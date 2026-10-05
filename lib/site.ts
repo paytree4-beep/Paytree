@@ -41,8 +41,8 @@ export const GOOGLE_SIGNIN = process.env.NEXT_PUBLIC_GOOGLE_SIGNIN === "true";
 
 /** Membership prices in US dollars. */
 export const PRICES = {
-  monthly: 2.99,
-  annual: 24.99,
+  monthly: 4.99,
+  annual: 39.99,
 } as const;
 
 const money = (value: number) => `$${value.toFixed(2)}`;

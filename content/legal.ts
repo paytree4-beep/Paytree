@@ -93,7 +93,7 @@ export const TERMS: LegalDocument = {
       id: "billing",
       title: "Subscriptions and billing",
       intro: [
-        "PayTree is a paid subscription: $2.99 per month or $24.99 per year, plus any applicable taxes. Billing is handled by [BILLING PROVIDER].",
+        "PayTree is a paid subscription: $4.99 per month or $39.99 per year, plus any applicable taxes. Billing is handled by [BILLING PROVIDER].",
         "Your subscription renews automatically at the end of each billing period until you cancel. You can cancel at any time from your account settings. Cancellation takes effect at the end of the current period, and you keep access until then.",
         "We will tell you before a price change takes effect. Refunds: [REFUND POLICY].",
       ],
