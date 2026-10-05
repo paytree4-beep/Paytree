@@ -6,10 +6,14 @@
 
 import Link from "next/link";
 
+import { ArrowUpRight, Copy, DollarSign, Mail, Smartphone, Wallet } from "lucide-react";
+
 import { Logo } from "@/components/brand/logo";
+import { ExampleQr } from "@/components/marketing/example-qr";
 import { Cta } from "@/components/marketing/cta";
 import { Pricing } from "@/components/marketing/pricing";
-import { PRICING, SIGNUPS_OPEN, SITE_HOST } from "@/lib/site";
+import { badgeColor } from "@/lib/payment-colors";
+import { PRICING, SIGNUPS_OPEN, SITE_HOST, SITE_URL } from "@/lib/site";
 
 const FEATURES: { title: string; body: string; icon: string }[] = [
   {
@@ -34,6 +38,16 @@ const STEPS: { n: string; title: string; body: string }[] = [
   { n: "2", title: "Add your apps", body: "Cash App, Venmo, Zelle and more." },
   { n: "3", title: "Share", body: "Send your link or show your QR code." },
 ];
+
+const EXAMPLE = [
+  { id: "cashapp", name: "Cash App", detail: "$hartwell", Icon: DollarSign, copy: false },
+  { id: "venmo", name: "Venmo", detail: "@hartwell-studio", Icon: Wallet, copy: false },
+  { id: "zelle", name: "Zelle", detail: "pay@hartwell.studio", Icon: Mail, copy: true },
+  { id: "applecash", name: "Apple Cash", detail: "(555) 010-0142", Icon: Smartphone, copy: true },
+] as const;
+
+/** Where the example's QR code leads. Change to a real example page when there is one. */
+const EXAMPLE_URL = SITE_URL;
 
 const headingClass =
   "font-serif text-[clamp(36px,4.4vw,56px)] font-normal leading-[1.08] tracking-[-0.02em] text-[#064E3B] [text-wrap:balance]";
@@ -90,12 +104,71 @@ export default function HomePage() {
                 View pricing
               </a>
             </div>
+            <a
+              href="#example"
+              className="inline-flex min-h-11 items-center gap-2 text-[15px] font-semibold text-[#D9B873] underline-offset-4 hover:underline"
+            >
+              See an example
+              <span aria-hidden="true">↓</span>
+            </a>
           </div>
 
         </div>
       </header>
 
       <main>
+        {/* Example page, shown in a phone */}
+        <section id="example" className="scroll-mt-4 pt-20">
+          <div className="mx-auto flex max-w-[1200px] flex-col items-center gap-8 px-6">
+            <h2 className={`text-center ${headingClass}`}>What your clients see</h2>
+            <div
+              role="img"
+              aria-label="Example PayTree page on a phone, with Cash App, Venmo, Zelle, Apple Cash and a QR code"
+              className="w-full max-w-[320px] overflow-hidden rounded-[44px] border-[10px] border-[#0B1F18] bg-[#FBFBFB] shadow-[0_40px_80px_-40px_rgba(6,78,59,0.55)]"
+            >
+              <div className="flex flex-col items-center gap-1 bg-[#064E3B] px-4 pb-4 pt-6 text-center text-[#FBFBFB]">
+                <span className="mb-1 flex h-12 w-12 items-center justify-center rounded-full bg-[#FBFBFB] font-serif text-2xl text-[#064E3B] ring-[3px] ring-[#D9B873]/55">
+                  H
+                </span>
+                <span className="font-serif text-[22px] leading-tight">Hartwell Studio</span>
+                <span className="text-[11px] text-[#FBFBFB]/75">{SITE_HOST}/hartwell</span>
+              </div>
+              <div className="flex flex-col gap-2 p-3.5">
+                {EXAMPLE.map(({ id, name, detail, Icon, copy }) => {
+                  const color = badgeColor(id);
+                  const Action = copy ? Copy : ArrowUpRight;
+                  return (
+                    <div
+                      key={id}
+                      className="flex items-center gap-2.5 rounded-[14px] border border-[#DCE5DF] bg-white px-3 py-2.5"
+                    >
+                      <span
+                        className="flex h-8 w-8 flex-none items-center justify-center rounded-full"
+                        style={{ backgroundColor: color.bg, color: color.fg }}
+                      >
+                        <Icon className="h-4 w-4" strokeWidth={2} />
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className="block text-[13px] font-bold leading-tight">{name}</span>
+                        <span className="block truncate text-[11px] text-[#4B6358]">{detail}</span>
+                      </span>
+                      <Action className="h-4 w-4 flex-none text-[#064E3B]" />
+                    </div>
+                  );
+                })}
+                <div className="mt-1 flex items-center gap-3 rounded-[14px] bg-[#064E3B] px-3 py-2.5 text-[#FBFBFB]">
+                  <ExampleQr url={EXAMPLE_URL} />
+                  <span className="min-w-0">
+                    <span className="block text-[13px] font-semibold">Scan to pay</span>
+                    <span className="block text-[11px] text-[#FBFBFB]/75">Point your camera here</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+            <p className="text-sm text-[#4B6358]">Example page with demo details.</p>
+          </div>
+        </section>
+
         {/* Features */}
         <section id="features" className="pb-24 pt-[104px]">
           <div className="mx-auto flex max-w-[1200px] flex-col gap-14 px-6">
