@@ -54,39 +54,39 @@ export default async function PublicPaymentPage({ params }: PageProps) {
   return (
     <div className="flex min-h-screen flex-col bg-[#FBFBFB] font-sans text-[#0B1F18]">
       {/* Profile header */}
-      <header className="bg-[#064E3B] px-5 pb-12 pt-14 text-[#FBFBFB]">
-        <div className="mx-auto flex max-w-[560px] flex-col items-center gap-3.5 text-center">
+      <header className="bg-[#064E3B] px-5 pb-6 pt-7 text-[#FBFBFB]">
+        <div className="mx-auto flex max-w-[560px] flex-col items-center gap-1.5 text-center">
           {profile.avatarUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={profile.avatarUrl}
               alt=""
-              width={92}
-              height={92}
-              className="h-[92px] w-[92px] rounded-full bg-[#FBFBFB] object-cover ring-4 ring-[#D9B873]/55"
+              width={68}
+              height={68}
+              className="mb-1.5 h-[68px] w-[68px] rounded-full bg-[#FBFBFB] object-cover ring-[3px] ring-[#D9B873]/55"
             />
           ) : (
             <span
               aria-hidden="true"
-              className="flex h-[92px] w-[92px] items-center justify-center rounded-full bg-[#FBFBFB] font-serif text-5xl leading-none text-[#064E3B] ring-4 ring-[#D9B873]/55"
+              className="mb-1.5 flex h-[68px] w-[68px] items-center justify-center rounded-full bg-[#FBFBFB] font-serif text-4xl leading-none text-[#064E3B] ring-[3px] ring-[#D9B873]/55"
             >
               {initial}
             </span>
           )}
-          <h1 className="font-serif text-[2.9rem] font-normal leading-[1.05] tracking-tight">
+          <h1 className="font-serif text-[2rem] font-normal leading-[1.1] tracking-tight">
             {profile.displayName}
           </h1>
-          <p className="text-[15px] text-[#FBFBFB]/80">
+          <p className="text-[13px] text-[#FBFBFB]/75">
             {SITE_HOST}/{profile.username}
           </p>
           {profile.bio ? (
-            <p className="max-w-[420px] text-[#FBFBFB]/90">{profile.bio}</p>
+            <p className="max-w-[420px] text-[15px] text-[#FBFBFB]/90">{profile.bio}</p>
           ) : null}
         </div>
       </header>
 
       {/* Payment methods */}
-      <main className="mx-auto w-full max-w-[560px] flex-1 px-5 pb-28 pt-9">
+      <main className="mx-auto w-full max-w-[560px] flex-1 px-5 pb-28 pt-6">
         <PaymentMethods
           username={profile.username}
           displayName={profile.displayName}
