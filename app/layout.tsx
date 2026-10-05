@@ -26,12 +26,12 @@ const serif = Instrument_Serif({
 });
 
 const DESCRIPTION =
-  "One refined page for every way to get paid. Share a single PayTree link with Cash App, Venmo, Zelle, cards, bank transfer and more.";
+  "Get paid your way. One link and one QR code for Cash App, Venmo, Zelle, PayPal, cards and more.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "PayTree · Every payment link. One refined page.",
+    default: "PayTree · Get paid your way. One link. One QR code.",
     template: "%s · PayTree",
   },
   description: DESCRIPTION,
@@ -39,14 +39,14 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: "PayTree",
-    title: "PayTree · Every payment link. One refined page.",
+    title: "PayTree · Get paid your way. One link. One QR code.",
     description: DESCRIPTION,
     url: "/",
     locale: "en_US",
   },
   twitter: {
     card: "summary",
-    title: "PayTree · Every payment link. One refined page.",
+    title: "PayTree · Get paid your way. One link. One QR code.",
     description: DESCRIPTION,
   },
 };

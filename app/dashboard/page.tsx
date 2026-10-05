@@ -11,7 +11,9 @@ import { logOut } from "@/app/auth-actions";
 import { Field, Notice, TextArea } from "@/components/auth/fields";
 import { SubmitButton } from "@/components/auth/submit-button";
 import { Logo } from "@/components/brand/logo";
+import { AvatarUploader } from "@/components/dashboard/avatar-uploader";
 import { param, type SearchParams } from "@/lib/auth";
+import { avatarUrl } from "@/lib/avatar";
 import { SITE_HOST } from "@/lib/site";
 import { createClient } from "@/lib/supabase/server";
 import { deleteAccount, setPublished, updateProfile } from "./actions";
@@ -39,6 +41,7 @@ type ProfileRow = {
   display_name: string;
   bio: string | null;
   is_published: boolean;
+  avatar_path: string | null;
 };
 
 export default async function DashboardPage({ searchParams }: { searchParams: SearchParams }) {
@@ -50,7 +53,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
 
   const { data } = await supabase
     .from("profiles")
-    .select("username, display_name, bio, is_published")
+    .select("username, display_name, bio, is_published, avatar_path")
     .eq("id", user.id)
     .maybeSingle();
   if (!data) redirect("/onboarding");
@@ -135,6 +138,12 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
 
         <section className="rounded-2xl border border-[#DCE5DF] bg-white p-5 sm:p-6">
           <h2 className="mb-5 text-sm font-bold uppercase tracking-[0.1em] text-[#4B6358]">Profile</h2>
+          <div className="mb-6">
+            <AvatarUploader
+              currentUrl={avatarUrl(profile.avatar_path)}
+              initial={profile.display_name.trim().charAt(0).toUpperCase() || "P"}
+            />
+          </div>
           <form action={updateProfile} className="flex flex-col gap-5">
             <Field
               label="Display name"

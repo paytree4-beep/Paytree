@@ -5,6 +5,8 @@
 // the already-validated `ResolvedMethod[]` that `resolveMethods` returns, so a
 // bad or malicious value stored in the database can never become a link.
 
+import { avatarUrl } from "./avatar";
+
 export const METHOD_IDS = [
   "cashapp",
   "venmo",
@@ -113,6 +115,8 @@ export interface Profile {
   username: string;
   displayName: string;
   bio?: string;
+  /** Public address of the profile photo, built by lib/avatar.ts. */
+  avatarUrl?: string;
   payments: PaymentSettings;
 }
 
@@ -771,11 +775,17 @@ export async function getProfileByUsername(rawUsername: string): Promise<Profile
 
   const { data, error } = await supabase
     .from("profiles")
-    .select("id, username, display_name, bio")
+    .select("id, username, display_name, bio, avatar_path")
     .eq("username", username)
     .maybeSingle();
   if (error || !data) return null;
-  const profile = data as { id: string; username: string; display_name: string; bio: string | null };
+  const profile = data as {
+    id: string;
+    username: string;
+    display_name: string;
+    bio: string | null;
+    avatar_path: string | null;
+  };
 
   const { data: rows } = await supabase
     .from("payment_methods")
@@ -787,6 +797,7 @@ export async function getProfileByUsername(rawUsername: string): Promise<Profile
     username: String(profile.username),
     displayName: String(profile.display_name),
     bio: typeof profile.bio === "string" && profile.bio ? profile.bio : undefined,
+    avatarUrl: avatarUrl(profile.avatar_path),
     payments: settingsFromRows((rows ?? []) as MethodRow[]),
   };
 }

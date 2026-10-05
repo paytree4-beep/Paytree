@@ -18,8 +18,8 @@ const FEATURES: { title: string; body: string; icon: string }[] = [
     icon: "M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1 M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1",
   },
   {
-    title: "Fourteen ways to pay",
-    body: "From Cash App and Venmo to wire transfers, checks and USDT. Add only the methods you actually use.",
+    title: "Every popular way to pay",
+    body: "Cash App, Venmo, Zelle, PayPal, Apple Cash, Chime, cards, checks and USDT. Add only the ones you use.",
     icon: "M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M3 10h18 M7 15h4",
   },
   {
@@ -28,8 +28,8 @@ const FEATURES: { title: string; body: string; icon: string }[] = [
     icon: "M4 7h10 M18 7h2 M4 17h2 M10 17h10 M14 5v4 M6 15v4",
   },
   {
-    title: "Share it anywhere",
-    body: "Every page comes with a QR code, ready for a business card, an invoice or a shop window.",
+    title: "Your own QR code",
+    body: "Every page comes with a QR code. Print it for your table, booth, shop window or business card, and get paid in person with one scan.",
     icon: "M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h3v3h-3z M20 14v.01 M14 20h.01 M17.5 20.5H21v-3",
   },
   {
@@ -66,7 +66,7 @@ const SAMPLE_METHODS: { name: string; detail: string; action: string }[] = [
   { name: "Cash App", detail: "$hartwell", action: "Open" },
   { name: "Venmo", detail: "@hartwell-studio", action: "Open" },
   { name: "Zelle", detail: "Email", action: "Copy" },
-  { name: "Wire transfer", detail: "Reveal details", action: "Reveal" },
+  { name: "Apple Cash", detail: "Phone number", action: "Copy" },
 ];
 
 const headingClass =
@@ -108,14 +108,15 @@ export default function HomePage() {
         <div className="mx-auto flex max-w-[1200px] flex-wrap items-center gap-14 px-6 pb-[104px] pt-16">
           <div className="flex min-w-0 flex-[1_1_460px] flex-col items-start gap-7">
             <span className="inline-block rounded-full border border-[#D9B873]/60 px-3.5 py-1.5 text-sm font-semibold text-[#D9B873]">
-              Payment links, refined
+              One link · One QR code
             </span>
             <h1 className="font-serif text-[clamp(46px,6.2vw,84px)] font-normal leading-[1.04] tracking-[-0.02em] [text-wrap:balance]">
-              Every payment link. <span className="text-[#D9B873]">One refined page.</span>
+              Get paid your way. <span className="text-[#D9B873]">One link. One QR code.</span>
             </h1>
             <p className="max-w-[520px] text-lg leading-[1.75] text-[#FBFBFB]/85">
-              PayTree brings every way you get paid together on a single, elegant page. Share one
-              link and let your clients choose how to pay you.
+              Cash App, Venmo, Zelle, PayPal and more on one elegant page. Share your link online, or
+              print your QR code for your table, shop window or business card. Clients scan, pick
+              their app and pay you directly.
             </p>
             <div className="flex flex-wrap gap-3.5">
               <Cta variant="gold" className="min-w-[200px]">
@@ -135,7 +136,7 @@ export default function HomePage() {
           <div className="mx-auto min-w-0 max-w-[420px] flex-[1_1_340px]">
             <div
               role="img"
-              aria-label="Sample PayTree page for Hartwell Studio showing Cash App, Venmo, Zelle and wire transfer"
+              aria-label="Sample PayTree page for Hartwell Studio showing Cash App, Venmo, Zelle, Apple Cash and a scan-to-pay QR code"
               className="flex flex-col gap-[18px] rounded-[36px] bg-[#FBFBFB] p-[26px] text-[#0B1F18] shadow-[0_40px_80px_-30px_rgba(0,0,0,0.55)]"
             >
               <span className="self-start rounded-full bg-[#E3F0EA] px-3 py-1 text-[13px] font-semibold text-[#064E3B]">
@@ -169,6 +170,26 @@ export default function HomePage() {
                     </span>
                   </div>
                 ))}
+              </div>
+              <div className="flex items-center gap-3.5 rounded-2xl bg-[#064E3B] px-[18px] py-3.5 text-[#FBFBFB]">
+                <svg
+                  width="44"
+                  height="44"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#D9B873"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                  className="flex-none"
+                >
+                  <path d="M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h3v3h-3z M20 14v.01 M14 20h.01 M17.5 20.5H21v-3 M6 6h1 M17 6h1 M6 17h1" />
+                </svg>
+                <span className="min-w-0">
+                  <span className="block font-semibold">Scan to pay</span>
+                  <span className="block text-[13px] text-[#FBFBFB]/75">Print it. Clients scan and pay.</span>
+                </span>
               </div>
             </div>
           </div>

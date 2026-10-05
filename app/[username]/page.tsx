@@ -56,12 +56,23 @@ export default async function PublicPaymentPage({ params }: PageProps) {
       {/* Profile header */}
       <header className="bg-[#064E3B] px-5 pb-12 pt-14 text-[#FBFBFB]">
         <div className="mx-auto flex max-w-[560px] flex-col items-center gap-3.5 text-center">
-          <span
-            aria-hidden="true"
-            className="flex h-[92px] w-[92px] items-center justify-center rounded-full bg-[#FBFBFB] font-serif text-5xl leading-none text-[#064E3B] ring-4 ring-[#D9B873]/55"
-          >
-            {initial}
-          </span>
+          {profile.avatarUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={profile.avatarUrl}
+              alt=""
+              width={92}
+              height={92}
+              className="h-[92px] w-[92px] rounded-full bg-[#FBFBFB] object-cover ring-4 ring-[#D9B873]/55"
+            />
+          ) : (
+            <span
+              aria-hidden="true"
+              className="flex h-[92px] w-[92px] items-center justify-center rounded-full bg-[#FBFBFB] font-serif text-5xl leading-none text-[#064E3B] ring-4 ring-[#D9B873]/55"
+            >
+              {initial}
+            </span>
+          )}
           <h1 className="font-serif text-[2.9rem] font-normal leading-[1.05] tracking-tight">
             {profile.displayName}
           </h1>
