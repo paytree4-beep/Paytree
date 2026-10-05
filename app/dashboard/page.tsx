@@ -75,6 +75,23 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
     .eq("profile_id", user.id);
   const methodCount = typeof count === "number" ? count : 0;
 
+  const weekAgo = new Date(Date.now() - 7 * 86_400_000).toISOString();
+  const [{ count: weekViews }, { count: weekAll }] = await Promise.all([
+    supabase
+      .from("analytics_events")
+      .select("id", { count: "exact", head: true })
+      .eq("profile_id", user.id)
+      .eq("action", "view")
+      .gte("occurred_at", weekAgo),
+    supabase
+      .from("analytics_events")
+      .select("id", { count: "exact", head: true })
+      .eq("profile_id", user.id)
+      .gte("occurred_at", weekAgo),
+  ]);
+  const views7 = typeof weekViews === "number" ? weekViews : 0;
+  const taps7 = Math.max(0, (typeof weekAll === "number" ? weekAll : 0) - views7);
+
   const { data: subData } = await supabase
     .from("subscriptions")
     .select("provider, provider_customer_id, provider_subscription_id, plan, status, current_period_end, cancel_at_period_end")
@@ -209,6 +226,26 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
             <ShareLink url={`${SITE_URL}/${profile.username}`} name={profile.display_name} />
           </div>
           <QrCard url={`${SITE_URL}/${profile.username}`} label={`${SITE_HOST}/${profile.username}`} />
+        </section>
+
+        <section className="rounded-2xl border border-[#DCE5DF] bg-white p-5 sm:p-6">
+          <h2 className="text-sm font-bold uppercase tracking-[0.1em] text-[#4B6358]">Last 7 days</h2>
+          <div className="mt-3 flex gap-8">
+            <p>
+              <span className="block font-serif text-[34px] leading-none tabular-nums text-[#064E3B]">{views7}</span>
+              <span className="text-[13px] text-[#4B6358]">page views</span>
+            </p>
+            <p>
+              <span className="block font-serif text-[34px] leading-none tabular-nums text-[#064E3B]">{taps7}</span>
+              <span className="text-[13px] text-[#4B6358]">taps on payment methods</span>
+            </p>
+          </div>
+          <Link
+            href="/dashboard/stats"
+            className="mt-4 inline-flex min-h-11 items-center rounded-full border border-[#064E3B]/40 px-6 font-bold text-[#064E3B]"
+          >
+            See statistics
+          </Link>
         </section>
 
         <section className="rounded-2xl border border-[#DCE5DF] bg-white p-5 sm:p-6">

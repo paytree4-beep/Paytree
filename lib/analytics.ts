@@ -105,28 +105,24 @@ export function countryFromHeaders(headers: Headers): string | null {
 }
 
 /**
- * Stores one event.
- *
- * TODO: replace with a real insert. Example Prisma model:
- *
- *   model PageEvent {
- *     id          String   @id @default(cuid())
- *     username    String
- *     action      String   // "view" | "open" | "copy"
- *     method      String?  // MethodId, null for views
- *     referrerHost String?
- *     device      String   // "mobile" | "tablet" | "desktop"
- *     country     String?  // ISO 3166-1 alpha-2
- *     occurredAt  DateTime @default(now())
- *     @@index([username, occurredAt])
- *   }
- *
- * Delete rows older than your published retention period with a scheduled job.
- * Rate limiting (for example per IP at the edge, without storing the IP in
- * this table) should sit in front of the route that calls this function.
+ * Stores one event with the service role (visitors cannot write to the table
+ * directly). Never throws: analytics must not break a payment page.
  */
-export async function recordEvent(event: AnalyticsEvent): Promise<void> {
-  if (process.env.NODE_ENV !== "production") {
-    console.info("[analytics]", JSON.stringify(event));
+export async function recordEvent(event: AnalyticsEvent & { profileId: string }): Promise<void> {
+  try {
+    const { createAdminClient } = await import("./supabase/admin");
+    const admin = createAdminClient();
+    if (!admin) return;
+    await admin.from("analytics_events").insert({
+      profile_id: event.profileId,
+      action: event.action,
+      method_id: event.method,
+      referrer_host: event.referrerHost,
+      device: event.device,
+      country: event.country,
+      occurred_at: event.occurredAt.toISOString(),
+    });
+  } catch {
+    // Ignore: a lost analytics event is better than a broken page.
   }
 }

@@ -7,7 +7,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-import { configFromForm, findMethodForm } from "@/lib/payment-forms";
+import { configFromForm, findMethodForm, METHOD_FORMS } from "@/lib/payment-forms";
 import { createClient } from "@/lib/supabase/server";
 
 async function signedIn() {
@@ -20,6 +20,21 @@ async function signedIn() {
   const { data } = await supabase.from("profiles").select("username").eq("id", user.id).maybeSingle();
   if (!data) redirect("/onboarding");
   return { supabase, userId: user.id as string, username: (data as { username: string }).username };
+}
+
+async function nextPosition(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  userId: string,
+): Promise<number> {
+  const { data } = await supabase
+    .from("payment_methods")
+    .select("position")
+    .eq("profile_id", userId)
+    .order("position", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  const top = (data as { position?: number } | null)?.position;
+  return typeof top === "number" ? Math.min(top + 1, 100) : 0;
 }
 
 export async function savePaymentMethod(formData: FormData): Promise<void> {
@@ -51,9 +66,12 @@ export async function savePaymentMethod(formData: FormData): Promise<void> {
         .from("payment_methods")
         .update({ public_config: config, is_visible: true })
         .eq("id", (existing as { id: string }).id)
-    : await supabase
-        .from("payment_methods")
-        .insert({ profile_id: userId, method_id: form.id, public_config: config });
+    : await supabase.from("payment_methods").insert({
+        profile_id: userId,
+        method_id: form.id,
+        public_config: config,
+        position: await nextPosition(supabase, userId),
+      });
 
   if (error) redirect(`/dashboard/payments?error=save&method=${form.id}#${form.id}`);
 
@@ -76,4 +94,24 @@ export async function removePaymentMethod(formData: FormData): Promise<void> {
 
   revalidatePath(`/${username}`);
   redirect(`/dashboard/payments?removed=${form.id}`);
+}
+
+/** Saves the owner's order of payment methods (first id = top of the page). */
+export async function savePaymentOrder(ids: unknown): Promise<{ ok: boolean }> {
+  if (!Array.isArray(ids) || ids.length > METHOD_FORMS.length) return { ok: false };
+  const clean = ids.filter((id): id is string => typeof id === "string" && Boolean(findMethodForm(id)));
+  if (clean.length !== ids.length || new Set(clean).size !== clean.length) return { ok: false };
+
+  const { supabase, userId, username } = await signedIn();
+  for (let i = 0; i < clean.length; i++) {
+    const { error } = await supabase
+      .from("payment_methods")
+      .update({ position: i })
+      .eq("profile_id", userId)
+      .eq("method_id", clean[i]);
+    if (error) return { ok: false };
+  }
+  revalidatePath(`/${username}`);
+  revalidatePath("/dashboard/payments");
+  return { ok: true };
 }

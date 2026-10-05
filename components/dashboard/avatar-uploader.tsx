@@ -5,6 +5,7 @@
 // shrunk to 512 x 512 in the browser, then sent as a small JPEG.
 
 import { useRef, useState, useTransition } from "react";
+import type { ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
 
 import { removeAvatar, uploadAvatar } from "@/app/dashboard/avatar-actions";
@@ -59,7 +60,7 @@ export function AvatarUploader({
   const [preview, setPreview] = useState<string | undefined>(undefined);
   const shown = preview ?? currentUrl;
 
-  const onPick = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const onPick = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     event.target.value = "";
     if (!file) return;

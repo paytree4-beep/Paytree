@@ -10,7 +10,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { getProfileByUsername, resolveMethods } from "@/lib/profiles";
+import { applyOrder, getProfileByUsername, resolveMethods } from "@/lib/profiles";
 import { SITE_HOST, SITE_URL } from "@/lib/site";
 import { PaymentMethods } from "./payment-methods";
 import { QrCard } from "./qr-card";
@@ -48,7 +48,7 @@ export default async function PublicPaymentPage({ params }: PageProps) {
   }
 
   // Only methods the user entered, and that passed validation, come back.
-  const methods = resolveMethods(profile.payments);
+  const methods = applyOrder(resolveMethods(profile.payments), profile.order);
   const initial = profile.displayName.trim().charAt(0).toUpperCase() || "P";
 
   return (

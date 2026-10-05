@@ -112,11 +112,15 @@ export interface PaymentSettings {
 }
 
 export interface Profile {
+  /** Database id. Present for real profiles, absent for the local sample. */
+  id?: string;
   username: string;
   displayName: string;
   bio?: string;
   /** Public address of the profile photo, built by lib/avatar.ts. */
   avatarUrl?: string;
+  /** The owner's chosen order of payment methods, first to last. */
+  order?: MethodId[];
   payments: PaymentSettings;
 }
 
@@ -797,11 +801,23 @@ export async function getProfileByUsername(rawUsername: string): Promise<Profile
     .eq("profile_id", profile.id)
     .order("position", { ascending: true });
 
+  const methodRows = (rows ?? []) as MethodRow[];
   return {
+    id: profile.id,
+    order: methodRows
+      .map((row) => METHOD_IDS.find((m) => m === row.method_id))
+      .filter((m): m is MethodId => Boolean(m)),
     username: String(profile.username),
     displayName: String(profile.display_name),
     bio: typeof profile.bio === "string" && profile.bio ? profile.bio : undefined,
     avatarUrl: avatarUrl(profile.avatar_path),
-    payments: settingsFromRows((rows ?? []) as MethodRow[]),
+    payments: settingsFromRows(methodRows),
   };
+}
+
+/** Sorts resolved methods into the owner's chosen order. Unlisted ones keep their place at the end. */
+export function applyOrder(methods: ResolvedMethod[], order: MethodId[] | undefined): ResolvedMethod[] {
+  if (!order || order.length === 0) return methods;
+  const rank = new Map(order.map((id, i) => [id, i] as const));
+  return [...methods].sort((a, b) => (rank.get(a.id) ?? 999) - (rank.get(b.id) ?? 999));
 }

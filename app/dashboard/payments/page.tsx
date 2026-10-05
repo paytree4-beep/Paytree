@@ -10,6 +10,7 @@ import { redirect } from "next/navigation";
 import { Field, Notice } from "@/components/auth/fields";
 import { SubmitButton } from "@/components/auth/submit-button";
 import { Logo } from "@/components/brand/logo";
+import { ReorderList } from "@/components/dashboard/reorder-list";
 import { param, type SearchParams } from "@/lib/auth";
 import { badgeColor } from "@/lib/payment-colors";
 import { METHOD_FORMS, findMethodForm, formValues } from "@/lib/payment-forms";
@@ -19,7 +20,7 @@ import { removePaymentMethod, savePaymentMethod } from "./actions";
 export const metadata: Metadata = { title: "Payment methods", robots: { index: false } };
 export const dynamic = "force-dynamic";
 
-type Row = { method_id: string; public_config: unknown };
+type Row = { method_id: string; public_config: unknown; position: number };
 
 export default async function PaymentsPage({ searchParams }: { searchParams: SearchParams }) {
   const supabase = await createClient();
@@ -38,8 +39,9 @@ export default async function PaymentsPage({ searchParams }: { searchParams: Sea
 
   const { data } = await supabase
     .from("payment_methods")
-    .select("method_id, public_config")
-    .eq("profile_id", user.id);
+    .select("method_id, public_config, position")
+    .eq("profile_id", user.id)
+    .order("position", { ascending: true });
   const stored = new Map<string, unknown>();
   for (const row of (data ?? []) as Row[]) stored.set(row.method_id, row.public_config);
 
@@ -49,6 +51,10 @@ export default async function PaymentsPage({ searchParams }: { searchParams: Sea
   const saved = findMethodForm(param(params, "saved"));
   const removed = findMethodForm(param(params, "removed"));
   const addedCount = METHOD_FORMS.filter((m) => stored.has(m.id)).length;
+  const orderItems = ((data ?? []) as Row[])
+    .map((row) => METHOD_FORMS.find((m) => m.id === row.method_id))
+    .filter((m): m is (typeof METHOD_FORMS)[number] => Boolean(m))
+    .map((m) => ({ id: m.id, title: m.title, color: badgeColor(m.id).bg }));
 
   return (
     <div className="min-h-screen bg-[#FBFBFB] text-[#0B1F18]">
@@ -101,6 +107,17 @@ export default async function PaymentsPage({ searchParams }: { searchParams: Sea
           </span>
         </div>
 
+        {addedCount > 0 ? (
+          <section className="rounded-2xl border border-[#DCE5DF] bg-[#F4F8F6] p-4 sm:p-5">
+            <h2 className="text-sm font-bold uppercase tracking-[0.1em] text-[#4B6358]">Order on your page</h2>
+            <p className="mb-3 mt-1 text-[13px] text-[#4B6358]">
+              Hold the dots and drag, or use the arrows. Saves automatically.
+            </p>
+            <ReorderList key={orderItems.map((i) => i.id).join()} initial={orderItems} />
+          </section>
+        ) : null}
+
+        <h2 className="mt-2 text-sm font-bold uppercase tracking-[0.1em] text-[#4B6358]">Add or edit</h2>
         <div className="flex flex-col gap-3">
           {METHOD_FORMS.map((form) => {
             const isAdded = stored.has(form.id);
