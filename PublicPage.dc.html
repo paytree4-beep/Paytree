@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>PayTree public page</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:inherit}
+.btn{transition:transform .15s ease, background-color .15s ease, box-shadow .15s ease;cursor:pointer}
+.btn:hover{transform:translateY(-1px);box-shadow:0 10px 24px -14px rgba(6,78,59,.55)}
+a:focus-visible,button:focus-visible{outline:2px solid #D9B873;outline-offset:3px}
+.num{font-variant-numeric:tabular-nums}
+.promo:hover{text-decoration:underline}
+@media (prefers-reduced-motion:reduce){.btn{transition:none}.btn:hover{transform:none}}
+</style>
+</helmet>
+
+<div style="display:flex;flex-direction:column;min-height:100vh;background:#FBFBFB;color:#0B1F18;font-family:'Plus Jakarta Sans',system-ui,sans-serif;font-size:16px;line-height:1.5">
+
+<!-- PROFILE HEADER -->
+<header style="background:#064E3B;color:#FBFBFB;padding:56px 20px 52px;box-sizing:border-box">
+<div style="max-width:560px;margin-inline:auto;display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center">
+<span style="padding:3px 12px;border-radius:999px;border:1px solid rgba(217,184,115,.6);color:#D9B873;font-size:13px;font-weight:600">Sample page</span>
+<span style="display:flex;align-items:center;justify-content:center;width:92px;height:92px;border-radius:50%;background:#FBFBFB;color:#064E3B;font-family:'Instrument Serif',Georgia,serif;font-size:48px;line-height:1;box-shadow:0 0 0 4px rgba(217,184,115,.55)" aria-hidden="true">H</span>
+<h1 style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:46px;line-height:1.05;letter-spacing:-0.02em">Hartwell Studio</h1>
+<span style="font-size:15px;color:rgba(251,251,251,.8)">paytree.me/hartwell</span>
+<p style="margin:0;max-width:420px;color:rgba(251,251,251,.88)">Brand strategy and advisory sessions. Choose how you would like to pay.</p>
+</div>
+</header>
+
+<!-- METHODS -->
+<main style="flex:1 0 auto;width:100%;max-width:560px;margin-inline:auto;box-sizing:border-box;padding:36px 20px 44px;display:flex;flex-direction:column;gap:32px">
+
+<sc-if value="{{hasOnline}}" hint-placeholder-val="{{true}}">
+<section aria-labelledby="h-online" style="display:flex;flex-direction:column;gap:12px">
+<div><h2 id="h-online" style="margin:0;font-size:13px;font-weight:700;letter-spacing:0.12em;color:#064E3B">PAY ONLINE</h2><p style="margin:2px 0 0;font-size:14px;color:#4B6358">Opens the app on your phone, or the secure website on a computer.</p></div>
+<sc-for list="{{onlineRows}}" as="m" hint-placeholder-count="5">
+<div>
+<sc-if value="{{m.isLink}}" hint-placeholder-val="{{true}}">
+<a class="btn" href="{{m.href}}" target="{{m.target}}" rel="noopener noreferrer nofollow ugc" onClick="{{m.onOpen}}" style="display:flex;align-items:center;gap:14px;min-height:72px;padding:14px 18px;box-sizing:border-box;border-radius:18px;background:#FFFFFF;border:1px solid #DCE5DF;text-decoration:none;color:#0B1F18">
+<span style="flex:none;display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:#E3F0EA;color:#064E3B" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="{{m.icon}}"/></svg></span>
+<span style="flex:1;min-width:0"><span style="display:block;font-weight:700">{{m.label}}<span style="font-weight:500;font-size:13px;color:#4B6358">{{m.tag}}</span></span><span style="display:block;font-size:13px;color:#4B6358;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{m.detail}}</span></span>
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#064E3B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10 M7 17L17 7"/></svg>
+</a>
+</sc-if>
+<sc-if value="{{m.isCopy}}" hint-placeholder-val="{{false}}">
+<button class="btn" onClick="{{m.onCopy}}" style="display:flex;align-items:center;gap:14px;width:100%;min-height:72px;padding:14px 18px;box-sizing:border-box;border-radius:18px;background:#FFFFFF;border:1px solid #DCE5DF;font:inherit;text-align:start;color:#0B1F18">
+<span style="flex:none;display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:#E3F0EA;color:#064E3B" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="{{m.icon}}"/></svg></span>
+<span style="flex:1;min-width:0"><span style="display:block;font-weight:700">{{m.label}}<span style="font-weight:500;font-size:13px;color:#4B6358">{{m.tag}}</span></span><span class="num" style="display:block;font-size:13px;color:#4B6358;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{m.detail}}</span>
+<sc-if value="{{m.hasNote}}" hint-placeholder-val="{{false}}"><span style="display:block;font-size:12px;color:#7A4B00;margin-top:2px">{{m.note}}</span></sc-if></span>
+<span style="flex:none;display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 14px;border-radius:999px;font-size:14px;font-weight:600;background:{{m.pillBg}};color:{{m.pillFg}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{m.pillIcon}}"/></svg>{{m.pillText}}</span>
+</button>
+</sc-if>
+</div>
+</sc-for>
+</section>
+</sc-if>
+
+<sc-if value="{{hasBank}}" hint-placeholder-val="{{true}}">
+<section aria-labelledby="h-bank" style="display:flex;flex-direction:column;gap:12px">
+<div><h2 id="h-bank" style="margin:0;font-size:13px;font-weight:700;letter-spacing:0.12em;color:#064E3B">TRANSFERS</h2><p style="margin:2px 0 0;font-size:14px;color:#4B6358">Copy the details, then paste them into your banking or payment app.</p></div>
+<sc-for list="{{bankRows}}" as="m" hint-placeholder-count="5">
+<div>
+<sc-if value="{{m.isLink}}" hint-placeholder-val="{{true}}">
+<a class="btn" href="{{m.href}}" target="{{m.target}}" rel="noopener noreferrer nofollow ugc" onClick="{{m.onOpen}}" style="display:flex;align-items:center;gap:14px;min-height:72px;padding:14px 18px;box-sizing:border-box;border-radius:18px;background:#FFFFFF;border:1px solid #DCE5DF;text-decoration:none;color:#0B1F18">
+<span style="flex:none;display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:#E3F0EA;color:#064E3B" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="{{m.icon}}"/></svg></span>
+<span style="flex:1;min-width:0"><span style="display:block;font-weight:700">{{m.label}}<span style="font-weight:500;font-size:13px;color:#4B6358">{{m.tag}}</span></span><span style="display:block;font-size:13px;color:#4B6358;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{m.detail}}</span></span>
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#064E3B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10 M7 17L17 7"/></svg>
+</a>
+</sc-if>
+<sc-if value="{{m.isCopy}}" hint-placeholder-val="{{false}}">
+<button class="btn" onClick="{{m.onCopy}}" style="display:flex;align-items:center;gap:14px;width:100%;min-height:72px;padding:14px 18px;box-sizing:border-box;border-radius:18px;background:#FFFFFF;border:1px solid #DCE5DF;font:inherit;text-align:start;color:#0B1F18">
+<span style="flex:none;display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:#E3F0EA;color:#064E3B" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="{{m.icon}}"/></svg></span>
+<span style="flex:1;min-width:0"><span style="display:block;font-weight:700">{{m.label}}<span style="font-weight:500;font-size:13px;color:#4B6358">{{m.tag}}</span></span><span class="num" style="display:block;font-size:13px;color:#4B6358;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{m.detail}}</span>
+<sc-if value="{{m.hasNote}}" hint-placeholder-val="{{false}}"><span style="display:block;font-size:12px;color:#7A4B00;margin-top:2px">{{m.note}}</span></sc-if></span>
+<span style="flex:none;display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 14px;border-radius:999px;font-size:14px;font-weight:600;background:{{m.pillBg}};color:{{m.pillFg}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{m.pillIcon}}"/></svg>{{m.pillText}}</span>
+</button>
+</sc-if>
+</div>
+</sc-for>
+</section>
+</sc-if>
+
+<sc-if value="{{hasCrypto}}" hint-placeholder-val="{{true}}">
+<section aria-labelledby="h-crypto" style="display:flex;flex-direction:column;gap:12px">
+<div><h2 id="h-crypto" style="margin:0;font-size:13px;font-weight:700;letter-spacing:0.12em;color:#064E3B">CRYPTO</h2><p style="margin:2px 0 0;font-size:14px;color:#4B6358">Send only on the network shown. Transfers cannot be reversed.</p></div>
+<sc-for list="{{cryptoRows}}" as="m" hint-placeholder-count="5">
+<div>
+<sc-if value="{{m.isLink}}" hint-placeholder-val="{{true}}">
+<a class="btn" href="{{m.href}}" target="{{m.target}}" rel="noopener noreferrer nofollow ugc" onClick="{{m.onOpen}}" style="display:flex;align-items:center;gap:14px;min-height:72px;padding:14px 18px;box-sizing:border-box;border-radius:18px;background:#FFFFFF;border:1px solid #DCE5DF;text-decoration:none;color:#0B1F18">
+<span style="flex:none;display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:#E3F0EA;color:#064E3B" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="{{m.icon}}"/></svg></span>
+<span style="flex:1;min-width:0"><span style="display:block;font-weight:700">{{m.label}}<span style="font-weight:500;font-size:13px;color:#4B6358">{{m.tag}}</span></span><span style="display:block;font-size:13px;color:#4B6358;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{m.detail}}</span></span>
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#064E3B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10 M7 17L17 7"/></svg>
+</a>
+</sc-if>
+<sc-if value="{{m.isCopy}}" hint-placeholder-val="{{false}}">
+<button class="btn" onClick="{{m.onCopy}}" style="display:flex;align-items:center;gap:14px;width:100%;min-height:72px;padding:14px 18px;box-sizing:border-box;border-radius:18px;background:#FFFFFF;border:1px solid #DCE5DF;font:inherit;text-align:start;color:#0B1F18">
+<span style="flex:none;display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:#E3F0EA;color:#064E3B" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="{{m.icon}}"/></svg></span>
+<span style="flex:1;min-width:0"><span style="display:block;font-weight:700">{{m.label}}<span style="font-weight:500;font-size:13px;color:#4B6358">{{m.tag}}</span></span><span class="num" style="display:block;font-size:13px;color:#4B6358;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{m.detail}}</span>
+<sc-if value="{{m.hasNote}}" hint-placeholder-val="{{false}}"><span style="display:block;font-size:12px;color:#7A4B00;margin-top:2px">{{m.note}}</span></sc-if></span>
+<span style="flex:none;display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 14px;border-radius:999px;font-size:14px;font-weight:600;background:{{m.pillBg}};color:{{m.pillFg}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{m.pillIcon}}"/></svg>{{m.pillText}}</span>
+</button>
+</sc-if>
+</div>
+</sc-for>
+</section>
+</sc-if>
+
+<sc-if value="{{hasNone}}" hint-placeholder-val="{{false}}">
+<div style="padding:28px;border:1px dashed #B9CBC0;border-radius:18px;text-align:center;color:#4B6358">Hartwell Studio has not added any payment methods yet.</div>
+</sc-if>
+
+<!-- QR CODE -->
+<section aria-labelledby="h-qr" style="display:flex;align-items:center;gap:18px;padding:18px;border-radius:18px;background:#FFFFFF;border:1px solid #DCE5DF">
+<svg role="img" aria-label="QR code that opens paytree.me/hartwell" width="112" height="112" viewBox="-2 -2 29 29" shape-rendering="crispEdges" style="flex:none;background:#FFFFFF;border-radius:8px"><rect x="-2" y="-2" width="29" height="29" fill="#FFFFFF"/><path fill="#064E3B" d="M0 0h7v1h-7zM9 0h1v1h-1zM12 0h1v1h-1zM14 0h2v1h-2zM18 0h7v1h-7zM0 1h1v1h-1zM6 1h1v1h-1zM8 1h1v1h-1zM11 1h2v1h-2zM14 1h2v1h-2zM18 1h1v1h-1zM24 1h1v1h-1zM0 2h1v1h-1zM2 2h3v1h-3zM6 2h1v1h-1zM8 2h5v1h-5zM14 2h1v1h-1zM18 2h1v1h-1zM20 2h3v1h-3zM24 2h1v1h-1zM0 3h1v1h-1zM2 3h3v1h-3zM6 3h1v1h-1zM9 3h3v1h-3zM18 3h1v1h-1zM20 3h3v1h-3zM24 3h1v1h-1zM0 4h1v1h-1zM2 4h3v1h-3zM6 4h1v1h-1zM8 4h1v1h-1zM14 4h3v1h-3zM18 4h1v1h-1zM20 4h3v1h-3zM24 4h1v1h-1zM0 5h1v1h-1zM6 5h1v1h-1zM8 5h2v1h-2zM11 5h1v1h-1zM15 5h1v1h-1zM18 5h1v1h-1zM24 5h1v1h-1zM0 6h7v1h-7zM8 6h1v1h-1zM10 6h1v1h-1zM12 6h1v1h-1zM14 6h1v1h-1zM16 6h1v1h-1zM18 6h7v1h-7zM8 7h2v1h-2zM12 7h1v1h-1zM14 7h1v1h-1zM0 8h2v1h-2zM3 8h1v1h-1zM6 8h2v1h-2zM10 8h1v1h-1zM12 8h5v1h-5zM18 8h3v1h-3zM22 8h2v1h-2zM1 9h4v1h-4zM7 9h2v1h-2zM10 9h2v1h-2zM17 9h2v1h-2zM24 9h1v1h-1zM0 10h1v1h-1zM2 10h3v1h-3zM6 10h1v1h-1zM8 10h3v1h-3zM12 10h3v1h-3zM16 10h1v1h-1zM18 10h3v1h-3zM23 10h2v1h-2zM1 11h2v1h-2zM4 11h2v1h-2zM7 11h1v1h-1zM12 11h6v1h-6zM19 11h2v1h-2zM0 12h2v1h-2zM4 12h1v1h-1zM6 12h1v1h-1zM11 12h3v1h-3zM16 12h4v1h-4zM21 12h1v1h-1zM23 12h2v1h-2zM2 13h1v1h-1zM4 13h1v1h-1zM7 13h4v1h-4zM12 13h1v1h-1zM18 13h2v1h-2zM21 13h2v1h-2zM24 13h1v1h-1zM0 14h1v1h-1zM3 14h1v1h-1zM6 14h2v1h-2zM9 14h4v1h-4zM17 14h1v1h-1zM19 14h2v1h-2zM22 14h1v1h-1zM24 14h1v1h-1zM1 15h2v1h-2zM4 15h2v1h-2zM8 15h1v1h-1zM11 15h6v1h-6zM20 15h1v1h-1zM23 15h1v1h-1zM0 16h2v1h-2zM3 16h2v1h-2zM6 16h4v1h-4zM11 16h2v1h-2zM16 16h7v1h-7zM8 17h1v1h-1zM10 17h4v1h-4zM15 17h2v1h-2zM20 17h2v1h-2zM24 17h1v1h-1zM0 18h7v1h-7zM8 18h2v1h-2zM13 18h4v1h-4zM18 18h1v1h-1zM20 18h2v1h-2zM23 18h2v1h-2zM0 19h1v1h-1zM6 19h1v1h-1zM9 19h4v1h-4zM16 19h1v1h-1zM20 19h3v1h-3zM24 19h1v1h-1zM0 20h1v1h-1zM2 20h3v1h-3zM6 20h1v1h-1zM10 20h5v1h-5zM16 20h6v1h-6zM23 20h1v1h-1zM0 21h1v1h-1zM2 21h3v1h-3zM6 21h1v1h-1zM8 21h1v1h-1zM12 21h5v1h-5zM19 21h4v1h-4zM0 22h1v1h-1zM2 22h3v1h-3zM6 22h1v1h-1zM9 22h2v1h-2zM13 22h1v1h-1zM17 22h1v1h-1zM19 22h2v1h-2zM22 22h1v1h-1zM24 22h1v1h-1zM0 23h1v1h-1zM6 23h1v1h-1zM8 23h7v1h-7zM16 23h2v1h-2zM21 23h1v1h-1zM0 24h7v1h-7zM8 24h1v1h-1zM13 24h1v1h-1zM15 24h2v1h-2zM18 24h2v1h-2zM23 24h2v1h-2z"/></svg>
+<div style="min-width:0">
+<h2 id="h-qr" style="margin:0;font-size:13px;font-weight:700;letter-spacing:0.12em;color:#064E3B">SCAN TO PAY</h2>
+<p style="margin:4px 0 0;font-size:14px;color:#4B6358">Point your phone camera at the code to open this page, or share it in person and in print.</p>
+<p style="margin:6px 0 0;font-size:13px;font-weight:600;color:#0B1F18">paytree.me/hartwell</p>
+</div>
+</section>
+
+<p style="margin:0;font-size:13px;color:#4B6358;text-align:center">Always confirm the recipient before you send money.</p>
+<p style="margin:-16px 0 0;font-size:13px;color:#4B6358;text-align:center"><a href="Legal.dc.html" style="text-decoration:none">Terms</a> &middot; <a href="Legal.dc.html" style="text-decoration:none">Privacy</a></p>
+
+<!-- DEMO CONTROLS -->
+<section aria-labelledby="h-demo" style="border:1px dashed #B9CBC0;border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:14px;background:#F4F8F6">
+<div>
+<h2 id="h-demo" style="margin:0;font-size:14px;font-weight:700">Preview controls</h2>
+<p style="margin:2px 0 0;font-size:13px;color:#4B6358">For this design review only, not part of the public page. Switch methods on or off to see how the page changes when a user adds or removes them in the dashboard.</p>
+</div>
+<div style="display:flex;flex-wrap:wrap;gap:8px">
+<sc-for list="{{chips}}" as="c" hint-placeholder-count="14">
+<button class="btn" onClick="{{c.toggle}}" aria-pressed="{{c.on}}" style="min-height:44px;padding:0 16px;border-radius:999px;font:inherit;font-size:14px;font-weight:600;background:{{c.bg}};color:{{c.fg}};border:1px solid {{c.bd}}">{{c.label}}</button>
+</sc-for>
+</div>
+<div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px">
+<span style="font-size:13px;font-weight:600">Zelle account type</span>
+<div role="group" aria-label="Zelle account type" style="display:inline-flex;padding:3px;border-radius:999px;background:#E3EBE6;gap:3px">
+<button class="btn" onClick="{{setZEmail}}" aria-pressed="{{zIsEmail}}" style="min-height:44px;min-width:84px;padding:0 14px;border:none;border-radius:999px;font:inherit;font-size:14px;font-weight:600;background:{{zeBg}};color:{{zeFg}}">Email</button>
+<button class="btn" onClick="{{setZPhone}}" aria-pressed="{{zIsPhone}}" style="min-height:44px;min-width:84px;padding:0 14px;border:none;border-radius:999px;font:inherit;font-size:14px;font-weight:600;background:{{zpBg}};color:{{zpFg}}">Phone</button>
+</div>
+</div>
+</section>
+</main>
+
+<!-- TOAST -->
+<div role="status" aria-live="polite" style="position:fixed;left:0;right:0;bottom:84px;display:flex;justify-content:center;padding-inline:16px;pointer-events:none;z-index:50">
+<div style="display:flex;align-items:center;gap:10px;max-width:420px;padding:12px 18px;border-radius:14px;background:#0B1F18;color:#FBFBFB;font-size:14px;font-weight:600;box-shadow:0 18px 40px -16px rgba(0,0,0,.5);opacity:{{toastOpacity}};transform:translateY({{toastShift}});transition:opacity .2s ease, transform .2s ease">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="{{toastIconColor}}" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{toastIcon}}"/></svg>
+<span>{{toast}}</span>
+</div>
+</div>
+
+<!-- STICKY PROMO FOOTER -->
+<footer style="position:sticky;bottom:0;z-index:40;background:#064E3B;color:#FBFBFB;border-top:1px solid rgba(217,184,115,.45);padding:14px 16px;box-sizing:border-box;text-align:center">
+<a class="promo" href="Main.dc.html" style="display:inline-flex;align-items:center;justify-content:center;min-height:44px;color:#FBFBFB;font-weight:600;text-decoration:none">&#128073; Get your own payment page by PayTree</a>
+</footer>
+
+</div>
+</x-dc>
+
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2500}}'>
+class Component extends DCLogic {
+  state = {
+    on: { cashapp: true, venmo: true, paypal: true, stripe: true, square: true, wise: true, custom: true, zelle: true, applecash: true, chime: true, ach: true, wire: true, check: true, crypto: true },
+    zelleType: 'email',
+    copiedId: '',
+    toast: '',
+    toastTone: 'ok'
+  };
+
+  // Lucide icon geometry (ISC licence), flattened to single path strings.
+  icons() {
+    return {
+      'dollar-sign': 'M12 2v20 M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6',
+      'wallet': 'M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1 M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4',
+      'credit-card': 'M4 5h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z M2 10h20',
+      'mail': 'M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z M22 7l-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7',
+      'phone': 'M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z',
+      'building': 'M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2 M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2 M10 6h4 M10 10h4 M10 14h4 M10 18h4',
+      'globe': 'M2 12a10 10 0 1 0 20 0a10 10 0 1 0-20 0 M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20 M2 12h20',
+      'coins': 'M2 8a6 6 0 1 0 12 0a6 6 0 1 0-12 0 M18.09 10.37A6 6 0 1 1 10.34 18 M7 6h1v4 M16.71 13.88l.7.71-2.82 2.82',
+      'smartphone': 'M7 2h10a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z M12 18h.01',
+      'bell': 'M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9 M10.3 21a1.94 1.94 0 0 0 3.4 0',
+      'landmark': 'M3 22h18 M6 18v-7 M10 18v-7 M14 18v-7 M18 18v-7 M12 2l8 5H4z',
+      'banknote': 'M4 6h16a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z M10 12a2 2 0 1 0 4 0a2 2 0 1 0-4 0 M6 12h.01 M18 12h.01',
+      'shopping-bag': 'M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z M3 6h18 M16 10a4 4 0 0 1-8 0',
+      'link': 'M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71 M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71'
+    };
+  }
+
+  defs() {
+    const zEmail = this.state.zelleType === 'email';
+    return [
+      { id: 'cashapp', group: 'online', label: 'Cash App', icon: 'dollar-sign', tag: '', detail: '$paytreedemo', href: 'https://cash.app/$paytreedemo', open: 'Opening Cash App' },
+      { id: 'venmo', group: 'online', label: 'Venmo', icon: 'wallet', tag: '', detail: '@paytree-demo', href: 'venmo://paycharge?txn=pay&recipients=paytree-demo', open: 'Opening Venmo' },
+      { id: 'paypal', group: 'online', label: 'PayPal', icon: 'credit-card', tag: '', detail: 'paypal.me/paytreedemo', href: 'https://paypal.me/paytreedemo', open: 'Opening PayPal' },
+      { id: 'stripe', group: 'online', label: 'Stripe', icon: 'credit-card', tag: ' · Card', detail: 'Visa, Mastercard and other cards', href: 'https://buy.stripe.com/test_paytreedemo', open: 'Opening secure card checkout' },
+      { id: 'square', group: 'online', label: 'Square', icon: 'shopping-bag', tag: ' · Card', detail: 'Pay securely with a card', href: 'https://square.link/u/paytreedemo', open: 'Opening Square checkout' },
+      { id: 'wise', group: 'online', label: 'Wise', icon: 'globe', tag: ' · International', detail: 'wise.com/pay/me/paytreedemo', href: 'https://wise.com/pay/me/paytreedemo', open: 'Opening Wise' },
+      { id: 'custom', group: 'online', label: 'Buy me a coffee', icon: 'link', tag: ' · External link', detail: 'example.com', href: 'https://example.com/hartwell', open: 'Opening example.com' },
+      {
+        id: 'zelle', group: 'bank', label: 'Zelle', tag: zEmail ? ' · Email' : ' · Phone',
+        icon: zEmail ? 'mail' : 'phone',
+        detail: zEmail ? 'pay@hartwell-demo.example' : '(555) 010-0199',
+        value: zEmail ? 'pay@hartwell-demo.example' : '5550100199',
+        copied: zEmail ? 'Zelle email copied to clipboard' : 'Zelle phone number copied to clipboard'
+      },
+      { id: 'applecash', group: 'bank', label: 'Apple Cash', icon: 'smartphone', tag: ' · Phone', detail: '(555) 010-0142', value: '5550100142', copied: 'Apple Cash contact copied to clipboard' },
+      { id: 'chime', group: 'bank', label: 'Chime', icon: 'bell', tag: ' · ChimeSign', detail: '$paytreedemo', value: '$paytreedemo', copied: 'ChimeSign copied to clipboard' },
+      { id: 'ach', group: 'bank', label: 'ACH bank transfer', icon: 'building', tag: '', detail: 'Routing 000000000 · Account ••••0000', value: 'Routing: 000000000, Account: 000000000000', copied: 'ACH routing and account numbers copied' },
+      { id: 'wire', group: 'bank', label: 'Wire transfer', icon: 'landmark', tag: ' · Domestic and international', detail: 'Demo Bank · Account ••••0000', value: 'Beneficiary: Hartwell Studio LLC\nBank: Demo Bank\nRouting (ABA): 000000000\nAccount: 000000000000\nSWIFT: DEMOUS33', copied: 'Wire transfer details copied' },
+      { id: 'check', group: 'bank', label: 'Check by mail', icon: 'banknote', tag: ' · Mail', detail: '100 Example Street, Springfield, IL 62701', value: 'Hartwell Studio LLC\n100 Example Street\nSpringfield, IL 62701', copied: 'Mailing address copied to clipboard' },
+      { id: 'crypto', group: 'crypto', label: 'Crypto', icon: 'coins', tag: ' · USDT · Tron (TRC-20) network', detail: 'TXYZopYRdj2D9XRtbG411XZZ3kM5VkAeBf', value: 'TXYZopYRdj2D9XRtbG411XZZ3kM5VkAeBf', copied: 'USDT address copied to clipboard', note: 'Send only USDT on the Tron network. Other networks can lose funds.' }
+    ];
+  }
+
+  flash(message, tone) {
+    if (this._t) clearTimeout(this._t);
+    this.setState({ toast: message, toastTone: tone });
+    this._t = setTimeout(() => { this.setState({ toast: '', copiedId: '' }); }, 2400);
+  }
+
+  componentWillUnmount() {
+    if (this._t) clearTimeout(this._t);
+  }
+
+  renderVals() {
+    const s = this.state;
+    const defs = this.defs();
+    const ICONS = this.icons();
+    const ICON_COPY = 'M10 8h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2z M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2';
+    const ICON_CHECK = 'M20 6L9 17l-5-5';
+
+    const build = (d) => {
+      const copied = s.copiedId === d.id;
+      return {
+        id: d.id, label: d.label, icon: ICONS[d.icon], tag: d.tag, detail: d.detail,
+        isLink: !!d.href, isCopy: !d.href,
+        hasNote: !!d.note, note: d.note || '',
+        href: d.href || '#',
+        target: d.href && d.href.indexOf('https://') === 0 ? '_blank' : '_self',
+        onOpen: () => this.flash(d.open + '…', 'ok'),
+        onCopy: () => {
+          const done = (ok) => {
+            if (ok) { this.setState({ copiedId: d.id }); this.flash(d.copied, 'ok'); }
+            else { this.flash('Your browser blocked copying here. Open this page in a full tab and try again.', 'warn'); }
+          };
+          try {
+            navigator.clipboard.writeText(d.value).then(() => done(true), () => done(false));
+          } catch (e) { done(false); }
+        },
+        pillText: copied ? 'Copied' : 'Copy',
+        pillIcon: copied ? ICON_CHECK : ICON_COPY,
+        pillBg: copied ? '#064E3B' : '#E3F0EA',
+        pillFg: copied ? '#FBFBFB' : '#064E3B'
+      };
+    };
+
+    const shown = defs.filter((d) => s.on[d.id]);
+    const onlineRows = shown.filter((d) => d.group === 'online').map(build);
+    const bankRows = shown.filter((d) => d.group === 'bank').map(build);
+    const cryptoRows = shown.filter((d) => d.group === 'crypto').map(build);
+
+    const labels = { cashapp: 'Cash App', venmo: 'Venmo', paypal: 'PayPal', stripe: 'Stripe', square: 'Square', wise: 'Wise', custom: 'Custom link', zelle: 'Zelle', applecash: 'Apple Cash', chime: 'Chime', ach: 'ACH Bank', wire: 'Wire', check: 'Check', crypto: 'Crypto' };
+    const order = ['cashapp', 'venmo', 'paypal', 'stripe', 'square', 'wise', 'custom', 'zelle', 'applecash', 'chime', 'ach', 'wire', 'check', 'crypto'];
+    const chips = order.map((id) => {
+      const on = !!s.on[id];
+      return {
+        label: labels[id], on,
+        bg: on ? '#064E3B' : '#FFFFFF',
+        fg: on ? '#FBFBFB' : '#0B1F18',
+        bd: on ? '#064E3B' : '#C9D6CE',
+        toggle: () => {
+          const next = Object.assign({}, this.state.on);
+          next[id] = !next[id];
+          this.setState({ on: next });
+        }
+      };
+    });
+
+    const zE = s.zelleType === 'email';
+    const hasToast = !!s.toast;
+    return {
+      onlineRows, bankRows, cryptoRows, chips,
+      hasOnline: onlineRows.length > 0, hasBank: bankRows.length > 0, hasCrypto: cryptoRows.length > 0,
+      hasNone: shown.length === 0,
+      zIsEmail: zE, zIsPhone: !zE,
+      setZEmail: () => this.setState({ zelleType: 'email' }),
+      setZPhone: () => this.setState({ zelleType: 'phone' }),
+      zeBg: zE ? '#064E3B' : 'transparent', zeFg: zE ? '#FBFBFB' : '#0B1F18',
+      zpBg: zE ? 'transparent' : '#064E3B', zpFg: zE ? '#0B1F18' : '#FBFBFB',
+      toast: s.toast,
+      toastOpacity: hasToast ? '1' : '0',
+      toastShift: hasToast ? '0px' : '8px',
+      toastIcon: s.toastTone === 'ok' ? ICON_CHECK : 'M12 8v5 M12 17h.01',
+      toastIconColor: s.toastTone === 'ok' ? '#D9B873' : '#F4B183'
+    };
+  }
+}
+</script>
+</body>
+</html>

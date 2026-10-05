@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>PayTree payment methods</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:inherit}
+.btn{transition:transform .15s ease, background-color .15s ease;cursor:pointer}
+.btn:hover{transform:translateY(-1px)}
+.navitem:hover{background:rgba(251,251,251,.08) !important}
+a:focus-visible,button:focus-visible{outline:2px solid #D9B873;outline-offset:3px}
+.num{font-variant-numeric:tabular-nums}
+.inp{width:100%;box-sizing:border-box;min-height:50px;padding:0 14px;border:1.5px solid #C9D6CE;border-radius:12px;background:#FFFFFF;font:inherit;color:#0B1F18}
+.inp:focus{outline:2px solid #D9B873;outline-offset:2px;border-color:#064E3B}
+.row{transition:box-shadow .15s ease, opacity .15s ease}
+.pick:hover{background:#E3F0EA !important}
+.iconbtn{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;border:none;border-radius:12px;background:transparent;color:#064E3B;cursor:pointer;font:inherit}
+.iconbtn:hover{background:#E3F0EA}
+.iconbtn[aria-disabled="true"]{opacity:.35;cursor:default}
+.grip{cursor:grab}
+@media (prefers-reduced-motion:reduce){.btn{transition:none}}
+</style>
+</helmet>
+
+<div id="top" style="display:flex;flex-wrap:wrap;align-items:stretch;background:#FBFBFB;color:#0B1F18;font-family:'Plus Jakarta Sans',system-ui,sans-serif;font-size:15px;line-height:1.5">
+
+<!-- SIDEBAR -->
+<aside style="flex:1 0 264px;max-width:300px;box-sizing:border-box;background:#064E3B;color:#FBFBFB;padding:28px 20px;display:flex;flex-direction:column;justify-content:space-between;gap:32px">
+<div style="display:flex;flex-direction:column;gap:32px">
+<a href="Main.dc.html" style="display:flex;align-items:center;gap:10px;color:#FBFBFB;text-decoration:none;padding-inline:8px">
+<svg width="34" height="34" viewBox="0 0 32 32" fill="none" stroke="#D9B873" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 10 L16 5 L21 10"/><path d="M9 16 L16 9 L23 16"/><path d="M7 22 L16 13 L25 22"/><path d="M16 22 V28"/></svg>
+<span style="font-weight:700;font-size:20px">PayTree</span>
+</a>
+<nav aria-label="Dashboard navigation" style="display:flex;flex-direction:column;gap:4px">
+<sc-for list="{{navItems}}" as="nv" hint-placeholder-count="5">
+<a class="navitem" href="{{nv.href}}" style="display:flex;align-items:center;gap:12px;min-height:46px;padding:0 12px;border-radius:12px;text-decoration:none;font-weight:600;background:{{nv.bg}};color:{{nv.fg}}">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{nv.icon}}"/></svg>
+<span>{{nv.label}}</span>
+</a>
+</sc-for>
+</nav>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:16px">
+<div style="border:1px solid rgba(217,184,115,.5);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:4px">
+<span style="font-size:13px;color:#D9B873;font-weight:600">Your plan</span>
+<span style="font-weight:700">Annual membership</span>
+<span style="font-size:14px;color:rgba(251,251,251,.75)">$24.99 per year</span>
+</div>
+<div style="display:flex;align-items:center;gap:12px;padding-inline:4px">
+<span style="display:flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:50%;background:#FBFBFB;color:#064E3B;font-family:'Instrument Serif',Georgia,serif;font-size:22px;line-height:1" aria-hidden="true">H</span>
+<div style="min-width:0">
+<div style="font-weight:600">Hartwell Studio</div>
+<div style="font-size:13px;color:rgba(251,251,251,.7)">paytree.me/hartwell</div>
+</div>
+</div>
+</div>
+</aside>
+
+<!-- MAIN -->
+<main style="flex:999 1 640px;min-width:0;box-sizing:border-box;padding:36px 32px 56px;display:flex;flex-direction:column;gap:28px">
+<div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:20px">
+<div style="display:flex;flex-direction:column;gap:6px">
+<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+<h1 style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:46px;line-height:1.05;letter-spacing:-0.02em;color:#064E3B">Payment methods</h1>
+<span style="padding:3px 12px;border-radius:999px;background:#E3F0EA;color:#064E3B;font-size:13px;font-weight:600">Demo</span>
+</div>
+<p style="margin:0;color:#4B6358;max-width:640px">Drag the handle to put your methods in the order you like inside each section (Pay online, Transfers, Crypto). Switch a method off to hide it without losing its details.</p>
+</div>
+<div style="display:flex;flex-wrap:wrap;gap:12px">
+<a class="btn" href="PublicPage.dc.html" style="min-height:48px;padding:0 24px;display:inline-flex;align-items:center;border-radius:999px;border:1.5px solid #064E3B;color:#064E3B;font-weight:700;text-decoration:none">View my page</a>
+<button class="btn" onClick="{{openAdd}}" aria-expanded="{{adding}}" style="min-height:48px;padding:0 24px;border:none;border-radius:999px;background:#064E3B;color:#FBFBFB;font:inherit;font-weight:700">Add a method</button>
+</div>
+</div>
+
+<div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
+<div style="flex:2 1 520px;min-width:0;display:flex;flex-direction:column;gap:14px">
+
+<sc-if value="{{adding}}" hint-placeholder-val="{{false}}">
+<section aria-label="Add a payment method" style="background:#F4F8F6;border:1px dashed #B9CBC0;border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:14px">
+<div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+<h2 style="margin:0;font-size:17px;font-weight:700">Choose a method to add</h2>
+<button class="btn" onClick="{{closeAdd}}" style="min-height:44px;padding:0 16px;border:1px solid #C9D6CE;border-radius:999px;background:#FFFFFF;font:inherit;font-weight:600;color:#0B1F18">Close</button>
+</div>
+<sc-if value="{{noneLeft}}" hint-placeholder-val="{{false}}"><p style="margin:0;color:#4B6358">You have added every available method.</p></sc-if>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px">
+<sc-for list="{{available}}" as="a" hint-placeholder-count="6">
+<button class="btn pick" onClick="{{a.add}}" style="display:flex;align-items:center;gap:12px;min-height:56px;padding:8px 14px;border:1px solid #DCE5DF;border-radius:14px;background:#FFFFFF;font:inherit;text-align:start;color:#0B1F18">
+<span style="flex:none;display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;background:#E3F0EA;color:#064E3B" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="{{a.icon}}"/></svg></span>
+<span style="font-weight:600">{{a.label}}</span>
+</button>
+</sc-for>
+</div>
+</section>
+</sc-if>
+
+<sc-if value="{{isEmpty}}" hint-placeholder-val="{{false}}">
+<div style="padding:32px;border:1px dashed #B9CBC0;border-radius:20px;text-align:center;color:#4B6358">You have no payment methods yet. Choose “Add a method” to start.</div>
+</sc-if>
+
+<ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px" aria-label="Your payment methods, in display order">
+<sc-for list="{{items}}" as="it" hint-placeholder-count="5">
+<li class="row" draggable="{{it.draggable}}" onDragStart="{{it.dragStart}}" onDragOver="{{it.dragOver}}" onDrop="{{it.drop}}" onDragEnd="{{it.dragEnd}}" style="background:#FFFFFF;border:1px solid #DCE5DF;border-top:3px solid {{it.topBd}};border-radius:20px;padding:14px 16px;display:flex;flex-direction:column;gap:14px;opacity:{{it.opacity}}">
+
+<div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px 12px">
+<span class="grip" title="Drag to reorder" aria-hidden="true" style="flex:none;display:flex;align-items:center;justify-content:center;width:28px;height:44px;color:#7C9488"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 5h.01 M9 12h.01 M9 19h.01 M15 5h.01 M15 12h.01 M15 19h.01"/></svg></span>
+<span style="flex:none;display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:#E3F0EA;color:#064E3B" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="{{it.icon}}"/></svg></span>
+<div style="flex:1 1 180px;min-width:0">
+<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-weight:700">{{it.label}}</span><span style="padding:1px 8px;border-radius:999px;background:#E3F0EA;color:#064E3B;font-size:12px;font-weight:600">{{it.groupTag}}</span><sc-if value="{{it.hidden}}" hint-placeholder-val="{{false}}"><span style="padding:1px 8px;border-radius:999px;background:#EEF2EF;color:#4B6358;font-size:12px;font-weight:700">Hidden</span></sc-if></div>
+<div class="num" style="font-size:13px;color:#4B6358;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{it.summary}}</div>
+</div>
+<div style="display:flex;align-items:center;gap:2px;flex-wrap:wrap">
+<button class="iconbtn" onClick="{{it.up}}" aria-disabled="{{it.isFirst}}" aria-label="Move {{it.label}} up" title="Move up"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m18 15-6-6-6 6"/></svg></button>
+<button class="iconbtn" onClick="{{it.down}}" aria-disabled="{{it.isLast}}" aria-label="Move {{it.label}} down" title="Move down"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+<button class="btn" role="switch" aria-checked="{{it.shown}}" aria-label="Show {{it.label}} on my page" onClick="{{it.toggle}}" style="display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 6px;border:none;background:transparent;font:inherit;color:#0B1F18;font-size:13px;font-weight:600">
+<span style="position:relative;width:44px;height:26px;border-radius:999px;background:{{it.trackBg}};transition:background-color .15s ease" aria-hidden="true"><span style="position:absolute;top:3px;left:{{it.knobLeft}};width:20px;height:20px;border-radius:50%;background:#FFFFFF;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:left .15s ease"></span></span>
+<span style="min-width:48px;text-align:start">{{it.shownText}}</span>
+</button>
+<button class="iconbtn" onClick="{{it.edit}}" aria-label="Edit {{it.label}}" title="Edit"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg></button>
+<button class="iconbtn" onClick="{{it.askRemove}}" aria-label="Remove {{it.label}}" title="Remove" style="color:#B42318"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18 M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6 M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2 M10 11v6 M14 11v6"/></svg></button>
+</div>
+</div>
+
+<sc-if value="{{it.confirming}}" hint-placeholder-val="{{false}}">
+<div role="alertdialog" aria-label="Confirm removal" style="padding:14px 16px;border-radius:14px;background:#FDECEA;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px">
+<p style="margin:0;color:#7A1A12;font-size:14px;max-width:420px"><strong>Remove {{it.label}}?</strong> Its details will be deleted and it will disappear from your page. You can add it again later.</p>
+<div style="display:flex;gap:10px">
+<button class="btn" onClick="{{it.cancelRemove}}" style="min-height:44px;padding:0 18px;border:1px solid #C9D6CE;border-radius:999px;background:#FFFFFF;font:inherit;font-weight:600;color:#0B1F18">Keep it</button>
+<button class="btn" onClick="{{it.remove}}" style="min-height:44px;padding:0 18px;border:none;border-radius:999px;background:#B42318;font:inherit;font-weight:700;color:#FFFFFF">Remove</button>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{it.editing}}" hint-placeholder-val="{{false}}">
+<div style="border-top:1px solid #E3EBE6;padding-top:16px;display:flex;flex-direction:column;gap:16px">
+<sc-if value="{{it.warn}}" hint-placeholder-val="{{false}}"><p style="margin:0;padding:10px 14px;border-radius:12px;background:#FFF6E5;color:#7A4B00;font-size:13px">{{it.warn}}</p></sc-if>
+<div style="display:flex;flex-wrap:wrap;gap:14px">
+<sc-for list="{{it.fields}}" as="fl" hint-placeholder-count="3">
+<div style="flex:{{fl.basis}};min-width:0;display:flex;flex-direction:column;gap:6px">
+<label for="{{fl.id}}" style="font-weight:600;font-size:14px">{{fl.label}}</label>
+<input id="{{fl.id}}" class="inp" type="text" inputmode="{{fl.mode}}" value="{{fl.val}}" onInput="{{fl.on}}" onBlur="{{fl.blur}}" placeholder="{{fl.ph}}" autocomplete="off" spellcheck="false" aria-invalid="{{fl.bad}}" style="border-color:{{fl.bd}}">
+<sc-if value="{{fl.hasErr}}" hint-placeholder-val="{{false}}"><p role="alert" style="margin:0;color:#B42318;font-size:13px">{{fl.err}}</p></sc-if>
+<sc-if value="{{fl.showHint}}" hint-placeholder-val="{{true}}"><p style="margin:0;color:#4B6358;font-size:13px">{{fl.hint}}</p></sc-if>
+</div>
+</sc-for>
+</div>
+<div style="display:flex;flex-wrap:wrap;gap:10px">
+<button class="btn" onClick="{{it.save}}" style="min-height:48px;padding:0 24px;border:none;border-radius:999px;background:#064E3B;color:#FBFBFB;font:inherit;font-weight:700">Save method</button>
+<button class="btn" onClick="{{it.cancel}}" style="min-height:48px;padding:0 20px;border:1px solid #C9D6CE;border-radius:999px;background:#FFFFFF;font:inherit;font-weight:600;color:#0B1F18">Cancel</button>
+</div>
+</div>
+</sc-if>
+</li>
+</sc-for>
+</ul>
+</div>
+
+<aside aria-label="Page order" style="flex:1 1 280px;min-width:0;position:sticky;top:24px;background:#FFFFFF;border:1px solid #DCE5DF;border-radius:20px;padding:22px;display:flex;flex-direction:column;gap:16px">
+<div>
+<h2 style="margin:0;font-size:17px;font-weight:700">What visitors see</h2>
+<p class="num" style="margin:2px 0 0;font-size:14px;color:#4B6358">{{shownCount}} shown · {{hiddenCount}} hidden</p>
+</div>
+<ol style="margin:0;padding:0 0 0 20px;display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:600">
+<sc-for list="{{orderRows}}" as="o" hint-placeholder-count="4"><li>{{o.label}} <span style="font-weight:500;color:#4B6358;font-size:12px">{{o.groupTag}}</span></li></sc-for>
+</ol>
+<sc-if value="{{noneShown}}" hint-placeholder-val="{{false}}"><p style="margin:0;font-size:13px;color:#4B6358">Nothing is shown yet, so visitors will see an empty page.</p></sc-if>
+<sc-if value="{{dirty}}" hint-placeholder-val="{{false}}"><p style="margin:0;padding:10px 14px;border-radius:12px;background:#FFF6E5;color:#7A4B00;font-size:13px;font-weight:600">You have unsaved changes.</p></sc-if>
+<button class="btn" onClick="{{saveAll}}" style="min-height:54px;border:none;border-radius:999px;background:#064E3B;color:#FBFBFB;font:inherit;font-weight:700;font-size:16px">Save changes</button>
+<p style="margin:0;font-size:12px;color:#4B6358">Demo only: nothing is stored yet. PayTree never holds your money. Payments go straight to the accounts you add. Double-check every value, because bank and crypto transfers can’t be reversed.</p>
+</aside>
+</div>
+</main>
+</div>
+
+<div role="status" aria-live="polite" style="position:fixed;left:0;right:0;bottom:24px;display:flex;justify-content:center;padding-inline:16px;pointer-events:none;z-index:50">
+<div style="display:flex;align-items:center;gap:10px;max-width:420px;padding:12px 18px;border-radius:14px;background:#0B1F18;color:#FBFBFB;font-size:14px;font-weight:600;box-shadow:0 18px 40px -16px rgba(0,0,0,.5);opacity:{{toastOpacity}};transition:opacity .2s ease">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D9B873" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+<span>{{toast}}</span>
+</div>
+</div>
+
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2000}}'>
+class Component extends DCLogic {
+  state = {
+    items: [
+      { id: 'cashapp', shown: true, isNew: false, values: { cashapp: 'paytreedemo' } },
+      { id: 'venmo', shown: true, isNew: false, values: { venmo: 'paytree-demo' } },
+      { id: 'zelle', shown: true, isNew: false, values: { zelle: 'pay@hartwell-demo.example' } },
+      { id: 'stripe', shown: false, isNew: false, values: { stripe: 'https://buy.stripe.com/test_paytreedemo' } },
+      { id: 'crypto', shown: true, isNew: false, values: { crypto: 'TXYZopYRdj2D9XRtbG411XZZ3kM5VkAeBf' } }
+    ],
+    editing: '', adding: false, confirm: '', dragId: '', overId: '', dirty: false, errs: {}, toast: ''
+  };
+  _d = {};
+
+  icons() { return {
+    'dollar-sign':'M12 2v20 M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6',
+    'wallet':'M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1 M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4',
+    'credit-card':'M4 5h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z M2 10h20',
+    'mail':'M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z M22 7l-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7',
+    'building':'M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2 M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2 M10 6h4 M10 10h4 M10 14h4 M10 18h4',
+    'globe':'M2 12a10 10 0 1 0 20 0a10 10 0 1 0-20 0 M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20 M2 12h20',
+    'coins':'M2 8a6 6 0 1 0 12 0a6 6 0 1 0-12 0 M18.09 10.37A6 6 0 1 1 10.34 18 M7 6h1v4 M16.71 13.88l.7.71-2.82 2.82',
+    'smartphone':'M7 2h10a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z M12 18h.01',
+    'bell':'M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9 M10.3 21a1.94 1.94 0 0 0 3.4 0',
+    'landmark':'M3 22h18 M6 18v-7 M10 18v-7 M14 18v-7 M18 18v-7 M12 2l8 5H4z',
+    'banknote':'M4 6h16a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z M10 12a2 2 0 1 0 4 0a2 2 0 1 0-4 0 M6 12h.01 M18 12h.01',
+    'shopping-bag':'M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z M3 6h18 M16 10a4 4 0 0 1-8 0',
+    'link':'M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71 M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71'
+  }; }
+
+
+  // Every method: label, icon, fields (key, label, placeholder, input mode, hint, optional, width) and a one-line summary.
+  catalogue() {
+    const strip = (t, re) => String(t || '').trim().replace(re, '');
+    return {
+      cashapp: { group: 'online', label: 'Cash App', icon: 'dollar-sign', fields: [{ k: 'cashapp', label: 'Cashtag', ph: 'yourcashtag', hint: 'Letters, numbers and underscores. Do not include the $ sign.' }], sum: (v) => '$' + strip(v.cashapp, /^\$/) },
+      venmo: { group: 'online', label: 'Venmo', icon: 'wallet', fields: [{ k: 'venmo', label: 'Venmo username', ph: 'your-venmo-name', hint: '5 to 30 letters, numbers, hyphens or underscores. Do not include the @ sign.' }], sum: (v) => '@' + strip(v.venmo, /^@/) },
+      paypal: { group: 'online', label: 'PayPal', icon: 'credit-card', fields: [{ k: 'paypal', label: 'PayPal.Me name', ph: 'yourname', hint: 'The part after paypal.me/ in your link.' }], sum: (v) => 'paypal.me/' + strip(v.paypal, /^(https?:\/\/)?(www\.)?paypal\.me\//i) },
+      stripe: { group: 'online', label: 'Stripe', icon: 'credit-card', fields: [{ k: 'stripe', label: 'Stripe Payment Link', ph: 'https://buy.stripe.com/...', mode: 'url', hint: 'Create a Payment Link in your Stripe dashboard. Only buy.stripe.com and donate.stripe.com links are accepted.' }], sum: () => 'Card payments through your Payment Link' },
+      square: { group: 'online', label: 'Square', icon: 'shopping-bag', fields: [{ k: 'square', label: 'Square payment link', ph: 'https://square.link/u/...', mode: 'url', hint: 'Only square.link and checkout.square.site links are accepted.' }], sum: () => 'Card payments through your Square link' },
+      wise: { group: 'online', label: 'Wise', icon: 'globe', fields: [{ k: 'wise', label: 'Wise.me name', ph: 'yourname', hint: 'The part after wise.com/pay/me/ in your link.' }], sum: (v) => 'wise.com/pay/me/' + strip(v.wise, /^(https?:\/\/)?(www\.)?wise\.com\/pay\/me\//i) },
+      custom: { group: 'online', label: 'Custom link', icon: 'link', fields: [{ k: 'customLabel', label: 'Button text', ph: 'Buy me a coffee', hint: 'Up to 30 characters.', basis: '1 1 200px' }, { k: 'customUrl', label: 'Link', ph: 'https://...', mode: 'url', hint: 'Must start with https://. Visitors see the website name under your button.', basis: '2 1 260px' }], sum: (v) => { let h = ''; try { h = new URL(v.customUrl).hostname; } catch (e) {} return (v.customLabel || '') + (h ? ' · ' + h : ''); } },
+      zelle: { group: 'bank', label: 'Zelle', icon: 'mail', fields: [{ k: 'zelle', label: 'Zelle email or US mobile number', ph: 'name@example.com or (555) 010-0199', hint: 'We detect whether it is an email or a phone number.' }], sum: (v) => v.zelle },
+      applecash: { group: 'bank', label: 'Apple Cash', icon: 'smartphone', fields: [{ k: 'applecash', label: 'Phone number or Apple ID email', ph: '(555) 010-0199 or name@icloud.com', hint: 'Apple Cash has no public payment link, so visitors copy this and send from Messages.' }], sum: (v) => v.applecash },
+      chime: { group: 'bank', label: 'Chime', icon: 'bell', fields: [{ k: 'chime', label: 'ChimeSign', ph: '$yourname', hint: 'Your Chime handle. The $ sign is optional.' }], sum: (v) => '$' + strip(v.chime, /^\$/) },
+      ach: { group: 'bank', label: 'ACH bank transfer', icon: 'building', fields: [{ k: 'routing', label: 'Routing number', ph: '9 digits', mode: 'numeric', hint: 'Your bank’s 9-digit ABA routing number.', basis: '1 1 200px' }, { k: 'account', label: 'Account number', ph: '4 to 17 digits', mode: 'numeric', hint: 'Shown to visitors only as dots, but copied in full.', basis: '1 1 200px' }], sum: (v) => 'Routing ' + (v.routing || '') + ' · Account ••••' + String(v.account || '').slice(-4) },
+      wire: { group: 'bank', label: 'Wire transfer', icon: 'landmark', fields: [{ k: 'wBeneficiary', label: 'Beneficiary name', ph: 'Name on the account', basis: '1 1 200px' }, { k: 'wBank', label: 'Bank name', ph: 'Your bank', basis: '1 1 200px' }, { k: 'wRouting', label: 'Routing number (ABA)', ph: '9 digits', mode: 'numeric', hint: 'Use the routing number your bank gives for wires. It is sometimes different from ACH.', basis: '1 1 200px' }, { k: 'wAccount', label: 'Account number', ph: '4 to 17 digits', mode: 'numeric', hint: 'Shown to visitors only as dots, but copied in full.', basis: '1 1 200px' }, { k: 'wSwift', label: 'SWIFT code (optional)', ph: 'e.g. CHASUS33', hint: 'Add this to receive international wires.', opt: true, basis: '1 1 200px' }], sum: (v) => (v.wBank || '') + ' · Account ••••' + String(v.wAccount || '').slice(-4) },
+      check: { group: 'bank', label: 'Check by mail', icon: 'banknote', warn: 'This address will be public on your page. Use a business address or P.O. box if you prefer not to share your home address.', fields: [{ k: 'kPayable', label: 'Make checks payable to', ph: 'Name or business name', basis: '1 1 100%' }, { k: 'kLine1', label: 'Street address', ph: '100 Example Street', basis: '1 1 100%' }, { k: 'kLine2', label: 'Apartment, suite or P.O. Box (optional)', ph: 'Suite 200', opt: true, basis: '1 1 100%' }, { k: 'kCity', label: 'City', ph: 'Springfield', basis: '2 1 160px' }, { k: 'kState', label: 'State', ph: 'IL', hint: '2 letters', basis: '1 1 80px' }, { k: 'kZip', label: 'ZIP code', ph: '62701', mode: 'numeric', basis: '1 1 110px' }], sum: (v) => (v.kCity || '') + ', ' + String(v.kState || '').toUpperCase() + ' ' + (v.kZip || '') },
+      crypto: { group: 'crypto', label: 'Crypto (USDT)', icon: 'coins', fields: [{ k: 'crypto', label: 'USDT wallet address (Tron)', ph: 'T...', hint: 'Starts with T and is 34 characters long. Your wallet must support TRC-20. Funds sent on another network can be lost.' }], sum: (v) => 'USDT · Tron (TRC-20) · ' + String(v.crypto || '').slice(0, 6) + '…' + String(v.crypto || '').slice(-4) }
+    };
+  }
+
+  check(key, raw) {
+    const t = String(raw).trim();
+    if (!t) return { error: '' };
+    if (key === 'cashapp') { const h = t.replace(/^\$/, ''); return /^[A-Za-z0-9_]{1,20}$/.test(h) ? { error: '' } : { error: 'Use 1 to 20 letters, numbers or underscores.' }; }
+    if (key === 'venmo') { const h = t.replace(/^@/, ''); return /^[A-Za-z0-9_-]{5,30}$/.test(h) ? { error: '' } : { error: 'Use 5 to 30 letters, numbers, hyphens or underscores.' }; }
+    if (key === 'paypal') { const h = t.replace(/^(https?:\/\/)?(www\.)?paypal\.me\//i, ''); return /^[A-Za-z0-9]{1,20}$/.test(h) ? { error: '' } : { error: 'Use 1 to 20 letters or numbers.' }; }
+    if (key === 'wise') { const h = t.replace(/^(https?:\/\/)?(www\.)?wise\.com\/pay\/me\//i, ''); return /^[A-Za-z0-9._-]{2,50}$/.test(h) ? { error: '' } : { error: 'Use 2 to 50 letters, numbers, dots, hyphens or underscores.' }; }
+    if (key === 'stripe') {
+      let u; try { u = new URL(t); } catch (e) { return { error: 'Paste the full link, starting with https://' }; }
+      const okHost = u.protocol === 'https:' && (u.hostname === 'buy.stripe.com' || u.hostname === 'donate.stripe.com');
+      const segs = u.pathname.split('/').filter(Boolean);
+      return okHost && segs.length === 1 && /^[A-Za-z0-9_]+$/.test(segs[0]) ? { error: '' } : { error: 'Enter a Stripe Payment Link, such as https://buy.stripe.com/abc123.' };
+    }
+    if (key === 'zelle') {
+      if (/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(t)) return { error: '', kind: 'Email address' };
+      const d = t.replace(/[\s().-]/g, '').replace(/^\+?1(?=\d{10}$)/, '');
+      if (/^\d{10}$/.test(d) && /^[2-9]/.test(d)) return { error: '', kind: 'US mobile number' };
+      return { error: 'Enter an email address or a 10-digit US phone number.' };
+    }
+    if (key === 'routing') {
+      if (!/^\d{9}$/.test(t)) return { error: 'A routing number has exactly 9 digits.' };
+      const d = t.split('').map(Number);
+      const sum = 3*(d[0]+d[3]+d[6]) + 7*(d[1]+d[4]+d[7]) + (d[2]+d[5]+d[8]);
+      return sum % 10 === 0 ? { error: '' } : { error: 'That routing number doesn’t look right. Check it against your bank.' };
+    }
+    if (key === 'square') {
+      let u; try { u = new URL(t); } catch (e) { return { error: 'Paste the full link, starting with https://' }; }
+      const okHost = u.protocol === 'https:' && (u.hostname === 'square.link' || u.hostname === 'checkout.square.site') && !u.port && !u.username;
+      return okHost && /^(\/[A-Za-z0-9_-]{1,64}){1,6}$/.test(u.pathname) ? { error: '' } : { error: 'Enter a Square payment link, such as https://square.link/u/abc123.' };
+    }
+    if (key === 'customLabel') return /^[A-Za-z0-9][A-Za-z0-9 .,'&!()-]{1,29}$/.test(t) ? { error: '' } : { error: 'Use 2 to 30 letters, numbers or basic punctuation.' };
+    if (key === 'customUrl') {
+      let u; try { u = new URL(t); } catch (e) { return { error: 'Paste the full link, starting with https://' }; }
+      const h = u.hostname.toLowerCase();
+      if (u.protocol !== 'https:' || u.port || u.username || u.password) return { error: 'Use a secure https:// link.' };
+      if (!/^([a-z0-9-]+\.)+[a-z]{2,}$/.test(h) || /\.(local|internal|localhost)$/.test(h)) return { error: 'Use a link on a real website name, not an IP address.' };
+      return { error: '', kind: h };
+    }
+    if (key === 'applecash') {
+      if (/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(t)) return { error: '' };
+      const d = t.replace(/[\s().-]/g, '').replace(/^\+?1(?=\d{10}$)/, '');
+      return /^\d{10}$/.test(d) ? { error: '' } : { error: 'Enter a US phone number or an Apple ID email.' };
+    }
+    if (key === 'chime') return /^[A-Za-z0-9_.-]{2,30}$/.test(t.replace(/^\$/, '')) ? { error: '' } : { error: 'Use 2 to 30 letters, numbers, dots, hyphens or underscores.' };
+    if (key === 'wBeneficiary' || key === 'wBank' || key === 'kPayable' || key === 'kLine1' || key === 'kLine2' || key === 'kCity')
+      return /^[A-Za-z0-9][A-Za-z0-9 .,'&()#/-]{1,79}$/.test(t) ? { error: '' } : { error: 'Use letters, numbers and basic punctuation only.' };
+    if (key === 'wRouting') return this.check('routing', t);
+    if (key === 'wAccount') return this.check('account', t);
+    if (key === 'wSwift') return /^[A-Za-z]{6}[A-Za-z0-9]{2}([A-Za-z0-9]{3})?$/.test(t.replace(/\s/g, '')) ? { error: '' } : { error: 'A SWIFT code has 8 or 11 characters.' };
+    if (key === 'kState') return /^(AL|AK|AZ|AR|CA|CO|CT|DE|DC|FL|GA|HI|ID|IL|IN|IA|KS|KY|LA|ME|MD|MA|MI|MN|MS|MO|MT|NE|NV|NH|NJ|NM|NY|NC|ND|OH|OK|OR|PA|RI|SC|SD|TN|TX|UT|VT|VA|WA|WV|WI|WY)$/.test(t.toUpperCase()) ? { error: '' } : { error: 'Use a two-letter state code.' };
+    if (key === 'kZip') return /^\d{5}(-\d{4})?$/.test(t) ? { error: '' } : { error: 'Use a 5-digit ZIP code.' };
+    if (key === 'account') return /^\d{4,17}$/.test(t) ? { error: '' } : { error: 'An account number has 4 to 17 digits.' };
+    if (key === 'crypto') return /^T[1-9A-HJ-NP-Za-km-z]{33}$/.test(t) ? { error: '' } : { error: 'Enter a Tron address: it starts with T and is 34 characters long.' };
+    return { error: '' };
+  }
+
+
+  flash(message) {
+    if (this._t) clearTimeout(this._t);
+    this.setState({ toast: message });
+    this._t = setTimeout(() => { this.setState({ toast: '' }); }, 2400);
+  }
+  componentWillUnmount() { if (this._t) clearTimeout(this._t); }
+
+  val(item, f) { return this._d[f.k] !== undefined ? this._d[f.k] : (item.values[f.k] || ''); }
+  fieldError(f, value) {
+    const t = String(value || '').trim();
+    if (!t) return f.opt ? '' : 'This field is required.';
+    return this.check(f.k, t).error;
+  }
+  move(id, dir) {
+    const list = this.state.items.slice();
+    const CAT = this.catalogue();
+    const i = list.findIndex((x) => x.id === id);
+    if (i < 0) return;
+    // Methods only move within their own section (online, transfers, crypto).
+    let j = i + dir;
+    while (j >= 0 && j < list.length && CAT[list[j].id].group !== CAT[id].group) j += dir;
+    if (j < 0 || j >= list.length) return;
+    const tmp = list[i]; list[i] = list[j]; list[j] = tmp;
+    this.setState({ items: list, dirty: true });
+  }
+  dropBefore(targetId) {
+    const dragId = this.state.dragId;
+    const CAT = this.catalogue();
+    if (!dragId || dragId === targetId || CAT[dragId].group !== CAT[targetId].group) { this.setState({ dragId: '', overId: '' }); return; }
+    const list = this.state.items.slice();
+    const from = list.findIndex((x) => x.id === dragId);
+    const origTo = list.findIndex((x) => x.id === targetId);
+    const moved = list.splice(from, 1)[0];
+    const to = list.findIndex((x) => x.id === targetId);
+    // Dragging down lands the item just below the row it was dropped on; dragging up, just above it.
+    list.splice(from < origTo ? to + 1 : to, 0, moved);
+    this.setState({ items: list, dragId: '', overId: '', dirty: true });
+  }
+
+  renderVals() {
+    const s = this.state, CAT = this.catalogue(), ic = this.icons();
+    const n = s.items.length;
+
+    const items = s.items.map((item, idx) => {
+      const c = CAT[item.id];
+      const editing = s.editing === item.id;
+      const fields = editing ? c.fields.map((f) => {
+        const err = s.errs[f.k] || '';
+        return {
+          id: 'pm-' + f.k, label: f.label, ph: f.ph, mode: f.mode || 'text', hint: f.hint || '', basis: f.basis || '1 1 100%',
+          val: this.val(item, f), err, hasErr: !!err, bad: !!err, bd: err ? '#B42318' : '#C9D6CE', showHint: !err && !!f.hint,
+          // Typing only updates a plain field, never React-style state, so the cursor never jumps.
+          on: (e) => { this._d[f.k] = String(e.target.value); },
+          blur: () => { const e2 = Object.assign({}, this.state.errs); const m = this.fieldError(f, this.val(item, f)); if (m && String(this.val(item, f)).trim()) e2[f.k] = m; else delete e2[f.k]; this.setState({ errs: e2 }); }
+        };
+      }) : [];
+      const isDragging = s.dragId === item.id;
+      return {
+        label: c.label, icon: ic[c.icon], summary: c.sum(item.values) || 'Not filled in yet',
+        warn: c.warn || '', fields,
+        shown: item.shown, hidden: !item.shown, shownText: item.shown ? 'Shown' : 'Hidden',
+        trackBg: item.shown ? '#064E3B' : '#B9CBC0', knobLeft: item.shown ? '21px' : '3px',
+        opacity: isDragging ? '0.45' : (item.shown ? '1' : '0.72'),
+        topBd: s.overId === item.id && s.dragId && s.dragId !== item.id ? '#D9B873' : 'transparent',
+        isFirst: !s.items.slice(0, idx).some((x) => CAT[x.id].group === c.group), isLast: !s.items.slice(idx + 1).some((x) => CAT[x.id].group === c.group),
+        groupTag: c.group === 'online' ? 'Pay online' : (c.group === 'bank' ? 'Transfers' : 'Crypto'),
+        editing, confirming: s.confirm === item.id,
+        draggable: !editing,
+        up: () => this.move(item.id, -1),
+        down: () => this.move(item.id, 1),
+        toggle: () => { this.setState({ items: s.items.map((x) => x.id === item.id ? Object.assign({}, x, { shown: !x.shown }) : x), dirty: true }); this.flash(c.label + (item.shown ? ' hidden from your page' : ' is now shown')); },
+        edit: () => { this._d = {}; this.setState({ editing: item.id, errs: {}, confirm: '' }); },
+        cancel: () => { this._d = {}; this.setState({ editing: '', errs: {}, items: item.isNew ? s.items.filter((x) => x.id !== item.id) : s.items }); },
+        save: () => {
+          const errs = {}; const values = {};
+          c.fields.forEach((f) => { const v2 = this.val(item, f); const m = this.fieldError(f, v2); if (m) errs[f.k] = m; values[f.k] = String(v2).trim(); });
+          if (Object.keys(errs).length) { this.setState({ errs }); return; }
+          this._d = {};
+          this.setState({ items: this.state.items.map((x) => x.id === item.id ? Object.assign({}, x, { values, isNew: false }) : x), editing: '', errs: {}, dirty: true });
+          this.flash(c.label + ' saved');
+        },
+        askRemove: () => this.setState({ confirm: item.id, editing: '' }),
+        cancelRemove: () => this.setState({ confirm: '' }),
+        remove: () => { this.setState({ items: this.state.items.filter((x) => x.id !== item.id), confirm: '', dirty: true }); this.flash(c.label + ' removed'); },
+        dragStart: (e) => { try { e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', item.id); } catch (x) {} this.setState({ dragId: item.id }); },
+        dragOver: (e) => { if (CAT[this.state.dragId] && CAT[this.state.dragId].group !== c.group) return; e.preventDefault(); if (this.state.overId !== item.id) this.setState({ overId: item.id }); },
+        drop: (e) => { e.preventDefault(); this.dropBefore(item.id); },
+        dragEnd: () => this.setState({ dragId: '', overId: '' })
+      };
+    });
+
+    const used = {}; s.items.forEach((x) => { used[x.id] = true; });
+    const available = Object.keys(CAT).filter((id) => !used[id]).map((id) => ({
+      label: CAT[id].label, icon: ic[CAT[id].icon],
+      add: () => { this._d = {}; this.setState({ items: this.state.items.concat([{ id, shown: true, isNew: true, values: {} }]), editing: id, adding: false, errs: {}, confirm: '' }); }
+    }));
+
+    const shownItems = s.items.filter((x) => x.shown && !x.isNew);
+    return {
+      items, available, adding: s.adding, noneLeft: available.length === 0, isEmpty: n === 0,
+      openAdd: () => this.setState({ adding: !this.state.adding }),
+      closeAdd: () => this.setState({ adding: false }),
+      shownCount: shownItems.length, hiddenCount: s.items.filter((x) => !x.shown && !x.isNew).length,
+      orderRows: ['online','bank','crypto'].reduce((acc, gr) => acc.concat(shownItems.filter((x) => CAT[x.id].group === gr).map((x) => ({ label: CAT[x.id].label, groupTag: gr === 'online' ? 'Pay online' : (gr === 'bank' ? 'Transfers' : 'Crypto') }))), []),
+      noneShown: shownItems.length === 0,
+      dirty: s.dirty,
+      saveAll: () => { this.setState({ dirty: false }); this.flash('Saved. Your page now shows this order.'); },
+      toast: s.toast, toastOpacity: s.toast ? '1' : '0',
+      navItems: [
+        ['Overview','M4 4h7v7H4z M13 4h7v7h-7z M4 13h7v7H4z M13 13h7v7h-7z','Dashboard.dc.html',false],
+        ['Payment methods','M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M3 10h18 M7 15h4','PaymentMethods.dc.html',true],
+        ['Analytics','M3 20h18 M6 20v-7 M12 20V5 M18 20v-10','Dashboard.dc.html#analytics',false],
+        ['Settings','M4 7h10 M18 7h2 M4 17h2 M10 17h10 M14 5v4 M6 15v4','AccountSettings.dc.html',false]
+      ].map((x) => ({ label: x[0], icon: x[1], href: x[2], bg: x[3] ? 'rgba(251,251,251,.14)' : 'transparent', fg: x[3] ? '#FBFBFB' : 'rgba(251,251,251,.78)' }))
+    };
+  }
+}
+</script>
+</x-dc>
+</body>
+</html>

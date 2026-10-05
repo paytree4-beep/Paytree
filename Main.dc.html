@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>PayTree landing page</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+html{scroll-behavior:smooth}
+a{color:inherit}
+.btn{transition:transform .15s ease, background-color .15s ease;cursor:pointer}
+.btn:hover{transform:translateY(-1px)}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid #D9B873;outline-offset:3px}
+.navlinks{display:flex;align-items:center;gap:28px}
+.field:focus-within{border-color:#064E3B !important;box-shadow:0 0 0 3px rgba(6,78,59,.15)}
+@media (max-width:760px){.navlinks{display:none}}
+@media (prefers-reduced-motion:reduce){.btn{transition:none}html{scroll-behavior:auto}}
+</style>
+</helmet>
+
+<div style="box-sizing:border-box;background:#FBFBFB;color:#0B1F18;font-family:'Plus Jakarta Sans',system-ui,sans-serif;font-size:16px;line-height:1.6">
+
+<!-- HERO + NAV -->
+<header style="background:#064E3B;color:#FBFBFB">
+<div style="max-width:1200px;margin-inline:auto;padding:22px 24px 0;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
+<a href="#top" style="display:flex;align-items:center;gap:10px;color:#FBFBFB;text-decoration:none">
+<svg width="36" height="36" viewBox="0 0 32 32" fill="none" stroke="#D9B873" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 10 L16 5 L21 10"/><path d="M9 16 L16 9 L23 16"/><path d="M7 22 L16 13 L25 22"/><path d="M16 22 V28"/></svg>
+<span style="font-weight:700;font-size:21px">PayTree</span>
+</a>
+<nav class="navlinks" aria-label="Main navigation">
+<a href="#features" style="text-decoration:none;color:rgba(251,251,251,.85)">Features</a>
+<a href="#how" style="text-decoration:none;color:rgba(251,251,251,.85)">How it works</a>
+<a href="#pricing" style="text-decoration:none;color:rgba(251,251,251,.85)">Pricing</a>
+</nav>
+<div style="display:flex;align-items:center;gap:18px"><a href="Auth.dc.html" style="display:inline-flex;align-items:center;min-height:44px;text-decoration:none;color:rgba(251,251,251,.9);font-weight:600">Log in</a><a class="btn" href="Auth.dc.html" style="display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 24px;border-radius:999px;background:#FBFBFB;color:#064E3B;text-decoration:none;font-weight:600">Sign up</a></div>
+</div>
+
+<div id="top" style="max-width:1200px;margin-inline:auto;padding:64px 24px 104px;box-sizing:border-box;display:flex;flex-wrap:wrap;align-items:center;gap:56px">
+<div style="flex:1 1 460px;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:28px">
+<span style="display:inline-block;padding:6px 14px;border:1px solid rgba(217,184,115,.6);border-radius:999px;color:#D9B873;font-size:14px;font-weight:600">Your payments. One page.</span>
+<h1 style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:clamp(46px,6.2vw,84px);line-height:1.04;letter-spacing:-0.02em;text-wrap:balance">Every way to pay. <span style="color:#D9B873">One refined page.</span></h1>
+<p style="margin:0;max-width:520px;font-size:18px;line-height:1.75;color:rgba(251,251,251,.84)">Bring every way your customers can pay into one simple page. Share one link and let them choose how to pay.</p>
+<div style="display:flex;flex-wrap:wrap;gap:14px">
+<a class="btn" href="#signup" style="display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 30px;border-radius:999px;background:#D9B873;color:#064E3B;text-decoration:none;font-weight:700">Claim your page</a>
+<a class="btn" href="#pricing" style="display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 30px;border-radius:999px;border:1px solid rgba(251,251,251,.5);color:#FBFBFB;text-decoration:none;font-weight:600">View pricing</a>
+</div>
+<p style="margin:0;font-size:14px;color:rgba(251,251,251,.7)">Tap a payment link in the sample to preview the experience.</p>
+</div>
+
+<div style="flex:1 1 340px;min-width:0;max-width:420px;margin-inline:auto">
+<div style="background:#FBFBFB;color:#0B1F18;border-radius:36px;padding:26px;box-sizing:border-box;box-shadow:0 40px 80px -30px rgba(0,0,0,.55);display:flex;flex-direction:column;gap:18px">
+<span style="align-self:flex-start;padding:4px 12px;border-radius:999px;background:#E3F0EA;color:#064E3B;font-size:13px;font-weight:600">Sample profile</span>
+<div style="display:flex;align-items:center;gap:14px">
+<span style="display:flex;align-items:center;justify-content:center;width:56px;height:56px;border-radius:50%;background:#064E3B;color:#D9B873;font-family:'Instrument Serif',Georgia,serif;font-size:28px;line-height:1" aria-hidden="true">H</span>
+<div style="min-width:0">
+<div style="font-weight:700;font-size:18px">Hartwell Studio</div>
+<div style="font-size:14px;color:#4B6358">paytree.me/hartwell</div>
+</div>
+</div>
+<p style="margin:0;font-size:14px;color:#4B6358">Brand strategy and advisory sessions</p>
+<div style="display:flex;flex-direction:column;gap:10px">
+<sc-for list="{{demoLinks}}" as="l" hint-placeholder-count="4">
+<button class="btn" onClick="{{l.pick}}" aria-pressed="{{l.selected}}" style="display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:56px;padding:12px 18px;box-sizing:border-box;border-radius:16px;font:inherit;text-align:start;background:{{l.bg}};color:{{l.fg}};border:1.5px solid {{l.bd}}">
+<span style="min-width:0">{{l.title}}</span>
+<span style="font-weight:700;white-space:nowrap">{{l.price}}</span>
+</button>
+</sc-for>
+</div>
+<button class="btn" onClick="{{pay}}" style="min-height:52px;border:none;border-radius:999px;background:#064E3B;color:#FBFBFB;font:inherit;font-weight:700">{{payLabel}}</button>
+<sc-if value="{{paid}}" hint-placeholder-val="{{false}}">
+<p role="status" style="margin:0;padding:12px 14px;border-radius:12px;background:#E3F0EA;color:#064E3B;font-size:14px">Demo only. No payment is processed.</p>
+</sc-if>
+</div>
+</div>
+</div>
+</header>
+
+<!-- FEATURES -->
+<section id="features" style="padding:104px 0 96px">
+<div style="max-width:1200px;margin-inline:auto;padding-inline:24px;box-sizing:border-box;display:flex;flex-direction:column;gap:56px">
+<div style="max-width:640px;display:flex;flex-direction:column;gap:14px">
+<span style="color:#064E3B;font-weight:700;font-size:14px;letter-spacing:0.12em">FEATURES</span>
+<h2 style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:clamp(36px,4.4vw,56px);line-height:1.08;letter-spacing:-0.02em;color:#064E3B;text-wrap:balance">Everything you need to get paid</h2>
+<p style="margin:0;font-size:18px;color:#4B6358">Considered tools that make every payment feel effortless, for you and for your clients.</p>
+</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:20px">
+<sc-for list="{{features}}" as="f" hint-placeholder-count="6">
+<div style="background:#FFFFFF;border:1px solid #DCE5DF;border-radius:20px;padding:30px;display:flex;flex-direction:column;gap:16px">
+<span style="display:flex;align-items:center;justify-content:center;width:50px;height:50px;border-radius:14px;background:#E3F0EA">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#064E3B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{f.icon}}"/></svg>
+</span>
+<h3 style="margin:0;font-size:19px;font-weight:700;color:#0B1F18">{{f.title}}</h3>
+<p style="margin:0;color:#4B6358">{{f.body}}</p>
+</div>
+</sc-for>
+</div>
+</div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how" style="background:#E9F1ED;padding:96px 0">
+<div style="max-width:1200px;margin-inline:auto;padding-inline:24px;box-sizing:border-box;display:flex;flex-direction:column;gap:56px">
+<h2 style="margin:0;max-width:640px;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:clamp(36px,4.4vw,56px);line-height:1.08;letter-spacing:-0.02em;color:#064E3B;text-wrap:balance">Live in three steps</h2>
+<div style="display:flex;flex-wrap:wrap;gap:40px">
+<sc-for list="{{steps}}" as="s" hint-placeholder-count="3">
+<div style="flex:1 1 260px;min-width:0;display:flex;flex-direction:column;gap:14px;padding-top:22px;border-top:2px solid #064E3B">
+<span style="font-family:'Instrument Serif',Georgia,serif;font-size:56px;line-height:1;color:#064E3B">{{s.n}}</span>
+<h3 style="margin:0;font-size:20px;font-weight:700">{{s.title}}</h3>
+<p style="margin:0;color:#3F574C">{{s.body}}</p>
+</div>
+</sc-for>
+</div>
+</div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing" style="padding:104px 0">
+<div style="max-width:1000px;margin-inline:auto;padding-inline:24px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:40px">
+<div style="max-width:620px;display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center">
+<span style="color:#064E3B;font-weight:700;font-size:14px;letter-spacing:0.12em">PRICING</span>
+<h2 style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:clamp(36px,4.4vw,56px);line-height:1.08;letter-spacing:-0.02em;color:#064E3B;text-wrap:balance">Simple, transparent pricing</h2>
+<p style="margin:0;font-size:18px;color:#4B6358">One membership with every feature included. Choose the billing cycle that suits you.</p>
+</div>
+
+<div role="group" aria-label="Billing cycle" style="display:inline-flex;padding:5px;border-radius:999px;background:#E3EBE6;gap:4px">
+<button class="btn" onClick="{{setMonthly}}" aria-pressed="{{isMonthly}}" style="min-height:44px;min-width:120px;padding:0 22px;border:none;border-radius:999px;font:inherit;font-weight:600;background:{{segMBg}};color:{{segMFg}}">Monthly</button>
+<button class="btn" onClick="{{setYearly}}" aria-pressed="{{isYearly}}" style="min-height:44px;min-width:120px;padding:0 22px;border:none;border-radius:999px;font:inherit;font-weight:600;background:{{segYBg}};color:{{segYFg}}">Yearly</button>
+</div>
+
+<div style="width:100%;display:flex;flex-wrap:wrap;gap:24px;align-items:stretch">
+<sc-for list="{{plans}}" as="p" hint-placeholder-count="2">
+<div style="flex:1 1 340px;min-width:0;box-sizing:border-box;border-radius:28px;padding:38px;display:flex;flex-direction:column;gap:22px;background:{{p.bg}};color:{{p.fg}};border:1.5px solid {{p.bd}};box-shadow:{{p.shadow}}">
+<div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+<span style="font-size:18px;font-weight:700">{{p.name}}</span>
+<sc-if value="{{p.hasBadge}}" hint-placeholder-val="{{false}}">
+<span style="padding:4px 12px;border-radius:999px;background:#D9B873;color:#064E3B;font-size:13px;font-weight:700">{{p.badge}}</span>
+</sc-if>
+</div>
+<div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap">
+<span style="font-family:'Instrument Serif',Georgia,serif;font-size:68px;line-height:1">{{p.price}}</span>
+<span style="color:{{p.muted}}">{{p.period}}</span>
+</div>
+<p style="margin:0;color:{{p.muted}};font-size:15px;min-height:24px">{{p.note}}</p>
+<div style="height:1px;background:{{p.rule}}"></div>
+<ul style="margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:12px;flex:1">
+<sc-for list="{{p.features}}" as="ft" hint-placeholder-count="5">
+<li style="display:flex;align-items:flex-start;gap:12px">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="{{ft.check}}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:3px"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+<span>{{ft.text}}</span>
+</li>
+</sc-for>
+</ul>
+<a class="btn" href="#signup" onClick="{{p.pick}}" style="display:flex;align-items:center;justify-content:center;min-height:54px;border-radius:999px;text-decoration:none;font-weight:700;background:{{p.ctaBg}};color:{{p.ctaFg}}">{{p.cta}}</a>
+</div>
+</sc-for>
+</div>
+</div>
+</section>
+
+<!-- SIGN UP -->
+<section id="signup" style="background:#064E3B;color:#FBFBFB;padding:96px 0">
+<div style="max-width:1100px;margin-inline:auto;padding-inline:24px;box-sizing:border-box;display:flex;flex-wrap:wrap;align-items:center;gap:56px">
+<div style="flex:1 1 380px;min-width:0;display:flex;flex-direction:column;gap:20px">
+<h2 style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:clamp(38px,4.8vw,62px);line-height:1.06;letter-spacing:-0.02em;text-wrap:balance">Reserve your PayTree page</h2>
+<p style="margin:0;font-size:18px;color:rgba(251,251,251,.84);max-width:460px">Choose your link name and enter your email. Your page will be ready to share.</p>
+<span style="align-self:flex-start;padding:8px 16px;border:1px solid rgba(217,184,115,.6);border-radius:999px;color:#D9B873;font-weight:600;font-size:15px">{{planSummary}}</span>
+</div>
+
+<div style="flex:1 1 380px;min-width:0;background:#FBFBFB;color:#0B1F18;border-radius:28px;padding:34px;box-sizing:border-box;display:flex;flex-direction:column;gap:20px">
+<div style="display:flex;flex-direction:column;gap:8px">
+<label for="handle" style="font-weight:600;font-size:15px">Link name</label>
+<div class="field" style="display:flex;align-items:center;border:1.5px solid #C9D6CE;border-radius:14px;background:#FFFFFF;min-height:52px;padding-inline:16px;gap:2px">
+<span style="color:#4B6358;white-space:nowrap">paytree.me/</span>
+<input id="handle" type="text" value="{{handle}}" onInput="{{onHandle}}" placeholder="yourname" autocomplete="off" style="flex:1;min-width:0;border:none;outline:none;background:transparent;font:inherit;color:#0B1F18;padding:12px 0">
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<label for="email" style="font-weight:600;font-size:15px">Email address</label>
+<div class="field" style="display:flex;align-items:center;border:1.5px solid #C9D6CE;border-radius:14px;background:#FFFFFF;min-height:52px;padding-inline:16px">
+<input id="email" type="email" value="{{email}}" onInput="{{onEmail}}" placeholder="name@example.com" autocomplete="off" style="flex:1;min-width:0;border:none;outline:none;background:transparent;font:inherit;color:#0B1F18;padding:12px 0">
+</div>
+</div>
+<sc-if value="{{hasErr}}" hint-placeholder-val="{{false}}">
+<p role="alert" style="margin:0;color:#B42318;font-size:14px">{{errText}}</p>
+</sc-if>
+<button class="btn" onClick="{{submit}}" style="min-height:54px;border:none;border-radius:999px;background:#064E3B;color:#FBFBFB;font:inherit;font-weight:700;font-size:17px">Create my page</button>
+<sc-if value="{{done}}" hint-placeholder-val="{{false}}">
+<p role="status" style="margin:0;padding:14px 16px;border-radius:12px;background:#E3F0EA;color:#064E3B;font-size:15px">Great choice. Next, confirm your email to finish creating your page. <a href="Auth.dc.html" style="font-weight:700">Continue to create your account</a></p>
+</sc-if>
+</div>
+</div>
+</section>
+
+<!-- FOOTER -->
+<footer style="background:#032F24;color:rgba(251,251,251,.75)">
+<div style="max-width:1200px;margin-inline:auto;padding:36px 24px;box-sizing:border-box;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;font-size:14px">
+<span>&copy; 2026 PayTree. All rights reserved.</span>
+<div style="display:flex;gap:24px;flex-wrap:wrap">
+<a href="Legal.dc.html" style="text-decoration:none">Terms</a>
+<a href="Legal.dc.html" style="text-decoration:none">Privacy</a>
+<a href="#top" style="text-decoration:none">Contact</a>
+</div>
+</div>
+</footer>
+
+</div>
+</x-dc>
+
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1360,"height":4100}}'>
+class Component extends DCLogic {
+  state = { plan: 'yearly', demo: 0, paid: false, handle: '', email: '', errKey: '', done: false };
+
+  renderVals() {
+    const s = this.state;
+
+    const icons = [
+      'M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1 M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1',
+      'M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M3 10h18 M7 15h4',
+      'M4 7h10 M18 7h2 M4 17h2 M10 17h10 M14 5v4 M6 15v4',
+      'M6 9a6 6 0 0 1 12 0c0 6 2 7 2 7H4s2-1 2-7 M10 20a2 2 0 0 0 4 0',
+      'M3 20h18 M6 20v-7 M12 20V5 M18 20v-10',
+      'M12 3l7 3v5c0 5-3.5 8-7 10-3.5-2-7-5-7-10V6z M9 12l2 2 4-4'
+    ];
+    const featureCopy = [
+      ['One link, every offering', 'Bring every service, product and subscription together behind a single PayTree link.'],
+      ['Flexible payment links', 'Create links for fixed prices, open amounts or recurring subscriptions.'],
+      ['A page that reflects your brand', 'Choose your colors, arrange your links and add your name and photo.'],
+      ['Instant payment alerts', 'Know the moment a client pays, without opening a dashboard.'],
+      ['Clear performance insights', 'See which links draw attention and which ones turn into payments.'],
+      ['Designed for trust', 'A clean, confident checkout experience that reassures your clients.']
+    ];
+    const stepCopy = [
+      ['Create your account', 'Sign up and reserve your personal PayTree link.'],
+      ['Add your payment links', 'Create a link for each offering and set your price.'],
+      ['Share your page', 'Add it to your profiles and begin accepting payments.']
+    ];
+    const planCopy = {
+      monthly: { name: 'Monthly membership', price: '$2.99', period: 'per month', note: 'Billed monthly.', cta: 'Start monthly', badge: '' },
+      yearly: { name: 'Annual membership', price: '$24.99', period: 'per year', note: 'Equivalent to $2.08 per month.', cta: 'Start annual', badge: 'Save 30%' }
+    };
+    const planFeatures = ['Unlimited payment links', 'Your personal PayTree page', 'Custom colors and layout', 'Instant payment alerts', 'Essential visitor insights'];
+
+    const demoItems = [
+      ['Advisory session', '$250'],
+      ['Brand identity package', '$1,800'],
+      ['Monthly retainer', '$600'],
+      ['Send a gratuity', '$25']
+    ];
+    const demoLinks = demoItems.map((it, i) => {
+      const sel = s.demo === i;
+      return {
+        title: it[0], price: it[1], selected: sel,
+        bg: sel ? '#064E3B' : '#FFFFFF',
+        fg: sel ? '#FBFBFB' : '#0B1F18',
+        bd: sel ? '#064E3B' : '#D5E0D9',
+        pick: () => this.setState({ demo: i, paid: false })
+      };
+    });
+
+    const mk = (key) => {
+      const sel = s.plan === key;
+      const p = planCopy[key];
+      const check = sel ? '#D9B873' : '#064E3B';
+      return {
+        name: p.name, price: p.price, period: p.period, note: p.note, cta: p.cta,
+        badge: p.badge, hasBadge: !!p.badge,
+        bg: sel ? '#064E3B' : '#FFFFFF',
+        fg: sel ? '#FBFBFB' : '#0B1F18',
+        muted: sel ? 'rgba(251,251,251,.78)' : '#4B6358',
+        bd: sel ? '#064E3B' : '#DCE5DF',
+        rule: sel ? 'rgba(251,251,251,.22)' : '#E3EBE6',
+        shadow: sel ? '0 30px 60px -30px rgba(6,78,59,.6)' : 'none',
+        ctaBg: sel ? '#D9B873' : '#064E3B',
+        ctaFg: sel ? '#064E3B' : '#FBFBFB',
+        pick: () => this.setState({ plan: key }),
+        features: planFeatures.map((text) => ({ text, check }))
+      };
+    };
+
+    const info = planCopy[s.plan];
+    const errText = s.errKey === 'handle'
+      ? 'Enter a link name with at least 3 letters or numbers.'
+      : (s.errKey === 'email' ? 'Enter a valid email address.' : '');
+
+    return {
+      demoLinks,
+      payLabel: 'Pay ' + demoItems[s.demo][1],
+      pay: () => this.setState({ paid: true }),
+      paid: s.paid,
+
+      features: featureCopy.map((f, i) => ({ icon: icons[i], title: f[0], body: f[1] })),
+      steps: stepCopy.map((st, i) => ({ n: String(i + 1), title: st[0], body: st[1] })),
+
+      isMonthly: s.plan === 'monthly',
+      isYearly: s.plan === 'yearly',
+      setMonthly: () => this.setState({ plan: 'monthly' }),
+      setYearly: () => this.setState({ plan: 'yearly' }),
+      segMBg: s.plan === 'monthly' ? '#064E3B' : 'transparent',
+      segMFg: s.plan === 'monthly' ? '#FBFBFB' : '#0B1F18',
+      segYBg: s.plan === 'yearly' ? '#064E3B' : 'transparent',
+      segYFg: s.plan === 'yearly' ? '#FBFBFB' : '#0B1F18',
+      plans: [mk('monthly'), mk('yearly')],
+
+      planSummary: 'Selected plan: ' + info.name + ' · ' + info.price + ' ' + info.period,
+      handle: s.handle,
+      email: s.email,
+      onHandle: (e) => this.setState({ handle: String(e.target.value).toLowerCase().replace(/[^a-z0-9_.-]/g, ''), errKey: '', done: false }),
+      onEmail: (e) => this.setState({ email: String(e.target.value), errKey: '', done: false }),
+      submit: () => {
+        const cur = this.state;
+        if (cur.handle.length < 3) { this.setState({ errKey: 'handle', done: false }); return; }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cur.email.trim())) { this.setState({ errKey: 'email', done: false }); return; }
+        this.setState({ errKey: '', done: true });
+      },
+      hasErr: !!s.errKey,
+      errText,
+      done: s.done
+    };
+  }
+}
+</script>
+</body>
+</html>

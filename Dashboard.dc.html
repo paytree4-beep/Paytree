@@ -1,0 +1,597 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>PayTree dashboard</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:inherit}
+.btn{transition:transform .15s ease, background-color .15s ease;cursor:pointer}
+.btn:hover{transform:translateY(-1px)}
+.navitem:hover{background:rgba(251,251,251,.08) !important}
+a:focus-visible,button:focus-visible{outline:2px solid #D9B873;outline-offset:3px}
+.num{font-variant-numeric:tabular-nums}
+@media (prefers-reduced-motion:reduce){.btn{transition:none}}
+</style>
+</helmet>
+
+<div id="top" style="display:flex;flex-wrap:wrap;align-items:stretch;background:#FBFBFB;color:#0B1F18;font-family:'Plus Jakarta Sans',system-ui,sans-serif;font-size:15px;line-height:1.5">
+
+<!-- SIDEBAR -->
+<aside style="flex:1 0 264px;max-width:300px;box-sizing:border-box;background:#064E3B;color:#FBFBFB;padding:28px 20px;display:flex;flex-direction:column;justify-content:space-between;gap:32px">
+<div style="display:flex;flex-direction:column;gap:32px">
+<a href="Main.dc.html" style="display:flex;align-items:center;gap:10px;color:#FBFBFB;text-decoration:none;padding-inline:8px">
+<svg width="34" height="34" viewBox="0 0 32 32" fill="none" stroke="#D9B873" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 10 L16 5 L21 10"/><path d="M9 16 L16 9 L23 16"/><path d="M7 22 L16 13 L25 22"/><path d="M16 22 V28"/></svg>
+<span style="font-weight:700;font-size:20px">PayTree</span>
+</a>
+<nav aria-label="Dashboard navigation" style="display:flex;flex-direction:column;gap:4px">
+<sc-for list="{{navItems}}" as="nv" hint-placeholder-count="5">
+<a class="navitem" href="{{nv.href}}" style="display:flex;align-items:center;gap:12px;min-height:46px;padding:0 12px;border-radius:12px;text-decoration:none;font-weight:600;background:{{nv.bg}};color:{{nv.fg}}">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{nv.icon}}"/></svg>
+<span>{{nv.label}}</span>
+</a>
+</sc-for>
+</nav>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:16px">
+<div style="border:1px solid rgba(217,184,115,.5);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:4px">
+<span style="font-size:13px;color:#D9B873;font-weight:600">Your plan</span>
+<span style="font-weight:700">Annual membership</span>
+<span style="font-size:14px;color:rgba(251,251,251,.75)">$24.99 per year</span>
+</div>
+<div style="display:flex;align-items:center;gap:12px;padding-inline:4px">
+<span style="display:flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:50%;background:#FBFBFB;color:#064E3B;font-family:'Instrument Serif',Georgia,serif;font-size:22px;line-height:1" aria-hidden="true">H</span>
+<div style="min-width:0">
+<div style="font-weight:600">Hartwell Studio</div>
+<div style="font-size:13px;color:rgba(251,251,251,.7)">paytree.me/hartwell</div>
+</div>
+</div>
+</div>
+</aside>
+
+<!-- MAIN -->
+<main style="flex:999 1 640px;min-width:0;box-sizing:border-box;padding:36px 32px 56px;display:flex;flex-direction:column;gap:28px">
+
+<div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:20px">
+<div style="display:flex;flex-direction:column;gap:6px">
+<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+<h1 style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:46px;line-height:1.05;letter-spacing:-0.02em;color:#064E3B">Overview</h1>
+<span style="padding:3px 12px;border-radius:999px;background:#E3F0EA;color:#064E3B;font-size:13px;font-weight:600">Sample data</span>
+</div>
+<p style="margin:0;color:#4B6358">Welcome back, Hartwell Studio. Here is how your payment links are performing.</p>
+</div>
+<div style="display:flex;flex-wrap:wrap;align-items:center;gap:14px">
+<div role="group" aria-label="Date range" style="display:inline-flex;padding:4px;border-radius:999px;background:#E3EBE6;gap:4px">
+<button class="btn" onClick="{{setR7}}" aria-pressed="{{is7}}" style="min-height:44px;min-width:60px;padding:0 16px;border:none;border-radius:999px;font:inherit;font-weight:600;background:{{r7Bg}};color:{{r7Fg}}">7D</button>
+<button class="btn" onClick="{{setR30}}" aria-pressed="{{is30}}" style="min-height:44px;min-width:60px;padding:0 16px;border:none;border-radius:999px;font:inherit;font-weight:600;background:{{r30Bg}};color:{{r30Fg}}">30D</button>
+<button class="btn" onClick="{{setR90}}" aria-pressed="{{is90}}" style="min-height:44px;min-width:60px;padding:0 16px;border:none;border-radius:999px;font:inherit;font-weight:600;background:{{r90Bg}};color:{{r90Fg}}">90D</button>
+</div>
+<button class="btn" onClick="{{newLink}}" style="min-height:48px;padding:0 24px;border:none;border-radius:999px;background:#064E3B;color:#FBFBFB;font:inherit;font-weight:700">New payment link</button>
+</div>
+</div>
+
+<sc-if value="{{notice}}" hint-placeholder-val="{{false}}">
+<p role="status" style="margin:0;padding:12px 16px;border-radius:12px;background:#E3F0EA;color:#064E3B;font-size:14px">This is a demo. Creating payment links is not connected yet.</p>
+</sc-if>
+
+<!-- KPIs -->
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:16px">
+<sc-for list="{{kpis}}" as="k" hint-placeholder-count="4">
+<div style="background:#FFFFFF;border:1px solid #DCE5DF;border-radius:20px;padding:22px;display:flex;flex-direction:column;gap:10px">
+<span style="font-size:14px;color:#4B6358;font-weight:600">{{k.label}}</span>
+<span class="num" style="font-family:'Instrument Serif',Georgia,serif;font-size:44px;line-height:1;color:#0B1F18">{{k.value}}</span>
+<span style="display:flex;align-items:center;gap:6px;font-size:13px;color:#4B6358">
+<svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="{{k.icon}}" fill="{{k.iconColor}}"/></svg>
+<span class="num" style="font-weight:700;color:#0B1F18">{{k.delta}}</span>
+<span>{{cmpLabel}}</span>
+</span>
+</div>
+</sc-for>
+</div>
+
+<!-- CHART + RECENT -->
+<div style="display:flex;flex-wrap:wrap;gap:20px;align-items:stretch">
+
+<section aria-label="Payment volume" style="flex:2 1 520px;min-width:0;box-sizing:border-box;background:#FFFFFF;border:1px solid #DCE5DF;border-radius:20px;padding:26px 24px 22px;display:flex;flex-direction:column;gap:20px">
+<div style="display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:12px">
+<div>
+<h2 style="margin:0;font-size:18px;font-weight:700">Payment volume</h2>
+<p style="margin:2px 0 0;font-size:14px;color:#4B6358">Daily, {{rangeLabel}}</p>
+</div>
+<div role="group" aria-label="Chart or table" style="display:inline-flex;padding:3px;border-radius:999px;background:#E3EBE6;gap:3px">
+<button class="btn" onClick="{{showChart}}" aria-pressed="{{isChart}}" style="min-height:44px;min-width:76px;padding:0 14px;border:none;border-radius:999px;font:inherit;font-size:14px;font-weight:600;background:{{vcBg}};color:{{vcFg}}">Chart</button>
+<button class="btn" onClick="{{showTable}}" aria-pressed="{{isTable}}" style="min-height:44px;min-width:76px;padding:0 14px;border:none;border-radius:999px;font:inherit;font-size:14px;font-weight:600;background:{{vtBg}};color:{{vtFg}}">Table</button>
+</div>
+</div>
+
+<sc-if value="{{isChart}}" hint-placeholder-val="{{true}}">
+<div>
+<div style="display:flex;gap:10px">
+<div style="flex:0 0 56px;position:relative;height:260px" aria-hidden="true">
+<sc-for list="{{yTicks}}" as="y" hint-placeholder-count="5">
+<span class="num" style="position:absolute;right:0;bottom:{{y.pos}};transform:translateY(50%);font-size:12px;color:#4B6358">{{y.label}}</span>
+</sc-for>
+</div>
+<div onMouseLeave="{{leave}}" style="flex:1;min-width:0;position:relative;height:260px">
+<svg viewBox="0 0 700 260" preserveAspectRatio="none" width="100%" height="100%" style="position:absolute;inset:0;display:block" aria-hidden="true">
+<path d="{{gridPath}}" fill="none" stroke="#E3EBE6" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<path d="{{areaPath}}" fill="rgba(6,78,59,0.10)" stroke="none"/>
+<path d="{{linePath}}" fill="none" stroke="#064E3B" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
+</svg>
+<sc-if value="{{hasHover}}" hint-placeholder-val="{{false}}">
+<div style="position:absolute;top:0;bottom:0;left:{{hx}};width:1px;background:rgba(6,78,59,.35);pointer-events:none"></div>
+<div style="position:absolute;left:{{hx}};top:{{hyTop}};width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;background:#064E3B;border:2px solid #FFFFFF;box-sizing:border-box;pointer-events:none"></div>
+<div style="position:absolute;top:6px;left:{{tipLeft}};transform:translateX(-50%);background:#0B1F18;color:#FBFBFB;border-radius:10px;padding:8px 12px;font-size:13px;line-height:1.35;white-space:nowrap;pointer-events:none">
+<div style="color:rgba(251,251,251,.75)">{{tipDate}}</div>
+<div class="num" style="font-weight:700">{{tipVal}}</div>
+</div>
+</sc-if>
+<div style="position:absolute;inset:0;display:flex">
+<sc-for list="{{cols}}" as="c" hint-placeholder-count="30">
+<div onMouseEnter="{{c.enter}}" onClick="{{c.enter}}" style="flex:1;height:100%"></div>
+</sc-for>
+</div>
+</div>
+</div>
+<div style="display:flex;gap:10px;margin-top:10px">
+<div style="flex:0 0 56px"></div>
+<div style="flex:1;min-width:0;position:relative;height:20px" aria-hidden="true">
+<sc-for list="{{xLabels}}" as="xl" hint-placeholder-count="6">
+<span style="position:absolute;top:0;left:{{xl.pos}};transform:translateX(-50%);font-size:12px;color:#4B6358;white-space:nowrap">{{xl.text}}</span>
+</sc-for>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{isTable}}" hint-placeholder-val="{{false}}">
+<div role="table" aria-label="Daily payment volume" style="max-height:316px;overflow-y:auto;border:1px solid #E3EBE6;border-radius:14px">
+<div role="row" style="display:flex;justify-content:space-between;padding:12px 16px;background:#F1F6F3;font-size:13px;font-weight:700;color:#4B6358">
+<span role="columnheader">Date</span>
+<span role="columnheader">Volume</span>
+</div>
+<sc-for list="{{tableRows}}" as="r" hint-placeholder-count="7">
+<div role="row" style="display:flex;justify-content:space-between;padding:11px 16px;border-top:1px solid #EEF3F0">
+<span role="cell">{{r.date}}</span>
+<span role="cell" class="num" style="font-weight:600">{{r.amount}}</span>
+</div>
+</sc-for>
+</div>
+</sc-if>
+</section>
+
+<section aria-label="Recent payments" style="flex:1 1 300px;min-width:0;box-sizing:border-box;background:#FFFFFF;border:1px solid #DCE5DF;border-radius:20px;padding:26px 24px;display:flex;flex-direction:column;gap:16px">
+<h2 style="margin:0;font-size:18px;font-weight:700">Recent payments</h2>
+<div style="display:flex;flex-direction:column">
+<sc-for list="{{recent}}" as="p" hint-placeholder-count="6">
+<div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid #EEF3F0">
+<span style="flex:none;display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;background:#E3F0EA;color:#064E3B;font-weight:700;font-size:14px" aria-hidden="true">{{p.initials}}</span>
+<div style="flex:1;min-width:0">
+<div style="font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{p.name}}</div>
+<div style="font-size:13px;color:#4B6358;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{p.link}}</div>
+</div>
+<div style="text-align:end;flex:none">
+<div class="num" style="font-weight:700">{{p.amount}}</div>
+<div style="display:flex;align-items:center;justify-content:flex-end;gap:4px;font-size:12px;color:#4B6358">
+<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0A7A55" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+<span>Paid · {{p.when}}</span>
+</div>
+</div>
+</div>
+</sc-for>
+</div>
+</section>
+</div>
+
+<!-- ANALYTICS -->
+<section id="analytics" aria-label="Analytics" style="display:flex;flex-direction:column;gap:20px;scroll-margin-top:16px">
+<div>
+<h2 style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:38px;line-height:1.1;letter-spacing:-0.02em;color:#064E3B">Analytics</h2>
+<p style="margin:2px 0 0;color:#4B6358">How visitors use your public page, {{rangeLabel}}. Anonymous: no IP addresses or cookies are stored.</p>
+</div>
+
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:16px">
+<sc-for list="{{aKpis}}" as="k" hint-placeholder-count="4">
+<div style="background:#FFFFFF;border:1px solid #DCE5DF;border-radius:20px;padding:22px;display:flex;flex-direction:column;gap:10px">
+<span style="font-size:14px;color:#4B6358;font-weight:600">{{k.label}}</span>
+<span class="num" style="font-family:'Instrument Serif',Georgia,serif;font-size:44px;line-height:1;color:#0B1F18">{{k.value}}</span>
+<span style="display:flex;align-items:center;gap:6px;font-size:13px;color:#4B6358">
+<svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="{{k.icon}}" fill="{{k.iconColor}}"/></svg>
+<span class="num" style="font-weight:700;color:#0B1F18">{{k.delta}}</span>
+<span>{{k.cmp}}</span>
+</span>
+</div>
+</sc-for>
+</div>
+
+<div style="display:flex;flex-wrap:wrap;gap:20px;align-items:stretch">
+
+<section aria-label="Taps by payment method" style="flex:2 1 520px;min-width:0;box-sizing:border-box;background:#FFFFFF;border:1px solid #DCE5DF;border-radius:20px;padding:26px 24px;display:flex;flex-direction:column;gap:22px">
+<div>
+<h3 style="margin:0;font-size:18px;font-weight:700">Taps by payment method</h3>
+<p style="margin:2px 0 0;font-size:14px;color:#4B6358">Every open and copy on your public page</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:16px">
+<sc-for list="{{tapRows}}" as="r" hint-placeholder-count="14">
+<div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px">
+<span style="flex:none;display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;background:#E3F0EA;color:#064E3B" aria-hidden="true">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="{{r.icon}}"/></svg>
+</span>
+<div style="flex:0 0 150px;min-width:0">
+<div style="font-weight:600">{{r.label}}</div>
+<div style="font-size:12px;color:#4B6358">{{r.kind}}</div>
+</div>
+<div style="flex:1 1 120px;min-width:0;height:10px;border-radius:999px;background:#E3F0EA;overflow:hidden">
+<div style="width:{{r.w}};height:100%;border-radius:999px;background:#064E3B"></div>
+</div>
+<div style="flex:0 0 92px;text-align:end;white-space:nowrap">
+<span class="num" style="font-weight:700">{{r.taps}}</span>
+<span class="num" style="font-size:13px;color:#4B6358"> {{r.pct}}</span>
+</div>
+</div>
+</sc-for>
+</div>
+</section>
+
+<div style="flex:1 1 300px;min-width:0;display:flex;flex-direction:column;gap:20px">
+
+<section aria-label="Traffic sources" style="box-sizing:border-box;background:#FFFFFF;border:1px solid #DCE5DF;border-radius:20px;padding:26px 24px;display:flex;flex-direction:column;gap:18px">
+<div>
+<h3 style="margin:0;font-size:18px;font-weight:700">Where visitors come from</h3>
+<p style="margin:2px 0 0;font-size:14px;color:#4B6358">Referring website, domain only</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:14px">
+<sc-for list="{{refRows}}" as="f" hint-placeholder-count="6">
+<div style="display:flex;flex-direction:column;gap:6px">
+<div style="display:flex;justify-content:space-between;gap:12px;font-size:14px">
+<span style="font-weight:600">{{f.label}}</span>
+<span class="num" style="color:#4B6358"><span style="font-weight:700;color:#0B1F18">{{f.visits}}</span> {{f.pct}}</span>
+</div>
+<div style="height:8px;border-radius:999px;background:#E3F0EA;overflow:hidden">
+<div style="width:{{f.w}};height:100%;border-radius:999px;background:#064E3B"></div>
+</div>
+</div>
+</sc-for>
+</div>
+</section>
+
+<section aria-label="Devices" style="box-sizing:border-box;background:#FFFFFF;border:1px solid #DCE5DF;border-radius:20px;padding:26px 24px;display:flex;flex-direction:column;gap:18px">
+<div>
+<h3 style="margin:0;font-size:18px;font-weight:700">Devices</h3>
+<p style="margin:2px 0 0;font-size:14px;color:#4B6358">Share of page views</p>
+</div>
+<div role="img" aria-label="{{deviceAria}}" style="display:flex;gap:2px;height:16px">
+<sc-for list="{{deviceSegs}}" as="d" hint-placeholder-count="3">
+<div style="flex:0 0 {{d.w}};min-width:4px;height:100%;border-radius:6px;background:{{d.color}}"></div>
+</sc-for>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px">
+<sc-for list="{{deviceRows}}" as="dr" hint-placeholder-count="3">
+<div style="display:flex;align-items:center;gap:10px;font-size:14px">
+<span style="flex:none;width:12px;height:12px;border-radius:3px;background:{{dr.color}}" aria-hidden="true"></span>
+<span style="flex:1;font-weight:600">{{dr.label}}</span>
+<span class="num" style="color:#4B6358"><span style="font-weight:700;color:#0B1F18">{{dr.pct}}</span> {{dr.count}}</span>
+</div>
+</sc-for>
+</div>
+</section>
+
+</div>
+</div>
+</section>
+
+<!-- LINKS TABLE -->
+<section aria-label="Payment links" style="box-sizing:border-box;background:#FFFFFF;border:1px solid #DCE5DF;border-radius:20px;padding:26px 24px;display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px">
+<h2 style="margin:0;font-size:18px;font-weight:700">Payment links</h2>
+<span style="font-size:14px;color:#4B6358">{{rangeLabelCap}}</span>
+</div>
+<div style="overflow-x:auto">
+<div role="table" aria-label="Payment links" style="min-width:820px">
+<div role="row" style="display:grid;grid-template-columns:minmax(220px,2.4fr) 110px 80px 90px 90px 120px 110px;gap:12px;padding:10px 4px;font-size:13px;font-weight:700;color:#4B6358;border-bottom:1px solid #E3EBE6">
+<span role="columnheader">Link</span>
+<span role="columnheader">Price</span>
+<span role="columnheader">Visits</span>
+<span role="columnheader">Payments</span>
+<span role="columnheader">Conversion</span>
+<span role="columnheader">Status</span>
+<span role="columnheader">Action</span>
+</div>
+<sc-for list="{{linkRows}}" as="lk" hint-placeholder-count="5">
+<div role="row" style="display:grid;grid-template-columns:minmax(220px,2.4fr) 110px 80px 90px 90px 120px 110px;gap:12px;align-items:center;padding:12px 4px;border-bottom:1px solid #EEF3F0">
+<div role="cell" style="min-width:0">
+<div style="font-weight:600">{{lk.name}}</div>
+<div style="font-size:13px;color:#4B6358">{{lk.url}}</div>
+</div>
+<span role="cell" class="num">{{lk.price}}</span>
+<span role="cell" class="num">{{lk.visits}}</span>
+<span role="cell" class="num">{{lk.payments}}</span>
+<span role="cell" class="num">{{lk.conv}}</span>
+<span role="cell"><span style="display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:999px;font-size:13px;font-weight:600;background:{{lk.stBg}};color:{{lk.stFg}}">
+<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{lk.stIcon}}"/></svg>{{lk.status}}</span></span>
+<span role="cell"><button class="btn" onClick="{{lk.toggle}}" style="min-height:44px;min-width:92px;padding:0 16px;border:1px solid #B9CBC0;border-radius:999px;background:#FFFFFF;color:#064E3B;font:inherit;font-weight:600">{{lk.action}}</button></span>
+</div>
+</sc-for>
+</div>
+</div>
+</section>
+
+</main>
+</div>
+</x-dc>
+
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2670}}'>
+class Component extends DCLogic {
+  state = { range: 30, hover: -1, view: 'chart', paused: { workshop: true }, notice: false };
+
+  val(k) {
+    const d = 180 - k;
+    return Math.round(160 + d * 1.6 + 70 * Math.sin(d * 0.9) + 40 * Math.cos(d * 0.37) + ((d * 37) % 13) * 6);
+  }
+
+  money(n) { return '$' + Number(n).toLocaleString('en-US'); }
+  num(n) { return Number(n).toLocaleString('en-US'); }
+
+  linkDefs() {
+    return [
+      { id: 'advisory', name: 'Advisory session', url: 'paytree.me/hartwell/advisory', price: '$250', share: 0.34, conv: 0.062 },
+      { id: 'brand', name: 'Brand identity package', url: 'paytree.me/hartwell/brand', price: '$1,800', share: 0.08, conv: 0.031 },
+      { id: 'retainer', name: 'Monthly retainer', url: 'paytree.me/hartwell/retainer', price: '$600 / mo', share: 0.22, conv: 0.048 },
+      { id: 'gratuity', name: 'Send a gratuity', url: 'paytree.me/hartwell/thanks', price: 'Open amount', share: 0.24, conv: 0.071 },
+      { id: 'workshop', name: 'Workshop seat', url: 'paytree.me/hartwell/workshop', price: '$95', share: 0.12, conv: 0.044 }
+    ];
+  }
+
+  metrics(vol) {
+    const defs = this.linkDefs();
+    const total = Math.round(vol / 212);
+    const pays = defs.map((d) => Math.round(total * d.share));
+    const visits = defs.map((d, i) => Math.max(pays[i], Math.round(pays[i] / d.conv)));
+    const p = pays.reduce((a, b) => a + b, 0);
+    const v = visits.reduce((a, b) => a + b, 0);
+    return { pays, visits, payments: p, visitsTotal: v, conv: v ? (p / v) * 100 : 0 };
+  }
+
+  dateLabel(k) {
+    const m = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const d = new Date(2026, 9, 4 - k);
+    return m[d.getMonth()] + ' ' + d.getDate();
+  }
+
+  dateFull(k) {
+    const w = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const d = new Date(2026, 9, 4 - k);
+    return w[d.getDay()] + ', ' + this.dateLabel(k) + ', ' + d.getFullYear();
+  }
+
+  renderVals() {
+    const s = this.state;
+    const n = s.range;
+
+    const vals = [];
+    for (let i = 0; i < n; i++) vals.push(this.val(n - 1 - i));
+    let vol = 0; vals.forEach((v) => { vol += v; });
+    let prevVol = 0; for (let k = n; k < 2 * n; k++) prevVol += this.val(k);
+
+    const cur = this.metrics(vol);
+    const prev = this.metrics(prevVol);
+
+    const pctDelta = (c, p) => {
+      const pct = p ? ((c - p) / p) * 100 : 0;
+      return { up: pct >= 0, text: Math.abs(pct).toFixed(1) + '%' };
+    };
+    const UP = 'M12 6l7 9H5z';
+    const DOWN = 'M12 18l-7-9h14z';
+    const mkKpi = (label, value, dl) => ({
+      label, value, delta: dl.text,
+      icon: dl.up ? UP : DOWN,
+      iconColor: dl.up ? '#0A7A55' : '#B42318'
+    });
+    const convDiff = cur.conv - prev.conv;
+    const convDl = { up: convDiff >= 0, text: Math.abs(convDiff).toFixed(1) + ' pts' };
+    const kpis = [
+      mkKpi('Payment volume', this.money(vol), pctDelta(vol, prevVol)),
+      mkKpi('Payments', this.num(cur.payments), pctDelta(cur.payments, prev.payments)),
+      mkKpi('Link visits', this.num(cur.visitsTotal), pctDelta(cur.visitsTotal, prev.visitsTotal)),
+      mkKpi('Conversion rate', cur.conv.toFixed(1) + '%', convDl)
+    ];
+
+    // chart geometry
+    const mx = Math.max.apply(null, vals);
+    const cands = [50, 100, 200, 250, 500, 1000, 2000];
+    let step = 2000;
+    for (let c = 0; c < cands.length; c++) { if (cands[c] * 4 >= mx * 1.08) { step = cands[c]; break; } }
+    const yMax = step * 4;
+    const yTicks = [0, 1, 2, 3, 4].map((t) => ({ label: this.money(t * step), pos: (t * 25) + '%' }));
+    const pts = vals.map((v, i) => ({
+      x: Math.round(((i + 0.5) / n) * 7000) / 10,
+      y: Math.round((260 - (v / yMax) * 260) * 10) / 10
+    }));
+    const linePath = 'M' + pts.map((p) => p.x + ' ' + p.y).join(' L');
+    const areaPath = linePath + ' L' + pts[n - 1].x + ' 260 L' + pts[0].x + ' 260 Z';
+    const gridPath = [0, 1, 2, 3, 4].map((t) => 'M0 ' + (259.5 - t * 64.75) + ' H700').join(' ');
+    const count = n <= 7 ? n : 6;
+    const xLabels = [];
+    for (let j = 0; j < count; j++) {
+      const idx = count === 1 ? 0 : Math.round((j * (n - 1)) / (count - 1));
+      xLabels.push({ pos: (((idx + 0.5) / n) * 100) + '%', text: this.dateLabel(n - 1 - idx) });
+    }
+    const cols = vals.map((v, i) => ({ enter: () => this.setState({ hover: i }) }));
+
+    const h = s.hover;
+    const hasHover = h >= 0 && h < n;
+    const hxNum = hasHover ? ((h + 0.5) / n) * 100 : 0;
+    const hx = hxNum + '%';
+    const hyTop = hasHover ? (100 - (vals[h] / yMax) * 100) + '%' : '0%';
+    const tipLeft = 'clamp(80px, ' + hxNum + '%, calc(100% - 80px))';
+
+    const tableRows = vals.map((v, i) => ({ date: this.dateFull(n - 1 - i), amount: this.money(v) })).reverse();
+
+    // links table
+    const defs = this.linkDefs();
+    const linkRows = defs.map((d, i) => {
+      const paused = !!s.paused[d.id];
+      const pays = cur.pays[i];
+      const vis = cur.visits[i];
+      return {
+        name: d.name, url: d.url, price: d.price,
+        visits: this.num(vis), payments: this.num(pays),
+        conv: (vis ? (pays / vis) * 100 : 0).toFixed(1) + '%',
+        status: paused ? 'Paused' : 'Active',
+        stBg: paused ? '#EEEFEC' : '#E3F0EA',
+        stFg: paused ? '#4A524E' : '#064E3B',
+        stIcon: paused ? 'M9 6v12 M15 6v12' : 'M5 12.5l4.5 4.5L19 7.5',
+        action: paused ? 'Resume' : 'Pause',
+        toggle: () => {
+          const next = Object.assign({}, this.state.paused);
+          next[d.id] = !next[d.id];
+          this.setState({ paused: next });
+        }
+      };
+    });
+
+    const recent = [
+      { initials: 'MR', name: 'Marcus Reed', link: 'Advisory session', amount: '$250', when: '2 min ago' },
+      { initials: 'EL', name: 'Elena Lawson', link: 'Monthly retainer', amount: '$600', when: '41 min ago' },
+      { initials: 'DK', name: 'Daniel Kim', link: 'Send a gratuity', amount: '$40', when: '2 hr ago' },
+      { initials: 'PW', name: 'Priya Walsh', link: 'Brand identity package', amount: '$1,800', when: '5 hr ago' },
+      { initials: 'TB', name: 'Thomas Brooks', link: 'Advisory session', amount: '$250', when: 'Yesterday' },
+      { initials: 'SC', name: 'Sofia Carter', link: 'Workshop seat', amount: '$95', when: 'Yesterday' }
+    ];
+
+    const navDefs = [
+      ['Overview', 'M4 4h7v7H4z M13 4h7v7h-7z M4 13h7v7H4z M13 13h7v7h-7z', true],
+      ['Payment methods', 'M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M3 10h18 M7 15h4', false],
+      ['Payments', 'M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M3 10h18 M7 15h4', false],
+      ['Analytics', 'M3 20h18 M6 20v-7 M12 20V5 M18 20v-10', false],
+      ['Settings', 'M4 7h10 M18 7h2 M4 17h2 M10 17h10 M14 5v4 M6 15v4', false]
+    ];
+    const navItems = navDefs.map((x) => ({
+      label: x[0], icon: x[1],
+      href: x[0] === 'Analytics' ? '#analytics' : (x[0] === 'Payment methods' ? 'PaymentMethods.dc.html' : '#top'),
+      bg: x[2] ? 'rgba(251,251,251,.14)' : 'transparent',
+      fg: x[2] ? '#FBFBFB' : 'rgba(251,251,251,.78)'
+    }));
+
+    // ---- analytics (sample data, derived from the same range) ----
+    const MICON = {
+      'dollar-sign': 'M12 2v20 M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6',
+      'wallet': 'M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1 M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4',
+      'credit-card': 'M4 5h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z M2 10h20',
+      'mail': 'M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z M22 7l-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7',
+      'building': 'M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2 M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2 M10 6h4 M10 10h4 M10 14h4 M10 18h4',
+      'globe': 'M2 12a10 10 0 1 0 20 0a10 10 0 1 0-20 0 M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20 M2 12h20',
+      'coins': 'M2 8a6 6 0 1 0 12 0a6 6 0 1 0-12 0 M18.09 10.37A6 6 0 1 1 10.34 18 M7 6h1v4 M16.71 13.88l.7.71-2.82 2.82',
+      'smartphone': 'M7 2h10a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z M12 18h.01',
+      'bell': 'M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9 M10.3 21a1.94 1.94 0 0 0 3.4 0',
+      'landmark': 'M3 22h18 M6 18v-7 M10 18v-7 M14 18v-7 M18 18v-7 M12 2l8 5H4z',
+      'banknote': 'M4 6h16a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z M10 12a2 2 0 1 0 4 0a2 2 0 1 0-4 0 M6 12h.01 M18 12h.01',
+      'shopping-bag': 'M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z M3 6h18 M16 10a4 4 0 0 1-8 0',
+      'link': 'M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71 M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71'
+    };
+    const methodDefs = [
+      { label: 'Cash App', icon: 'dollar-sign', kind: 'Opens app', w: 0.20 },
+      { label: 'Venmo', icon: 'wallet', kind: 'Opens app', w: 0.15 },
+      { label: 'Zelle', icon: 'mail', kind: 'Copies details', w: 0.14 },
+      { label: 'PayPal', icon: 'credit-card', kind: 'Opens app', w: 0.10 },
+      { label: 'Stripe', icon: 'credit-card', kind: 'Opens card checkout', w: 0.10 },
+      { label: 'Apple Cash', icon: 'smartphone', kind: 'Copies contact', w: 0.07 },
+      { label: 'ACH bank transfer', icon: 'building', kind: 'Copies details', w: 0.06 },
+      { label: 'Crypto', icon: 'coins', kind: 'Copies address', w: 0.05 },
+      { label: 'Wise', icon: 'globe', kind: 'Opens transfer page', w: 0.04 },
+      { label: 'Square', icon: 'shopping-bag', kind: 'Opens card checkout', w: 0.03 },
+      { label: 'Chime', icon: 'bell', kind: 'Copies ChimeSign', w: 0.02 },
+      { label: 'Custom link', icon: 'link', kind: 'Opens external page', w: 0.02 },
+      { label: 'Wire transfer', icon: 'landmark', kind: 'Copies details', w: 0.01 },
+      { label: 'Check by mail', icon: 'banknote', kind: 'Copies address', w: 0.01 }
+    ];
+    const views = cur.visitsTotal;
+    const prevViews = prev.visitsTotal;
+    const taps = Math.round(views * 0.38);
+    const prevTaps = Math.round(prevViews * 0.36);
+    const tapCounts = methodDefs.map((d) => Math.round(taps * d.w));
+    let tapSum = 0; tapCounts.forEach((c) => { tapSum += c; });
+    tapCounts[0] += taps - tapSum;
+    const tapSorted = methodDefs
+      .map((d, i) => ({ d, c: tapCounts[i] }))
+      .sort((a, b) => b.c - a.c);
+    const maxTap = tapSorted[0].c || 1;
+    const tapRows = tapSorted.map((x) => ({
+      label: x.d.label, kind: x.d.kind, icon: MICON[x.d.icon],
+      taps: this.num(x.c),
+      pct: (taps ? Math.round((x.c / taps) * 100) : 0) + '%',
+      w: ((x.c / maxTap) * 100).toFixed(1) + '%'
+    }));
+    const rate = views ? (taps / views) * 100 : 0;
+    const prevRate = prevViews ? (prevTaps / prevViews) * 100 : 0;
+    const rateDiff = rate - prevRate;
+    const cmpA = 'vs previous ' + n + ' days';
+    const aKpis = [
+      Object.assign(mkKpi('Page views', this.num(views), pctDelta(views, prevViews)), { cmp: cmpA }),
+      Object.assign(mkKpi('Payment button taps', this.num(taps), pctDelta(taps, prevTaps)), { cmp: cmpA }),
+      Object.assign(mkKpi('Tap-through rate', rate.toFixed(1) + '%', { up: rateDiff >= 0, text: Math.abs(rateDiff).toFixed(1) + ' pts' }), { cmp: cmpA }),
+      { label: 'Most used method', value: tapSorted[0].d.label, delta: tapRows[0].pct + ' of taps', cmp: '', icon: '', iconColor: 'transparent' }
+    ];
+    const refDefs = [['Instagram', 0.31], ['Direct or unknown', 0.27], ['X', 0.14], ['LinkedIn', 0.12], ['Google', 0.09]];
+    const refs = []; let refUsed = 0;
+    refDefs.forEach((r) => { const c = Math.round(views * r[1]); refUsed += c; refs.push({ label: r[0], c }); });
+    refs.push({ label: 'Other websites', c: views - refUsed });
+    const maxRef = Math.max.apply(null, refs.map((r) => r.c)) || 1;
+    const refRows = refs.map((r) => ({
+      label: r.label, visits: this.num(r.c),
+      pct: (views ? Math.round((r.c / views) * 100) : 0) + '%',
+      w: ((r.c / maxRef) * 100).toFixed(1) + '%'
+    }));
+    const mobile = Math.round(views * 0.68);
+    const desktop = Math.round(views * 0.27);
+    const tablet = views - mobile - desktop;
+    const devs = [
+      { label: 'Mobile', c: mobile, color: '#064E3B' },
+      { label: 'Desktop', c: desktop, color: '#3F8F76' },
+      { label: 'Tablet', c: tablet, color: '#A8D5C5' }
+    ];
+    const deviceRows = devs.map((x) => ({ label: x.label, color: x.color, pct: (views ? Math.round((x.c / views) * 100) : 0) + '%', count: this.num(x.c) }));
+    const deviceSegs = devs.map((x) => ({ color: x.color, w: (views ? (x.c / views) * 100 : 0).toFixed(1) + '%' }));
+    const deviceAria = deviceRows.map((x) => x.label + ' ' + x.pct).join(', ');
+
+    const rangeLabel = 'last ' + n + ' days';
+    const setRange = (r) => () => this.setState({ range: r, hover: -1 });
+    const seg = (on) => ({ bg: on ? '#064E3B' : 'transparent', fg: on ? '#FBFBFB' : '#0B1F18' });
+    const s7 = seg(n === 7); const s30 = seg(n === 30); const s90 = seg(n === 90);
+    const sc = seg(s.view === 'chart'); const st = seg(s.view === 'table');
+
+    return {
+      navItems, kpis,
+      cmpLabel: 'vs previous ' + n + ' days',
+      rangeLabel, rangeLabelCap: 'Last ' + n + ' days',
+      is7: n === 7, is30: n === 30, is90: n === 90,
+      setR7: setRange(7), setR30: setRange(30), setR90: setRange(90),
+      r7Bg: s7.bg, r7Fg: s7.fg, r30Bg: s30.bg, r30Fg: s30.fg, r90Bg: s90.bg, r90Fg: s90.fg,
+      isChart: s.view === 'chart', isTable: s.view === 'table',
+      showChart: () => this.setState({ view: 'chart' }),
+      showTable: () => this.setState({ view: 'table', hover: -1 }),
+      vcBg: sc.bg, vcFg: sc.fg, vtBg: st.bg, vtFg: st.fg,
+      yTicks, gridPath, areaPath, linePath, xLabels, cols,
+      leave: () => this.setState({ hover: -1 }),
+      hasHover, hx, hyTop, tipLeft,
+      tipDate: hasHover ? this.dateFull(n - 1 - h) : '',
+      tipVal: hasHover ? this.money(vals[h]) : '',
+      tableRows, linkRows, recent,
+      aKpis, tapRows, refRows, deviceSegs, deviceRows, deviceAria,
+      notice: s.notice,
+      newLink: () => this.setState({ notice: true })
+    };
+  }
+}
+</script>
+</body>
+</html>

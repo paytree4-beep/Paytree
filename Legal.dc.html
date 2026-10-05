@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>PayTree legal pages</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+html{scroll-behavior:smooth}
+a{color:inherit}
+.btn{transition:background-color .15s ease}
+.toc a:hover{color:#064E3B;text-decoration:underline}
+a:focus-visible,button:focus-visible{outline:2px solid #D9B873;outline-offset:3px}
+.sec{scroll-margin-top:24px}
+@media (prefers-reduced-motion:reduce){.btn{transition:none}html{scroll-behavior:auto}}
+</style>
+</helmet>
+
+<div id="top" style="display:flex;flex-direction:column;min-height:100vh;background:#FBFBFB;color:#0B1F18;font-family:'Plus Jakarta Sans',system-ui,sans-serif;font-size:16px;line-height:1.6">
+
+<header style="background:#064E3B;color:#FBFBFB;padding:24px 20px 40px;box-sizing:border-box">
+<div style="max-width:1100px;margin-inline:auto;display:flex;flex-direction:column;align-items:flex-start;gap:8px">
+<a href="Main.dc.html" style="display:inline-flex;align-items:center;gap:10px;min-height:44px;color:#FBFBFB;text-decoration:none">
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="#D9B873" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 10 L16 5 L21 10"/><path d="M9 16 L16 9 L23 16"/><path d="M7 22 L16 13 L25 22"/><path d="M16 22 V28"/></svg>
+<span style="font-weight:700;font-size:20px">PayTree</span>
+</a>
+<h1 style="margin:24px 0 0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:clamp(40px,5.4vw,60px);line-height:1.05;letter-spacing:-0.02em">{{docTitle}}</h1>
+<p style="margin:0;color:rgba(251,251,251,.8)">Last updated: [EFFECTIVE DATE]</p>
+<div role="group" aria-label="Legal documents" style="display:inline-flex;flex-wrap:wrap;margin-top:16px;padding:4px;border-radius:999px;background:rgba(251,251,251,.12);gap:4px">
+<button class="btn" onClick="{{showTerms}}" aria-pressed="{{isTerms}}" style="min-height:44px;padding:0 22px;border:none;border-radius:999px;font:inherit;font-size:14px;font-weight:600;cursor:pointer;background:{{tBg}};color:{{tFg}}">Terms of Service</button>
+<button class="btn" onClick="{{showPrivacy}}" aria-pressed="{{isPrivacy}}" style="min-height:44px;padding:0 22px;border:none;border-radius:999px;font:inherit;font-size:14px;font-weight:600;cursor:pointer;background:{{pBg}};color:{{pFg}}">Privacy Policy</button>
+</div>
+</div>
+</header>
+
+<main style="flex:1 0 auto;width:100%;max-width:1100px;margin-inline:auto;box-sizing:border-box;padding:40px 20px 56px">
+<p role="note" style="margin:0 0 40px;padding:16px 20px;border:1px solid #D9B873;border-radius:16px;background:rgba(217,184,115,.16);font-size:14px;font-weight:500">Template, not legal advice. Replace every [BRACKETED] item and have a licensed attorney review this document before you launch.</p>
+
+<div style="display:flex;flex-wrap:wrap;gap:48px">
+<nav class="toc" aria-label="On this page" style="flex:1 1 240px;max-width:260px;min-width:0">
+<h2 style="margin:0 0 12px;font-size:13px;font-weight:700;letter-spacing:0.12em;color:#064E3B">ON THIS PAGE</h2>
+<ol style="margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:2px">
+<sc-for list="{{toc}}" as="t" hint-placeholder-count="12">
+<li>
+<a href="{{t.href}}" style="display:flex;align-items:flex-start;gap:8px;min-height:36px;padding-block:4px;font-size:14px;color:#3F574C;text-decoration:none">
+<span style="flex:none;width:24px;color:#4B6358;font-variant-numeric:tabular-nums">{{t.n}}.</span>
+<span>{{t.title}}</span>
+</a>
+</li>
+</sc-for>
+</ol>
+</nav>
+
+<article style="flex:3 1 480px;min-width:0;max-width:720px">
+<p style="margin:0 0 40px;font-size:18px;line-height:1.7;color:#2F4A3F">{{docIntro}}</p>
+<sc-for list="{{sections}}" as="s" hint-placeholder-count="12">
+<section id="{{s.id}}" class="sec" style="margin-bottom:40px">
+<h2 style="margin:0 0 12px;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:32px;line-height:1.15;letter-spacing:-0.01em;color:#064E3B">{{s.heading}}</h2>
+<sc-for list="{{s.intro}}" as="q" hint-placeholder-count="1">
+<p style="margin:0 0 12px;line-height:1.7;color:#2F4A3F">{{q.text}}</p>
+</sc-for>
+<sc-if value="{{s.hasBullets}}" hint-placeholder-val="{{false}}">
+<ul style="margin:0 0 12px;padding-inline-start:24px;display:flex;flex-direction:column;gap:8px;line-height:1.7;color:#2F4A3F">
+<sc-for list="{{s.bullets}}" as="b" hint-placeholder-count="3">
+<li>{{b.text}}</li>
+</sc-for>
+</ul>
+</sc-if>
+<sc-for list="{{s.closing}}" as="c" hint-placeholder-count="0">
+<p style="margin:0 0 12px;line-height:1.7;color:#2F4A3F">{{c.text}}</p>
+</sc-for>
+</section>
+</sc-for>
+</article>
+</div>
+</main>
+
+<footer style="background:#032F24;color:rgba(251,251,251,.75);padding:32px 20px;box-sizing:border-box;font-size:14px">
+<div style="max-width:1100px;margin-inline:auto;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px">
+<span>&copy; 2026 PayTree. All rights reserved.</span>
+<a href="Main.dc.html" style="text-decoration:none">Back to PayTree</a>
+</div>
+</footer>
+
+</div>
+</x-dc>
+
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":3700}}'>
+class Component extends DCLogic {
+  state = { doc: 'terms' };
+
+  // Same wording as content/legal.ts in the Next.js project.
+  docs() {
+    return {
+      terms: {
+        title: 'Terms of Service',
+        intro: 'These Terms of Service (the “Terms”) govern your use of PayTree (the “Service”), operated by [COMPANY LEGAL NAME] (“PayTree,” “we,” “us”). By creating an account or using the Service, you agree to these Terms.',
+        sections: [
+          { id: 'eligibility', title: 'Who can use PayTree',
+            intro: ['You must be at least 18 years old and able to form a binding contract. The Service is intended for use in the United States.', 'If you use the Service for a business, you confirm that you have authority to bind that business to these Terms.'] },
+          { id: 'service', title: 'What PayTree does',
+            intro: ['PayTree lets you build a public page that lists the ways people can pay you, such as Cash App, Venmo, PayPal, Zelle, Apple Cash, Chime, ACH bank transfer, wire transfer, check by mail, Stripe, Square, Wise, cryptocurrency and links to other payment pages, and share that page with a single link.'] },
+          { id: 'no-payments', title: 'We do not handle your money',
+            intro: ['PayTree is not a bank, payment processor or money transmitter. We do not receive, hold, transmit, convert or refund funds. When someone pays you, the payment happens directly between them and the third-party service or network they choose, under that provider’s terms.', 'We are not a party to any transaction between you and the people who pay you. We are not responsible for disputes, chargebacks, failed payments or payments sent to the wrong place.', '[CONFIRM: this section assumes PayTree never touches funds. If that changes, review it with counsel before launch.]'] },
+          { id: 'account', title: 'Your account',
+            intro: ['When you create an account, you agree to:'],
+            bullets: ['give accurate information and keep it up to date;', 'keep your sign-in details secure and tell us right away about unauthorized use;', 'choose a username that does not impersonate anyone or infringe anyone’s rights;', 'accept responsibility for everything that happens under your account.'],
+            closing: ['Some usernames are reserved for the Service. We may reclaim a reserved or abandoned username [USERNAME POLICY].'] },
+          { id: 'payment-details', title: 'The payment details you publish',
+            intro: ['You decide which payment details appear on your page. Anything you add can be seen by anyone who has your link, and the copy buttons give visitors the full value, including a complete bank account number if you add one.', 'You are responsible for entering correct details. We are not liable for payments sent to an account that is wrong, outdated or closed. Publish only details you are comfortable sharing publicly, and consider using accounts set up for receiving payments.'] },
+          { id: 'billing', title: 'Subscriptions and billing',
+            intro: ['PayTree is a paid subscription: $2.99 per month or $24.99 per year, plus any applicable taxes. Billing is handled by [BILLING PROVIDER].', 'Your subscription renews automatically at the end of each billing period until you cancel. You can cancel at any time from your account settings. Cancellation takes effect at the end of the current period, and you keep access until then.', 'We will tell you before a price change takes effect. All payments are non-refundable, including for any unused part of a billing period. Cancel before your renewal date to avoid the next charge.'] },
+          { id: 'acceptable-use', title: 'Acceptable use',
+            intro: ['You agree not to use the Service to:'],
+            bullets: ['collect money through fraud, deception or false pretenses;', 'impersonate a person, business or charity;', 'sell or promote illegal goods or services, or anything the payment providers you list prohibit;', 'harass, threaten or infringe the rights of others, or publish someone else’s payment details without permission;', 'probe, scrape, overload or bypass the limits of the Service.'],
+            closing: ['We may remove content or suspend pages that violate this section. Report abuse to [ABUSE REPORT EMAIL].'] },
+          { id: 'risks', title: 'Payment risks',
+            intro: ['Payments made with some methods, including Zelle, Apple Cash, ACH, wire transfers, checks and cryptocurrency, can be difficult or impossible to reverse. Verify the recipient before you send money.', 'Cryptocurrency must be sent on the network shown on the page. Funds sent on a different network can be lost permanently. Links to other websites are added by the page owner, are not reviewed by PayTree, and open sites we do not control.'] },
+          { id: 'content', title: 'Your content and our property',
+            intro: ['You keep ownership of what you add to your page. You give us a limited, worldwide license to host, display and process it only to run the Service.', 'PayTree, its design and its software belong to us and our licensors. These Terms give you no rights to them except to use the Service.'] },
+          { id: 'analytics', title: 'Analytics on your page',
+            intro: ['The Service shows you aggregated statistics about visits and taps on your page. Our Privacy Policy explains what we collect from visitors. You agree not to use the Service to identify individual visitors.'] },
+          { id: 'termination', title: 'Suspension and termination',
+            intro: ['You may delete your account at any time. We may suspend or end your access if you break these Terms, create risk or legal exposure for us or others, or, after reasonable notice, for any other reason. Sections that by their nature should continue after termination will continue.'] },
+          { id: 'disclaimers', title: 'Disclaimers',
+            intro: ['The Service is provided “as is” and “as available.” To the fullest extent permitted by law, we disclaim all warranties, express or implied, including merchantability, fitness for a particular purpose and non-infringement. We do not promise that the Service will be uninterrupted or error-free.'] },
+          { id: 'liability', title: 'Limitation of liability',
+            intro: ['To the fullest extent permitted by law, PayTree and its owners, employees and suppliers are not liable for indirect, incidental, special, consequential or punitive damages, or for lost profits, revenue, data or funds.', 'Our total liability for any claim is limited to the greater of the amount you paid us in the 12 months before the claim or $100. Some states do not allow certain limits, so parts of this section may not apply to you.'] },
+          { id: 'indemnity', title: 'Indemnification',
+            intro: ['You agree to defend and indemnify us against claims, losses and expenses, including reasonable attorneys’ fees, that arise from your content, your use of the Service, or your violation of these Terms or of anyone’s rights.'] },
+          { id: 'disputes', title: 'Disputes and governing law',
+            intro: ['These Terms are governed by the laws of [GOVERNING STATE], without regard to conflict-of-law rules.', 'Before filing a claim, you agree to contact us at [CONTACT EMAIL] and try to resolve the issue informally for 30 days. A claim that is not resolved will be brought in the state or federal courts located in [VENUE COUNTY, STATE].', '[OPTIONAL, ATTORNEY TO DECIDE: binding individual arbitration and a class-action waiver.]'] },
+          { id: 'changes', title: 'Changes to these Terms',
+            intro: ['We may update these Terms. If a change is material, we will notify you by email or in your dashboard before it takes effect. Using the Service after that means you accept the updated Terms.'] },
+          { id: 'contact', title: 'Contact us',
+            intro: ['[COMPANY LEGAL NAME], [MAILING ADDRESS]. Email: [CONTACT EMAIL].'] }
+        ]
+      },
+      privacy: {
+        title: 'Privacy Policy',
+        intro: 'This Privacy Policy explains what [COMPANY LEGAL NAME] (“PayTree,” “we,” “us”) collects when you use PayTree, and how we use and protect it. It covers two groups of people: account holders who build pages, and visitors who view those pages.',
+        sections: [
+          { id: 'collect-account', title: 'Information from account holders',
+            intro: ['When you create and manage a page, we collect:'],
+            bullets: ['Account details: your email address, username, display name, bio and photo.', 'Payment details you choose to publish: handles, a Zelle email or phone number, bank routing and account numbers, a card checkout link, a Wise link and wallet addresses.', 'Subscription details: your plan, billing status, and the brand and last four digits of your card. Full card numbers are handled by [BILLING PROVIDER] and are not stored by us.', 'Messages you send to our support team.'] },
+          { id: 'collect-visitors', title: 'Information from visitors',
+            intro: ['When someone views a PayTree page, we record:'],
+            bullets: ['that the page was viewed;', 'which payment button was tapped, and whether it opened an app or copied details;', 'the time of the action;', 'the website the visitor came from (the domain only), the type of device (mobile, tablet or desktop) and an approximate country.'],
+            closing: ['We do not collect visitors’ names, email addresses or payment information, and we do not store visitor IP addresses or set cookies for analytics. [CONFIRM: matches your logging setup.]'] },
+          { id: 'collect-logs', title: 'Security logs',
+            intro: ['Our servers keep standard logs, which include IP addresses, for [LOG RETENTION PERIOD, for example 30 days]. We use them to detect abuse and keep the Service running.'] },
+          { id: 'use', title: 'How we use information',
+            bullets: ['To provide, host and secure the Service and your page.', 'To show you statistics about views and taps.', 'To process subscriptions and send receipts and service messages.', 'To prevent fraud, abuse and violations of our Terms.', 'To comply with the law.', 'To improve the Service, using aggregated information that does not identify anyone.'] },
+          { id: 'public', title: 'Your public page',
+            intro: ['Everything you add to your page is public to anyone who has your link. The copy buttons give visitors the full value, including your complete bank account number if you add one. Think carefully about what you publish.'] },
+          { id: 'share', title: 'How we share information',
+            intro: ['We do not sell your personal information, and we do not share it for cross-context behavioral advertising.', 'We share information with service providers who help us run the Service under contract: [LIST OF PROVIDERS, for example hosting, database, email and billing].', 'We may disclose information to comply with the law or legal process, to protect rights, safety and security, or in a merger or sale of the business, with notice where required.'] },
+          { id: 'cookies', title: 'Cookies and similar technologies',
+            intro: ['We use cookies that are necessary to keep you signed in and to secure your account. We do not use advertising or cross-site tracking cookies, and visitor analytics do not use cookies.', 'We honor Global Privacy Control and Do Not Track signals by not recording analytics for visitors who send them. [CONFIRM before launch.]'] },
+          { id: 'retention', title: 'How long we keep information',
+            bullets: ['Account data: until you delete your account, then removed within [DELETION WINDOW, for example 30 days] unless the law requires us to keep it.', 'Analytics events: [ANALYTICS RETENTION PERIOD, for example 25 months].', 'Billing records: as long as tax and accounting law require.'] },
+          { id: 'rights', title: 'Your choices and rights',
+            intro: ['You can update or delete your page details, and export or delete your data, from your account settings or by emailing [CONTACT EMAIL].', 'Residents of California and other states with privacy laws may have the right to know, access, correct, delete and obtain a copy of their personal information, and to opt out of the sale of personal information or targeted advertising, neither of which we do.', 'To make a request, email [CONTACT EMAIL]. We respond within 45 days, and we will not treat you differently for exercising your rights. If we decline a request, you may appeal by replying to our response.'] },
+          { id: 'security', title: 'Security',
+            intro: ['We use reasonable administrative, technical and physical safeguards, including encryption in transit. No method of transmission or storage is completely secure, so we cannot promise absolute security. Protect your password and tell us right away if you suspect unauthorized access.'] },
+          { id: 'children', title: 'Children',
+            intro: ['PayTree is not directed to anyone under 18, and we do not knowingly collect personal information from them. If you believe a child has given us information, contact us and we will delete it.'] },
+          { id: 'location', title: 'Where information is processed',
+            intro: ['The Service is operated in the United States and is intended for people in the United States. Information is processed and stored in the United States.'] },
+          { id: 'changes-privacy', title: 'Changes to this policy',
+            intro: ['We may update this policy. We will post the new version here with a new date and, for material changes, notify account holders by email or in the dashboard.'] },
+          { id: 'contact-privacy', title: 'Contact us',
+            intro: ['[COMPANY LEGAL NAME], [MAILING ADDRESS]. Privacy requests: [CONTACT EMAIL].'] }
+        ]
+      }
+    };
+  }
+
+  renderVals() {
+    const isTerms = this.state.doc === 'terms';
+    const doc = this.docs()[this.state.doc];
+    const wrap = (list) => (list || []).map((text) => ({ text }));
+
+    return {
+      docTitle: doc.title,
+      docIntro: doc.intro,
+      toc: doc.sections.map((s, i) => ({ n: String(i + 1), title: s.title, href: '#' + s.id })),
+      sections: doc.sections.map((s, i) => ({
+        id: s.id,
+        heading: (i + 1) + '. ' + s.title,
+        intro: wrap(s.intro),
+        bullets: wrap(s.bullets),
+        hasBullets: !!(s.bullets && s.bullets.length),
+        closing: wrap(s.closing)
+      })),
+      isTerms, isPrivacy: !isTerms,
+      showTerms: () => this.setState({ doc: 'terms' }),
+      showPrivacy: () => this.setState({ doc: 'privacy' }),
+      tBg: isTerms ? '#FBFBFB' : 'transparent', tFg: isTerms ? '#064E3B' : 'rgba(251,251,251,.88)',
+      pBg: isTerms ? 'transparent' : '#FBFBFB', pFg: isTerms ? 'rgba(251,251,251,.88)' : '#064E3B'
+    };
+  }
+}
+</script>
+</body>
+</html>

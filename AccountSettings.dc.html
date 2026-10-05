@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>PayTree account settings</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:inherit}
+.btn{transition:transform .15s ease, background-color .15s ease;cursor:pointer}
+.btn:hover{transform:translateY(-1px)}
+.navitem:hover{background:rgba(251,251,251,.08) !important}
+a:focus-visible,button:focus-visible{outline:2px solid #D9B873;outline-offset:3px}
+.num{font-variant-numeric:tabular-nums}
+.inp{width:100%;box-sizing:border-box;min-height:50px;padding:0 14px;border:1.5px solid #C9D6CE;border-radius:12px;background:#FFFFFF;font:inherit;color:#0B1F18}
+.inp:focus{outline:2px solid #D9B873;outline-offset:2px;border-color:#064E3B}
+.row{transition:box-shadow .15s ease, opacity .15s ease}
+.pick:hover{background:#E3F0EA !important}
+.iconbtn{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;border:none;border-radius:12px;background:transparent;color:#064E3B;cursor:pointer;font:inherit}
+.iconbtn:hover{background:#E3F0EA}
+.iconbtn[aria-disabled="true"]{opacity:.35;cursor:default}
+.grip{cursor:grab}
+@media (prefers-reduced-motion:reduce){.btn{transition:none}}
+</style>
+</helmet>
+
+<div id="top" style="display:flex;flex-wrap:wrap;align-items:stretch;background:#FBFBFB;color:#0B1F18;font-family:'Plus Jakarta Sans',system-ui,sans-serif;font-size:15px;line-height:1.5">
+
+<!-- SIDEBAR -->
+<aside style="flex:1 0 264px;max-width:300px;box-sizing:border-box;background:#064E3B;color:#FBFBFB;padding:28px 20px;display:flex;flex-direction:column;justify-content:space-between;gap:32px">
+<div style="display:flex;flex-direction:column;gap:32px">
+<a href="Main.dc.html" style="display:flex;align-items:center;gap:10px;color:#FBFBFB;text-decoration:none;padding-inline:8px">
+<svg width="34" height="34" viewBox="0 0 32 32" fill="none" stroke="#D9B873" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 10 L16 5 L21 10"/><path d="M9 16 L16 9 L23 16"/><path d="M7 22 L16 13 L25 22"/><path d="M16 22 V28"/></svg>
+<span style="font-weight:700;font-size:20px">PayTree</span>
+</a>
+<nav aria-label="Dashboard navigation" style="display:flex;flex-direction:column;gap:4px">
+<sc-for list="{{navItems}}" as="nv" hint-placeholder-count="5">
+<a class="navitem" href="{{nv.href}}" style="display:flex;align-items:center;gap:12px;min-height:46px;padding:0 12px;border-radius:12px;text-decoration:none;font-weight:600;background:{{nv.bg}};color:{{nv.fg}}">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{nv.icon}}"/></svg>
+<span>{{nv.label}}</span>
+</a>
+</sc-for>
+</nav>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:16px">
+<div style="border:1px solid rgba(217,184,115,.5);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:4px">
+<span style="font-size:13px;color:#D9B873;font-weight:600">Your plan</span>
+<span style="font-weight:700">Annual membership</span>
+<span style="font-size:14px;color:rgba(251,251,251,.75)">$24.99 per year</span>
+</div>
+<div style="display:flex;align-items:center;gap:12px;padding-inline:4px">
+<span style="display:flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:50%;background:#FBFBFB;color:#064E3B;font-family:'Instrument Serif',Georgia,serif;font-size:22px;line-height:1" aria-hidden="true">H</span>
+<div style="min-width:0">
+<div style="font-weight:600">Hartwell Studio</div>
+<div style="font-size:13px;color:rgba(251,251,251,.7)">paytree.me/hartwell</div>
+</div>
+</div>
+</div>
+</aside>
+
+<!-- MAIN -->
+<main style="flex:999 1 640px;min-width:0;box-sizing:border-box;padding:36px 32px 64px;display:flex;flex-direction:column;gap:28px">
+<div style="display:flex;flex-direction:column;gap:6px">
+<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+<h1 style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:46px;line-height:1.05;letter-spacing:-0.02em;color:#064E3B">Settings</h1>
+<span style="padding:3px 12px;border-radius:999px;background:#E3F0EA;color:#064E3B;font-size:13px;font-weight:600">Demo</span>
+</div>
+<p style="margin:0;color:#4B6358">Manage your profile, sign-in, plan and data.</p>
+</div>
+<sc-if value="{{deleted}}" hint-placeholder-val="{{false}}">
+<section role="status" style="max-width:760px;background:#FFFFFF;border:1px solid #DCE5DF;border-radius:20px;padding:32px;display:flex;flex-direction:column;gap:14px"><h2 style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:34px;color:#064E3B">Your account has been deleted</h2><p style="margin:0;color:#4B6358">Your page, payment methods and analytics were removed, and your subscription was cancelled. We are sorry to see you go.</p><div><a class="btn" href="Main.dc.html" style="display:inline-flex;align-items:center;min-height:48px;padding:0 24px;border-radius:999px;background:#064E3B;color:#FBFBFB;text-decoration:none;font-weight:700">Back to the home page</a></div></section>
+</sc-if>
+<sc-if value="{{notDeleted}}" hint-placeholder-val="{{true}}">
+<div style="max-width:760px;display:flex;flex-direction:column;gap:20px">
+<section aria-label="Profile" style="background:#FFFFFF;border:1px solid #DCE5DF;border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:18px">
+<div><h2 style="margin:0;font-size:18px;font-weight:700;color:#0B1F18">Profile</h2><p style="margin:2px 0 0;font-size:14px;color:#4B6358">This is what visitors see at the top of your page.</p></div>
+<div style="display:flex;align-items:center;gap:16px"><span style="display:flex;align-items:center;justify-content:center;width:72px;height:72px;border-radius:50%;background:#064E3B;color:#FBFBFB;font-family:'Instrument Serif',Georgia,serif;font-size:38px;line-height:1;box-shadow:0 0 0 3px rgba(217,184,115,.6)" aria-hidden="true">{{initial}}</span><p style="margin:0;font-size:13px;color:#4B6358;max-width:340px">Your photo is a gold-ringed initial. It follows your display name.</p></div><div style="display:flex;flex-wrap:wrap;gap:16px"><div style="display:flex;flex-direction:column;gap:6px;flex:1 1 240px;min-width:0">
+<label for="s-name" style="font-weight:600;font-size:14px">Display name</label>
+<input id="s-name" class="inp" type="text" autocomplete="organization" spellcheck="false" value="{{v.displayName}}" onInput="{{on.displayName}}" placeholder="Hartwell Studio" style="border-color:{{bd.displayName}}">
+<sc-if value="{{e.displayName}}" hint-placeholder-val="{{false}}"><p role="alert" style="margin:0;color:#B42318;font-size:13px">{{e.displayName}}</p></sc-if>
+</div><div style="display:flex;flex-direction:column;gap:6px;flex:1 1 240px;min-width:0">
+<label for="s-handle" style="font-weight:600;font-size:14px">Link name</label>
+<input id="s-handle" class="inp" type="text" autocomplete="off" spellcheck="false" value="{{v.handle}}" onInput="{{on.handle}}" placeholder="yourname" style="border-color:{{bd.handle}}">
+<sc-if value="{{e.handle}}" hint-placeholder-val="{{false}}"><p role="alert" style="margin:0;color:#B42318;font-size:13px">{{e.handle}}</p></sc-if><p style="margin:0;color:#4B6358;font-size:13px">Your page is paytree.me/ followed by this name.</p>
+</div></div><sc-if value="{{handleWarn}}" hint-placeholder-val="{{false}}"><p style="margin:0;padding:10px 14px;border-radius:12px;background:#FFF6E5;color:#7A4B00;font-size:13px">Changing your link name breaks old links and printed QR codes that use the current one. Share the new address after you save.</p></sc-if><div style="display:flex;flex-direction:column;gap:6px"><label for="s-bio" style="font-weight:600;font-size:14px">Short bio</label><input id="s-bio" class="inp" type="text" value="{{v.bio}}" onInput="{{on.bio}}" placeholder="What you do, in one line" style="border-color:{{bd.bio}}"><sc-if value="{{e.bio}}" hint-placeholder-val="{{false}}"><p role="alert" style="margin:0;color:#B42318;font-size:13px">{{e.bio}}</p></sc-if><p style="margin:0;color:#4B6358;font-size:13px">Up to 140 characters.</p></div><div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center"><button class="btn" onClick="{{saveProfile}}" style="min-height:48px;padding:0 24px;border:none;border-radius:999px;background:#064E3B;color:#FBFBFB;font:inherit;font-weight:700">Save profile</button></div><sc-if value="{{n.profile}}" hint-placeholder-val="{{false}}"><p role="status" style="margin:0;padding:12px 14px;border-radius:12px;background:#E3F0EA;color:#064E3B;font-size:14px">{{n.profile}}</p></sc-if>
+</section>
+<section aria-label="Sign-in" style="background:#FFFFFF;border:1px solid #DCE5DF;border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:18px">
+<div><h2 style="margin:0;font-size:18px;font-weight:700;color:#0B1F18">Sign-in</h2><p style="margin:2px 0 0;font-size:14px;color:#4B6358">How you log in to PayTree.</p></div>
+<div style="display:flex;flex-direction:column;gap:10px"><div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px"><div><div style="font-weight:600">Email</div><div class="num" style="font-size:14px;color:#4B6358">{{currentEmail}}</div></div><button class="btn" onClick="{{toggleEmail}}" aria-expanded="{{emailOpen}}" style="min-height:44px;padding:0 18px;border:1.5px solid #C9D6CE;border-radius:999px;background:#FFFFFF;font:inherit;font-weight:600;color:#0B1F18">Change email</button></div><sc-if value="{{emailOpen}}" hint-placeholder-val="{{false}}"><div style="display:flex;flex-direction:column;gap:12px;padding:16px;border-radius:14px;background:#F4F8F6"><div style="display:flex;flex-direction:column;gap:6px;flex:1 1 240px;min-width:0">
+<label for="s-newemail" style="font-weight:600;font-size:14px">New email address</label>
+<input id="s-newemail" class="inp" type="email" autocomplete="email" spellcheck="false" value="{{v.newEmail}}" onInput="{{on.newEmail}}" placeholder="name@example.com" style="border-color:{{bd.newEmail}}">
+<sc-if value="{{e.newEmail}}" hint-placeholder-val="{{false}}"><p role="alert" style="margin:0;color:#B42318;font-size:13px">{{e.newEmail}}</p></sc-if><p style="margin:0;color:#4B6358;font-size:13px">We email a confirmation link to the new address. Your login changes only after you click it.</p>
+</div><div><button class="btn" onClick="{{sendEmailChange}}" style="min-height:48px;padding:0 24px;border:none;border-radius:999px;background:#064E3B;color:#FBFBFB;font:inherit;font-weight:700">Send confirmation link</button></div></div></sc-if><sc-if value="{{n.email}}" hint-placeholder-val="{{false}}"><p role="status" style="margin:0;padding:12px 14px;border-radius:12px;background:#E3F0EA;color:#064E3B;font-size:14px">{{n.email}}</p></sc-if></div><div style="height:1px;background:#E3EBE6"></div><div style="display:flex;flex-direction:column;gap:12px"><div style="font-weight:600">Password</div><div style="display:flex;flex-wrap:wrap;gap:16px"><div style="display:flex;flex-direction:column;gap:6px;flex:1 1 240px;min-width:0">
+<label for="s-curpw" style="font-weight:600;font-size:14px">Current password</label>
+<input id="s-curpw" class="inp" type="password" autocomplete="current-password" spellcheck="false" value="{{v.curPw}}" onInput="{{on.curPw}}" placeholder="Current password" style="border-color:{{bd.curPw}}">
+<sc-if value="{{e.curPw}}" hint-placeholder-val="{{false}}"><p role="alert" style="margin:0;color:#B42318;font-size:13px">{{e.curPw}}</p></sc-if>
+</div><div style="display:flex;flex-direction:column;gap:6px;flex:1 1 240px;min-width:0">
+<label for="s-newpw" style="font-weight:600;font-size:14px">New password</label>
+<input id="s-newpw" class="inp" type="password" autocomplete="new-password" spellcheck="false" value="{{v.newPw}}" onInput="{{on.newPw}}" placeholder="At least 8 characters" style="border-color:{{bd.newPw}}">
+<sc-if value="{{e.newPw}}" hint-placeholder-val="{{false}}"><p role="alert" style="margin:0;color:#B42318;font-size:13px">{{e.newPw}}</p></sc-if><p style="margin:0;color:#4B6358;font-size:13px">Use a letter and a number.</p>
+</div></div><div><button class="btn" onClick="{{savePassword}}" style="min-height:48px;padding:0 22px;border:1.5px solid #C9D6CE;border-radius:999px;background:#FFFFFF;color:#0B1F18;font:inherit;font-weight:600">Update password</button></div><sc-if value="{{n.password}}" hint-placeholder-val="{{false}}"><p role="status" style="margin:0;padding:12px 14px;border-radius:12px;background:#E3F0EA;color:#064E3B;font-size:14px">{{n.password}}</p></sc-if></div><div style="height:1px;background:#E3EBE6"></div><div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px"><div><div style="font-weight:600">Google</div><div style="font-size:14px;color:#4B6358">{{googleText}}</div></div><button class="btn" onClick="{{toggleGoogle}}" style="min-height:44px;padding:0 18px;border:1.5px solid #C9D6CE;border-radius:999px;background:#FFFFFF;font:inherit;font-weight:600;color:#0B1F18">{{googleBtn}}</button></div><sc-if value="{{n.google}}" hint-placeholder-val="{{false}}"><p role="status" style="margin:0;padding:12px 14px;border-radius:12px;background:#E3F0EA;color:#064E3B;font-size:14px">{{n.google}}</p></sc-if>
+</section>
+<section aria-label="Plan and billing" style="background:#FFFFFF;border:1px solid #DCE5DF;border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:18px">
+<div><h2 style="margin:0;font-size:18px;font-weight:700;color:#0B1F18">Plan and billing</h2><p style="margin:2px 0 0;font-size:14px;color:#4B6358">Cancel any time. You keep access until the end of the period you paid for.</p></div>
+<div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px;padding:16px 18px;border-radius:14px;background:#F4F8F6"><div><div style="font-weight:700">{{planName}}</div><div class="num" style="font-size:14px;color:#4B6358">{{planPrice}}</div><div style="font-size:14px;color:#4B6358">{{planStatus}}</div></div><span style="padding:3px 12px;border-radius:999px;background:{{planChipBg}};color:{{planChipFg}};font-size:13px;font-weight:700">{{planChip}}</span></div><div style="display:flex;flex-wrap:wrap;gap:12px"><sc-if value="{{canSwitch}}" hint-placeholder-val="{{true}}"><button class="btn" onClick="{{switchPlan}}" style="min-height:48px;padding:0 22px;border:1.5px solid #C9D6CE;border-radius:999px;background:#FFFFFF;color:#0B1F18;font:inherit;font-weight:600">{{switchText}}</button></sc-if><sc-if value="{{canCancel}}" hint-placeholder-val="{{true}}"><button class="btn" onClick="{{askCancel}}" style="min-height:48px;padding:0 22px;border:1.5px solid #C9D6CE;border-radius:999px;background:#FFFFFF;color:#0B1F18;font:inherit;font-weight:600">Cancel subscription</button></sc-if><sc-if value="{{canResume}}" hint-placeholder-val="{{false}}"><button class="btn" onClick="{{resume}}" style="min-height:48px;padding:0 24px;border:none;border-radius:999px;background:#064E3B;color:#FBFBFB;font:inherit;font-weight:700">Resume subscription</button></sc-if></div><sc-if value="{{confirmCancel}}" hint-placeholder-val="{{false}}"><div role="alertdialog" aria-label="Confirm cancellation" style="padding:16px;border-radius:14px;background:#FFF6E5;display:flex;flex-direction:column;gap:12px"><p style="margin:0;color:#7A4B00;font-size:14px"><strong>Cancel your subscription?</strong> Your page stays live until {{endDate}}. After that it is switched off, but your details are kept for 30 days in case you come back.</p><div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" onClick="{{keepPlan}}" style="min-height:48px;padding:0 22px;border:1.5px solid #C9D6CE;border-radius:999px;background:#FFFFFF;color:#0B1F18;font:inherit;font-weight:600">Keep my plan</button><button class="btn" onClick="{{doCancel}}" style="min-height:48px;padding:0 24px;border:none;border-radius:999px;background:#064E3B;color:#FBFBFB;font:inherit;font-weight:700">Yes, cancel at period end</button></div></div></sc-if><sc-if value="{{n.plan}}" hint-placeholder-val="{{false}}"><p role="status" style="margin:0;padding:12px 14px;border-radius:12px;background:#E3F0EA;color:#064E3B;font-size:14px">{{n.plan}}</p></sc-if>
+</section>
+<section aria-label="Your data" style="background:#FFFFFF;border:1px solid #DCE5DF;border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:18px">
+<div><h2 style="margin:0;font-size:18px;font-weight:700;color:#0B1F18">Your data</h2><p style="margin:2px 0 0;font-size:14px;color:#4B6358">Download a copy of everything PayTree stores about you.</p></div>
+<div><button class="btn" onClick="{{exportData}}" style="min-height:48px;padding:0 22px;border:1.5px solid #C9D6CE;border-radius:999px;background:#FFFFFF;color:#0B1F18;font:inherit;font-weight:600">Download my data (JSON)</button></div><sc-if value="{{n.export}}" hint-placeholder-val="{{false}}"><p role="status" style="margin:0;padding:12px 14px;border-radius:12px;background:#E3F0EA;color:#064E3B;font-size:14px">{{n.export}}</p></sc-if>
+</section>
+<section aria-label="Delete account" style="background:#FFFFFF;border:1px solid #F1C9C4;border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:18px">
+<div><h2 style="margin:0;font-size:18px;font-weight:700;color:#B42318">Delete account</h2><p style="margin:2px 0 0;font-size:14px;color:#4B6358">Permanently remove your account and page.</p></div>
+<p style="margin:0;font-size:14px;color:#4B6358">This deletes your profile, every payment method, your link name and your analytics, and cancels your subscription. It cannot be undone, and your link name may be claimed by someone else.</p><sc-if value="{{notDeleteOpen}}" hint-placeholder-val="{{true}}"><div><button class="btn" onClick="{{openDelete}}" style="min-height:48px;padding:0 24px;border:none;border-radius:999px;background:#B42318;color:#FFFFFF;font:inherit;font-weight:700">Delete my account</button></div></sc-if><sc-if value="{{deleteOpen}}" hint-placeholder-val="{{false}}"><div role="alertdialog" aria-label="Confirm account deletion" style="padding:18px;border-radius:14px;background:#FDECEA;display:flex;flex-direction:column;gap:14px"><p style="margin:0;color:#7A1A12;font-size:14px"><strong>Are you sure?</strong> Type <strong>DELETE</strong> to confirm.</p><div style="max-width:320px"><div style="display:flex;flex-direction:column;gap:6px;flex:1 1 240px;min-width:0">
+<label for="s-del" style="font-weight:600;font-size:14px">Confirmation</label>
+<input id="s-del" class="inp" type="text" autocomplete="off" spellcheck="false" value="{{v.delText}}" onInput="{{on.delText}}" placeholder="DELETE" style="border-color:{{bd.delText}}">
+<sc-if value="{{e.delText}}" hint-placeholder-val="{{false}}"><p role="alert" style="margin:0;color:#B42318;font-size:13px">{{e.delText}}</p></sc-if>
+</div></div><div style="display:flex;flex-wrap:wrap;gap:10px"><button class="btn" onClick="{{cancelDelete}}" style="min-height:48px;padding:0 22px;border:1.5px solid #C9D6CE;border-radius:999px;background:#FFFFFF;color:#0B1F18;font:inherit;font-weight:600">Keep my account</button><button class="btn" onClick="{{confirmDelete}}" style="min-height:48px;padding:0 24px;border:none;border-radius:999px;background:#B42318;color:#FFFFFF;font:inherit;font-weight:700">Permanently delete</button></div></div></sc-if>
+</section>
+</div>
+</sc-if>
+</main>
+</div>
+
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2200}}'>
+class Component extends DCLogic {
+  // Typing goes into plain fields (this._v). State changes only on button presses and blur.
+  state = { errs: {}, n: {}, emailOpen: false, google: true, plan: 'yearly', cancelling: false, confirmCancel: false, deleteOpen: false, deleted: false, handleChanged: false, savedName: 'Hartwell Studio' };
+  _v = { displayName: 'Hartwell Studio', handle: 'hartwell', bio: 'Brand strategy and advisory sessions.', newEmail: '', curPw: '', newPw: '', delText: '' };
+
+  validEmail(t) { return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(String(t).trim()); }
+  note(key, text) { const n = Object.assign({}, this.state.n); n[key] = text; this.setState({ n }); }
+
+  renderVals() {
+    const s = this.state, v = this._v, e = s.errs;
+    const keys = ['displayName','handle','bio','newEmail','curPw','newPw','delText'];
+    const on = {}, vals = {}, bd = {}, err = {};
+    keys.forEach((k) => {
+      on[k] = (ev) => { this._v[k] = String(ev.target.value); if (k === 'handle') { this._v.handle = this._v.handle.toLowerCase().replace(/[^a-z0-9_.-]/g, ''); } };
+      vals[k] = v[k]; bd[k] = e[k] ? '#B42318' : '#C9D6CE'; err[k] = e[k] || '';
+    });
+    const yearly = s.plan === 'yearly';
+    const price = yearly ? '$24.99 per year' : '$2.99 per month';
+    const endDate = yearly ? 'October 5, 2027' : 'November 5, 2026';
+    const reserved = ['about','account','admin','api','app','billing','blog','contact','dashboard','help','home','login','logout','new','pricing','privacy','register','settings','signin','signup','support','terms','www'];
+    return {
+      v: vals, on, bd, e: err, n: s.n,
+      initial: (s.savedName.trim().charAt(0) || 'P').toUpperCase(),
+      handleWarn: s.handleChanged,
+      saveProfile: () => {
+        const errs = {};
+        if (v.displayName.trim().length < 2 || v.displayName.trim().length > 60) errs.displayName = 'Use 2 to 60 characters.';
+        if (!/^[a-z0-9][a-z0-9_.-]{2,29}$/.test(v.handle)) errs.handle = 'Use 3 to 30 characters: lowercase letters, numbers, dots, hyphens or underscores.';
+        else if (reserved.indexOf(v.handle) >= 0) errs.handle = 'That name is reserved.';
+        else if (['demo','paytree'].indexOf(v.handle) >= 0) errs.handle = 'That name is already taken.';
+        if (v.bio.length > 140) errs.bio = 'Keep it under 140 characters.';
+        if (Object.keys(errs).length) { this.setState({ errs, n: {} }); return; }
+        this.setState({ errs: {}, savedName: v.displayName, handleChanged: v.handle !== 'hartwell', n: { profile: 'Profile saved. Your page is paytree.me/' + v.handle + '.' } });
+      },
+      currentEmail: 'owner@hartwell-demo.example',
+      emailOpen: s.emailOpen,
+      toggleEmail: () => this.setState({ emailOpen: !this.state.emailOpen, errs: {}, n: {} }),
+      sendEmailChange: () => {
+        if (!this.validEmail(v.newEmail)) { this.setState({ errs: { newEmail: 'Enter a valid email address.' } }); return; }
+        this.setState({ errs: {}, n: { email: 'We sent a confirmation link to ' + v.newEmail.trim() + '. Your email changes after you click it.' } });
+      },
+      savePassword: () => {
+        const errs = {};
+        if (!v.curPw) errs.curPw = 'Enter your current password.';
+        if (!/^(?=.*[A-Za-z])(?=.*\d).{8,}$/.test(v.newPw)) errs.newPw = 'Use at least 8 characters, with a letter and a number.';
+        if (Object.keys(errs).length) { this.setState({ errs }); return; }
+        this._v.curPw = ''; this._v.newPw = '';
+        this.setState({ errs: {}, n: { password: 'Password updated. Other devices will be signed out.' } });
+      },
+      googleText: s.google ? 'Connected. You can log in with Google.' : 'Not connected.',
+      googleBtn: s.google ? 'Disconnect' : 'Connect Google',
+      toggleGoogle: () => this.setState({ google: !this.state.google, n: { google: this.state.google ? 'Google disconnected. Log in with your email and password.' : 'Google connected.' } }),
+      planName: yearly ? 'Annual membership' : 'Monthly membership', planPrice: price,
+      planStatus: s.cancelling ? 'Ends on ' + endDate + '. You keep full access until then.' : 'Renews automatically on ' + endDate + '.',
+      planChip: s.cancelling ? 'Cancelling' : 'Active', planChipBg: s.cancelling ? '#FFF6E5' : '#E3F0EA', planChipFg: s.cancelling ? '#7A4B00' : '#064E3B',
+      canSwitch: !s.cancelling, canCancel: !s.cancelling, canResume: s.cancelling,
+      switchText: yearly ? 'Switch to monthly ($2.99)' : 'Switch to annual ($24.99, save 30%)',
+      switchPlan: () => this.setState({ plan: yearly ? 'monthly' : 'yearly', n: { plan: 'Plan changed. The new price starts at your next renewal.' } }),
+      endDate, confirmCancel: s.confirmCancel,
+      askCancel: () => this.setState({ confirmCancel: true, n: {} }),
+      keepPlan: () => this.setState({ confirmCancel: false }),
+      doCancel: () => this.setState({ cancelling: true, confirmCancel: false, n: { plan: 'Your subscription will end on ' + endDate + '.' } }),
+      resume: () => this.setState({ cancelling: false, n: { plan: 'Welcome back. Your subscription will renew as normal.' } }),
+      exportData: () => this.setState({ n: { export: 'Demo: in the live app this downloads a JSON file with your profile, payment methods and analytics.' } }),
+      deleteOpen: s.deleteOpen, deleted: s.deleted, notDeleteOpen: !s.deleteOpen, notDeleted: !s.deleted,
+      openDelete: () => { this._v.delText = ''; this.setState({ deleteOpen: true, errs: {} }); },
+      cancelDelete: () => { this._v.delText = ''; this.setState({ deleteOpen: false, errs: {} }); },
+      confirmDelete: () => {
+        if (String(this._v.delText).trim() !== 'DELETE') { this.setState({ errs: { delText: 'Type DELETE in capital letters to confirm.' } }); return; }
+        this.setState({ deleted: true, errs: {} });
+      },
+      navItems: [
+        ['Overview','M4 4h7v7H4z M13 4h7v7h-7z M4 13h7v7H4z M13 13h7v7h-7z','Dashboard.dc.html',false],
+        ['Payment methods','M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M3 10h18 M7 15h4','PaymentMethods.dc.html',false],
+        ['Analytics','M3 20h18 M6 20v-7 M12 20V5 M18 20v-10','Dashboard.dc.html#analytics',false],
+        ['Settings','M4 7h10 M18 7h2 M4 17h2 M10 17h10 M14 5v4 M6 15v4','AccountSettings.dc.html',true]
+      ].map((x) => ({ label: x[0], icon: x[1], href: x[2], bg: x[3] ? 'rgba(251,251,251,.14)' : 'transparent', fg: x[3] ? '#FBFBFB' : 'rgba(251,251,251,.78)' }))
+    };
+  }
+}
+</script>
+</x-dc>
+</body>
+</html>
