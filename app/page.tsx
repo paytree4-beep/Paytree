@@ -35,13 +35,6 @@ const STEPS: { n: string; title: string; body: string }[] = [
   { n: "3", title: "Share", body: "Send your link or show your QR code." },
 ];
 
-const SAMPLE_METHODS: { name: string; detail: string; action: string }[] = [
-  { name: "Cash App", detail: "$hartwell", action: "Open" },
-  { name: "Venmo", detail: "@hartwell-studio", action: "Open" },
-  { name: "Zelle", detail: "Email", action: "Copy" },
-  { name: "Apple Cash", detail: "Phone number", action: "Copy" },
-];
-
 const headingClass =
   "font-serif text-[clamp(36px,4.4vw,56px)] font-normal leading-[1.08] tracking-[-0.02em] text-[#064E3B] [text-wrap:balance]";
 
@@ -79,7 +72,7 @@ export default function HomePage() {
         </div>
 
         <div className="mx-auto flex max-w-[1200px] flex-wrap items-center gap-14 px-6 pb-[104px] pt-16">
-          <div className="flex min-w-0 flex-[1_1_460px] flex-col items-start gap-7">
+          <div className="flex min-w-0 max-w-[720px] flex-col items-start gap-7">
             <h1 className="font-serif text-[clamp(46px,6.2vw,84px)] font-normal leading-[1.04] tracking-[-0.02em] [text-wrap:balance]">
               Get paid your way. <span className="text-[#D9B873]">One link. One QR code.</span>
             </h1>
@@ -99,67 +92,6 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Sample page */}
-          <div className="mx-auto min-w-0 max-w-[420px] flex-[1_1_340px]">
-            <div
-              role="img"
-              aria-label="Sample PayTree page for Hartwell Studio showing Cash App, Venmo, Zelle, Apple Cash and a scan-to-pay QR code"
-              className="flex flex-col gap-[18px] rounded-[36px] bg-[#FBFBFB] p-[26px] text-[#0B1F18] shadow-[0_40px_80px_-30px_rgba(0,0,0,0.55)]"
-            >
-              <span className="self-start rounded-full bg-[#E3F0EA] px-3 py-1 text-[13px] font-semibold text-[#064E3B]">
-                Sample page
-              </span>
-              <div className="flex items-center gap-3.5">
-                <span
-                  aria-hidden="true"
-                  className="flex h-14 w-14 items-center justify-center rounded-full bg-[#064E3B] font-serif text-[28px] leading-none text-[#D9B873]"
-                >
-                  H
-                </span>
-                <div className="min-w-0">
-                  <div className="text-lg font-bold">Hartwell Studio</div>
-                  <div className="text-sm text-[#4B6358]">{SITE_HOST}/hartwell</div>
-                </div>
-              </div>
-              <p className="text-sm text-[#4B6358]">Brand strategy and advisory sessions</p>
-              <div className="flex flex-col gap-2.5">
-                {SAMPLE_METHODS.map((m) => (
-                  <div
-                    key={m.name}
-                    className="flex min-h-14 items-center justify-between gap-3 rounded-2xl border-[1.5px] border-[#DCE5DF] bg-white px-[18px] py-3"
-                  >
-                    <span className="min-w-0">
-                      <span className="block font-semibold">{m.name}</span>
-                      <span className="block text-[13px] text-[#4B6358]">{m.detail}</span>
-                    </span>
-                    <span className="rounded-full bg-[#E3F0EA] px-3 py-1 text-[13px] font-semibold text-[#064E3B]">
-                      {m.action}
-                    </span>
-                  </div>
-                ))}
-              </div>
-              <div className="flex items-center gap-3.5 rounded-2xl bg-[#064E3B] px-[18px] py-3.5 text-[#FBFBFB]">
-                <svg
-                  width="44"
-                  height="44"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="#D9B873"
-                  strokeWidth="1.8"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden="true"
-                  className="flex-none"
-                >
-                  <path d="M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h3v3h-3z M20 14v.01 M14 20h.01 M17.5 20.5H21v-3 M6 6h1 M17 6h1 M6 17h1" />
-                </svg>
-                <span className="min-w-0">
-                  <span className="block font-semibold">Scan to pay</span>
-                  <span className="block text-[13px] text-[#FBFBFB]/75">Print it. Clients scan and pay.</span>
-                </span>
-              </div>
-            </div>
-          </div>
         </div>
       </header>
 
