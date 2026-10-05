@@ -14,9 +14,12 @@ import { Logo } from "@/components/brand/logo";
 import { AvatarUploader } from "@/components/dashboard/avatar-uploader";
 import { param, type SearchParams } from "@/lib/auth";
 import { avatarUrl } from "@/lib/avatar";
-import { SITE_HOST } from "@/lib/site";
+import { PRICING, SITE_HOST } from "@/lib/site";
 import { createClient } from "@/lib/supabase/server";
 import { deleteAccount, setPublished, updateProfile } from "./actions";
+import { openBillingPortal, startCheckout } from "./billing-actions";
+import { grantsAccess, type SubscriptionRow } from "@/lib/billing";
+import { billingConfigured } from "@/lib/stripe";
 
 export const metadata: Metadata = { title: "Dashboard", robots: { index: false } };
 export const dynamic = "force-dynamic";
@@ -27,6 +30,8 @@ const NOTICES: Record<string, string> = {
   published: "Your page is public again.",
   hidden: "Your page is hidden. Visitors will see a not-found page.",
   password: "Your new password is saved.",
+  subscribed: "Thank you! Your membership is active and your page is live. It can take a few seconds to update.",
+  "checkout-cancelled": "Checkout was cancelled. You have not been charged.",
 };
 
 const ERRORS: Record<string, string> = {
@@ -34,6 +39,9 @@ const ERRORS: Record<string, string> = {
   save: "We could not save that. Please try again.",
   confirm: "The link name you typed does not match. Your account was not deleted.",
   delete: "We could not delete your account. Please try again, or contact us.",
+  "delete-billing": "We could not cancel your subscription, so your account was not deleted. Please try again.",
+  billing: "We could not open checkout. Please try again in a moment.",
+  portal: "We could not open billing settings. Please try again in a moment.",
 };
 
 type ProfileRow = {
@@ -64,6 +72,22 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
     .select("id", { count: "exact", head: true })
     .eq("profile_id", user.id);
   const methodCount = typeof count === "number" ? count : 0;
+
+  const { data: subData } = await supabase
+    .from("subscriptions")
+    .select("provider, provider_customer_id, provider_subscription_id, plan, status, current_period_end, cancel_at_period_end")
+    .eq("user_id", user.id)
+    .maybeSingle();
+  const subscription = subData as SubscriptionRow | null;
+  const billingOn = billingConfigured();
+  const isMember = !billingOn || grantsAccess(subscription);
+  const periodEnd = subscription?.current_period_end
+    ? new Date(subscription.current_period_end).toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      })
+    : null;
 
   const params = await searchParams;
   const notice = param(params, "notice");
@@ -97,6 +121,68 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
         {notice && NOTICES[notice] ? <Notice tone="success">{NOTICES[notice]}</Notice> : null}
         {error && ERRORS[error] ? <Notice tone="error">{ERRORS[error]}</Notice> : null}
 
+        {billingOn ? (
+          <section
+            id="billing"
+            className={`scroll-mt-4 rounded-2xl border p-5 sm:p-6 ${
+              isMember ? "border-[#DCE5DF] bg-white" : "border-[#D9B873] bg-[#FBF6EA]"
+            }`}
+          >
+            <h2 className="text-sm font-bold uppercase tracking-[0.1em] text-[#4B6358]">Membership</h2>
+            {isMember && subscription ? (
+              <>
+                <p className="mt-2 text-[15px] text-[#0B1F18]">
+                  {subscription.provider === "comp"
+                    ? "Your membership is active."
+                    : subscription.status === "past_due"
+                      ? `Your last payment did not go through. Update your card to keep your page live${periodEnd ? ` after ${periodEnd}` : ""}.`
+                      : subscription.cancel_at_period_end || subscription.status === "canceled"
+                        ? `Your membership is cancelled and ends on ${periodEnd ?? "the end of this period"}. Your page stays live until then.`
+                        : `${subscription.plan === "annual" ? "Annual" : "Monthly"} membership, active${periodEnd ? `. Renews on ${periodEnd}` : ""}.`}
+                </p>
+                {subscription.provider === "stripe" ? (
+                  <form action={openBillingPortal} className="mt-4 sm:max-w-[260px]">
+                    <SubmitButton variant="outline" pendingText="Opening…">
+                      Manage billing
+                    </SubmitButton>
+                  </form>
+                ) : null}
+              </>
+            ) : (
+              <>
+                <p className="mt-2 text-[15px] text-[#0B1F18]">
+                  <strong>Your page is not live yet.</strong> Choose a membership to publish it. Cancel
+                  any time.
+                </p>
+                <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                  <form action={startCheckout}>
+                    <input type="hidden" name="plan" value="annual" />
+                    <SubmitButton pendingText="Opening checkout…">
+                      {`Yearly · ${PRICING.annual.price}`}
+                    </SubmitButton>
+                  </form>
+                  <form action={startCheckout}>
+                    <input type="hidden" name="plan" value="monthly" />
+                    <SubmitButton variant="outline" pendingText="Opening checkout…">
+                      {`Monthly · ${PRICING.monthly.price}`}
+                    </SubmitButton>
+                  </form>
+                </div>
+                <p className="mt-3 text-[13px] text-[#4B6358]">
+                  {`Yearly works out to ${PRICING.annual.perMonth} a month (${PRICING.annual.badge}). Secure checkout by Stripe.`}
+                </p>
+                {subscription?.provider === "stripe" && subscription.provider_customer_id ? (
+                  <form action={openBillingPortal} className="mt-3">
+                    <button type="submit" className="inline-flex min-h-11 items-center text-sm font-semibold text-[#064E3B] underline underline-offset-2">
+                      View past invoices
+                    </button>
+                  </form>
+                ) : null}
+              </>
+            )}
+          </section>
+        ) : null}
+
         <section className="rounded-2xl border border-[#DCE5DF] bg-white p-5 sm:p-6">
           <h2 className="text-sm font-bold uppercase tracking-[0.1em] text-[#4B6358]">Your link</h2>
           <p className="mt-2 break-all font-serif text-[28px] leading-tight text-[#064E3B]">
@@ -111,10 +197,10 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
             </Link>
             <span
               className={`inline-flex min-h-8 items-center rounded-full px-3 text-[13px] font-semibold ${
-                profile.is_published ? "bg-[#E3F0EA] text-[#064E3B]" : "bg-[#FEF3F2] text-[#7A271A]"
+                isMember && profile.is_published ? "bg-[#E3F0EA] text-[#064E3B]" : "bg-[#FEF3F2] text-[#7A271A]"
               }`}
             >
-              {profile.is_published ? "Public" : "Hidden"}
+              {!isMember ? "Not live" : profile.is_published ? "Public" : "Hidden"}
             </span>
           </div>
         </section>

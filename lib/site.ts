@@ -60,6 +60,7 @@ export const PRICING = {
     price: money(PRICES.annual),
     period: "per year",
     note: `Equivalent to ${money(PRICES.annual / 12)} per month.`,
+    perMonth: money(PRICES.annual / 12),
     cta: "Start annual",
     badge: `Save ${Math.round((1 - PRICES.annual / (PRICES.monthly * 12)) * 100)}%`,
   },

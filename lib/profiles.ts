@@ -787,6 +787,10 @@ export async function getProfileByUsername(rawUsername: string): Promise<Profile
     avatar_path: string | null;
   };
 
+  // Only members with an active subscription have a public page.
+  const { pageIsPaid } = await import("./billing");
+  if (!(await pageIsPaid(profile.id))) return null;
+
   const { data: rows } = await supabase
     .from("payment_methods")
     .select("method_id, public_config")

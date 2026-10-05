@@ -8,6 +8,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { normalizeUsername } from "@/lib/profiles";
+import { cancelSubscription } from "@/lib/stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
@@ -115,6 +116,21 @@ export async function deleteAccount(formData: FormData): Promise<void> {
 
   const admin = createAdminClient();
   if (!admin) redirect("/dashboard?error=delete#delete");
+
+  // Stop billing first, so a deleted account is never charged again.
+  const { data: sub } = await supabase
+    .from("subscriptions")
+    .select("provider, provider_subscription_id, status")
+    .eq("user_id", user.id)
+    .maybeSingle();
+  const row = sub as { provider: string; provider_subscription_id: string | null; status: string } | null;
+  if (row?.provider === "stripe" && row.provider_subscription_id && row.status !== "canceled") {
+    try {
+      await cancelSubscription(row.provider_subscription_id);
+    } catch {
+      redirect("/dashboard?error=delete-billing#delete");
+    }
+  }
 
   const { error } = await admin.auth.admin.deleteUser(user.id);
   if (error) redirect("/dashboard?error=delete#delete");
