@@ -12,9 +12,11 @@ import { Field, Notice, TextArea } from "@/components/auth/fields";
 import { SubmitButton } from "@/components/auth/submit-button";
 import { Logo } from "@/components/brand/logo";
 import { AvatarUploader } from "@/components/dashboard/avatar-uploader";
+import { ShareLink } from "@/components/dashboard/share-link";
+import { QrCard } from "@/app/[username]/qr-card";
 import { param, type SearchParams } from "@/lib/auth";
 import { avatarUrl } from "@/lib/avatar";
-import { PRICING, SITE_HOST } from "@/lib/site";
+import { PRICING, SITE_HOST, SITE_URL } from "@/lib/site";
 import { createClient } from "@/lib/supabase/server";
 import { deleteAccount, setPublished, updateProfile } from "./actions";
 import { openBillingPortal, startCheckout } from "./billing-actions";
@@ -203,6 +205,10 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
               {!isMember ? "Not live" : profile.is_published ? "Public" : "Hidden"}
             </span>
           </div>
+          <div className="mt-4">
+            <ShareLink url={`${SITE_URL}/${profile.username}`} name={profile.display_name} />
+          </div>
+          <QrCard url={`${SITE_URL}/${profile.username}`} label={`${SITE_HOST}/${profile.username}`} />
         </section>
 
         <section className="rounded-2xl border border-[#DCE5DF] bg-white p-5 sm:p-6">
