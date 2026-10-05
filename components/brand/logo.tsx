@@ -31,11 +31,11 @@ export function Logo({ size = 36, className = "" }: { size?: number; className?:
     <Link
       href="/"
       className={`inline-flex min-h-11 items-center gap-2.5 font-bold text-[#FBFBFB] ${className}`}
-      aria-label="PayTree.me home"
+      aria-label="PayTree home"
     >
       <LogoMark size={size} />
       <span className="text-[21px]">
-        PayTree<span className="text-[#D9B873]">.me</span>
+        PayTree
       </span>
     </Link>
   );

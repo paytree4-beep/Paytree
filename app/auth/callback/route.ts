@@ -17,9 +17,11 @@ export async function GET(request: NextRequest) {
   const tokenHash = searchParams.get("token_hash");
   const type = searchParams.get("type") as EmailOtpType | null;
   const isReset = next === "/reset-password";
+  const isGoogle = searchParams.get("source") === "google";
 
   // Supabase reports expired or already-used links with an error parameter.
   if (searchParams.get("error") || searchParams.get("error_code")) {
+    if (isGoogle) return NextResponse.redirect(`${origin}/login?error=google`);
     return NextResponse.redirect(`${origin}${isReset ? "/forgot?error=link" : "/login?error=link"}`);
   }
 
@@ -28,6 +30,7 @@ export async function GET(request: NextRequest) {
   if (code) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) return NextResponse.redirect(`${origin}${next}`);
+    if (isGoogle) return NextResponse.redirect(`${origin}/login?error=google`);
     // The link was opened in a different browser from the one used to sign up.
     // Supabase has already confirmed the email, so the person only needs to
     // log in here.

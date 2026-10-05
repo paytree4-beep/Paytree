@@ -20,7 +20,7 @@ export const metadata: Metadata = { title: "Dashboard", robots: { index: false }
 export const dynamic = "force-dynamic";
 
 const NOTICES: Record<string, string> = {
-  welcome: "Your page is ready. Share your link, and add payment methods next.",
+  welcome: "Your page is ready. Add your payment methods next.",
   saved: "Your changes are saved.",
   published: "Your page is public again.",
   hidden: "Your page is hidden. Visitors will see a not-found page.",
@@ -53,6 +53,12 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
     .maybeSingle();
   if (!data) redirect("/onboarding");
   const profile = data as ProfileRow;
+
+  const { count } = await supabase
+    .from("payment_methods")
+    .select("id", { count: "exact", head: true })
+    .eq("profile_id", user.id);
+  const methodCount = typeof count === "number" ? count : 0;
 
   const params = await searchParams;
   const notice = param(params, "notice");
@@ -113,9 +119,16 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
             Payment methods
           </h2>
           <p className="mt-2 text-[15px] text-[#4B6358]">
-            Adding Cash App, Venmo, Zelle, PayPal and the rest arrives in the next update. Until
-            then your page shows your name and details only.
+            {methodCount === 0
+              ? "You have not added any payment methods yet. Add Cash App, Venmo, Zelle, PayPal and more."
+              : `${methodCount} payment ${methodCount === 1 ? "method is" : "methods are"} on your page.`}
           </p>
+          <Link
+            href="/dashboard/payments"
+            className="mt-4 inline-flex min-h-11 items-center rounded-full bg-[#064E3B] px-6 font-bold text-[#FBFBFB]"
+          >
+            {methodCount === 0 ? "Add payment methods" : "Manage payment methods"}
+          </Link>
         </section>
 
         <section className="rounded-2xl border border-[#DCE5DF] bg-white p-5 sm:p-6">

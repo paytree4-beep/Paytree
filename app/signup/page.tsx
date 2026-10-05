@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 
 import { signUp } from "@/app/auth-actions";
 import { Field, Notice } from "@/components/auth/fields";
+import { GoogleSignIn } from "@/components/auth/google-button";
 import { AuthShell } from "@/components/auth/shell";
 import { SubmitButton } from "@/components/auth/submit-button";
 import { AuthTabs } from "@/components/auth/tabs";
@@ -37,6 +38,7 @@ export default async function SignUpPage({ searchParams }: { searchParams: Searc
   return (
     <AuthShell title="Create your page" subtitle="Start accepting payments from one refined link.">
       <AuthTabs active="signup" />
+      <GoogleSignIn />
       <form action={signUp} className="flex flex-col gap-5" noValidate>
         {error && ERRORS[error] ? <Notice tone="error">{ERRORS[error]}</Notice> : null}
         <Field

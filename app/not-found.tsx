@@ -35,7 +35,7 @@ export default function NotFound() {
           href="/"
           className="mt-2 inline-flex min-h-[52px] items-center justify-center rounded-full bg-[#064E3B] px-8 font-bold text-[#FBFBFB] transition-transform duration-150 hover:-translate-y-px motion-reduce:transition-none motion-reduce:hover:transform-none"
         >
-          Back to PayTree.me
+          Back to PayTree
         </Link>
       </main>
     </div>

@@ -32,6 +32,13 @@ export const SIGNUPS_OPEN =
   signupsFlag === "true" ||
   (signupsFlag !== "false" && Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL));
 
+/**
+ * "Continue with Google" appears only once Google is set up in Supabase
+ * (Authentication > Sign In / Providers > Google). Then set
+ * NEXT_PUBLIC_GOOGLE_SIGNIN to "true" in Vercel and redeploy.
+ */
+export const GOOGLE_SIGNIN = process.env.NEXT_PUBLIC_GOOGLE_SIGNIN === "true";
+
 /** Membership prices in US dollars. */
 export const PRICES = {
   monthly: 2.99,

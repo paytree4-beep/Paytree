@@ -118,6 +118,17 @@ export async function updatePassword(formData: FormData): Promise<void> {
   redirect("/dashboard?notice=password");
 }
 
+export async function continueWithGoogle(): Promise<void> {
+  const origin = await requestOrigin();
+  const supabase = await createClient();
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: { redirectTo: `${origin}/auth/callback?next=/dashboard&source=google` },
+  });
+  if (error || !data.url) redirect("/login?error=google");
+  redirect(data.url);
+}
+
 export async function logOut(): Promise<void> {
   const supabase = await createClient();
   await supabase.auth.signOut();

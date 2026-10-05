@@ -13,7 +13,7 @@ type PlanKey = "monthly" | "annual";
 
 const PLAN_FEATURES = [
   "14 payment methods on one page",
-  "Your personal PayTree.me address",
+  "Your personal PayTree address",
   "Reorder, hide and edit methods any time",
   "A QR code you can share or print",
   "Privacy-first visitor insights",

@@ -5,8 +5,8 @@ import { LegalLayout } from "@/components/legal-layout";
 import { PRIVACY } from "@/content/legal";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy · PayTree.me",
-  description: "What PayTree.me collects, why, and the choices you have.",
+  title: "Privacy Policy · PayTree",
+  description: "What PayTree collects, why, and the choices you have.",
 };
 
 export default function PrivacyPage() {

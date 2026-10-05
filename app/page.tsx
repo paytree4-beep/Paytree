@@ -9,12 +9,12 @@ import Link from "next/link";
 import { Logo } from "@/components/brand/logo";
 import { Cta } from "@/components/marketing/cta";
 import { Pricing } from "@/components/marketing/pricing";
-import { PRICING, SIGNUPS_OPEN } from "@/lib/site";
+import { PRICING, SIGNUPS_OPEN, SITE_HOST } from "@/lib/site";
 
 const FEATURES: { title: string; body: string; icon: string }[] = [
   {
     title: "One link, every method",
-    body: "Bring Cash App, Venmo, Zelle, cards, bank transfer and more together behind a single PayTree.me address.",
+    body: "Bring Cash App, Venmo, Zelle, cards, bank transfer and more together behind a single PayTree address.",
     icon: "M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1 M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1",
   },
   {
@@ -48,7 +48,7 @@ const STEPS: { n: string; title: string; body: string }[] = [
   {
     n: "1",
     title: "Create your account",
-    body: "Sign up and reserve your personal PayTree.me address.",
+    body: "Sign up and reserve your personal PayTree address.",
   },
   {
     n: "2",
@@ -114,7 +114,7 @@ export default function HomePage() {
               Every payment link. <span className="text-[#D9B873]">One refined page.</span>
             </h1>
             <p className="max-w-[520px] text-lg leading-[1.75] text-[#FBFBFB]/85">
-              PayTree.me brings every way you get paid together on a single, elegant page. Share one
+              PayTree brings every way you get paid together on a single, elegant page. Share one
               link and let your clients choose how to pay you.
             </p>
             <div className="flex flex-wrap gap-3.5">
@@ -150,7 +150,7 @@ export default function HomePage() {
                 </span>
                 <div className="min-w-0">
                   <div className="text-lg font-bold">Hartwell Studio</div>
-                  <div className="text-sm text-[#4B6358]">paytree.me/hartwell</div>
+                  <div className="text-sm text-[#4B6358]">{SITE_HOST}/hartwell</div>
                 </div>
               </div>
               <p className="text-sm text-[#4B6358]">Brand strategy and advisory sessions</p>
@@ -248,7 +248,7 @@ export default function HomePage() {
             </div>
             <Pricing />
             <p className="max-w-[560px] text-center text-sm text-[#4B6358]">
-              Prices are in US dollars, plus any applicable taxes. Your membership pays for PayTree.me
+              Prices are in US dollars, plus any applicable taxes. Your membership pays for PayTree
               only. PayTree never receives or moves the money your clients send you.
             </p>
           </div>
@@ -259,7 +259,7 @@ export default function HomePage() {
           <div className="mx-auto flex max-w-[1100px] flex-wrap items-center justify-between gap-10 px-6">
             <div className="flex min-w-0 max-w-[560px] flex-col gap-5">
               <h2 className="font-serif text-[clamp(38px,4.8vw,62px)] font-normal leading-[1.06] tracking-[-0.02em] [text-wrap:balance]">
-                Reserve your PayTree.me page
+                Reserve your PayTree page
               </h2>
               <p className="text-lg text-[#FBFBFB]/85">
                 Choose your link name and create your account. Your page will be ready to share.
@@ -277,7 +277,7 @@ export default function HomePage() {
 
       <footer className="bg-[#032F24] text-[#FBFBFB]/75">
         <div className="mx-auto flex max-w-[1200px] flex-wrap items-center justify-between gap-4 px-6 py-9 text-sm">
-          <span>&copy; {new Date().getFullYear()} PayTree.me. All rights reserved.</span>
+          <span>&copy; {new Date().getFullYear()} PayTree. All rights reserved.</span>
           <nav aria-label="Legal" className="flex flex-wrap gap-6">
             <Link href="/terms" className="inline-flex min-h-11 items-center hover:text-[#FBFBFB]">
               Terms

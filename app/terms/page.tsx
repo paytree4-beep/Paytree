@@ -5,8 +5,8 @@ import { LegalLayout } from "@/components/legal-layout";
 import { TERMS } from "@/content/legal";
 
 export const metadata: Metadata = {
-  title: "Terms of Service · PayTree.me",
-  description: "The rules for using PayTree.me.",
+  title: "Terms of Service · PayTree",
+  description: "The rules for using PayTree.",
 };
 
 export default function TermsPage() {

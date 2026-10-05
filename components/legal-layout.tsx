@@ -39,7 +39,7 @@ export function LegalLayout({ doc, active }: { doc: LegalDocument; active: Activ
               <path d="M16 22 V28" />
             </svg>
             <span className="text-xl">
-              PayTree<span className="text-[#D9B873]">.me</span>
+              PayTree
             </span>
           </Link>
 
@@ -126,9 +126,9 @@ export function LegalLayout({ doc, active }: { doc: LegalDocument; active: Activ
 
       <footer className="bg-[#032F24] px-5 py-8 text-sm text-[#FBFBFB]/75">
         <div className="mx-auto flex max-w-[1100px] flex-wrap items-center justify-between gap-4">
-          <span>© 2026 PayTree.me. All rights reserved.</span>
+          <span>© 2026 PayTree. All rights reserved.</span>
           <Link href="/" className="hover:underline">
-            Back to PayTree.me
+            Back to PayTree
           </Link>
         </div>
       </footer>

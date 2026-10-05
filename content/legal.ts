@@ -1,6 +1,6 @@
 // content/legal.ts
 //
-// Terms of Service and Privacy Policy for PayTree.me (United States).
+// Terms of Service and Privacy Policy for PayTree (United States).
 //
 // THIS IS A TEMPLATE, NOT LEGAL ADVICE. Every [BRACKETED] item must be
 // replaced, and a licensed attorney should review both documents before
@@ -8,7 +8,7 @@
 // them is wrong for your product, change the document, not the product claim.
 //
 // README-LEGAL: facts these documents assume
-//  - PayTree.me never receives, holds or moves customer money.
+//  - PayTree never receives, holds or moves customer money.
 //  - Billing is handled by a third-party processor.
 //  - Visitor analytics store no IP address and set no cookies.
 //  - Visitors who send Global Privacy Control or Do Not Track are not recorded.
@@ -38,14 +38,14 @@ export const LEGAL_TEMPLATE_NOTICE =
 
 export const TERMS: LegalDocument = {
   title: "Terms of Service",
-  summary: "The rules for using PayTree.me.",
+  summary: "The rules for using PayTree.",
   lastUpdated: "[EFFECTIVE DATE]",
   intro:
-    "These Terms of Service (the “Terms”) govern your use of PayTree.me (the “Service”), operated by [COMPANY LEGAL NAME] (“PayTree,” “we,” “us”). By creating an account or using the Service, you agree to these Terms.",
+    "These Terms of Service (the “Terms”) govern your use of PayTree (the “Service”), operated by [COMPANY LEGAL NAME] (“PayTree,” “we,” “us”). By creating an account or using the Service, you agree to these Terms.",
   sections: [
     {
       id: "eligibility",
-      title: "Who can use PayTree.me",
+      title: "Who can use PayTree",
       intro: [
         "You must be at least 18 years old and able to form a binding contract. The Service is intended for use in the United States.",
         "If you use the Service for a business, you confirm that you have authority to bind that business to these Terms.",
@@ -53,18 +53,18 @@ export const TERMS: LegalDocument = {
     },
     {
       id: "service",
-      title: "What PayTree.me does",
+      title: "What PayTree does",
       intro: [
-        "PayTree.me lets you build a public page that lists the ways people can pay you, such as Cash App, Venmo, PayPal, Zelle, Apple Cash, Chime, ACH bank transfer, wire transfer, check by mail, Stripe, Square, Wise, cryptocurrency and links to other payment pages, and share that page with a single link.",
+        "PayTree lets you build a public page that lists the ways people can pay you, such as Cash App, Venmo, PayPal, Zelle, Apple Cash, Chime, ACH bank transfer, wire transfer, check by mail, Stripe, Square, Wise, cryptocurrency and links to other payment pages, and share that page with a single link.",
       ],
     },
     {
       id: "no-payments",
       title: "We do not handle your money",
       intro: [
-        "PayTree.me is not a bank, payment processor or money transmitter. We do not receive, hold, transmit, convert or refund funds. When someone pays you, the payment happens directly between them and the third-party service or network they choose, under that provider’s terms.",
+        "PayTree is not a bank, payment processor or money transmitter. We do not receive, hold, transmit, convert or refund funds. When someone pays you, the payment happens directly between them and the third-party service or network they choose, under that provider’s terms.",
         "We are not a party to any transaction between you and the people who pay you. We are not responsible for disputes, chargebacks, failed payments or payments sent to the wrong place.",
-        "[CONFIRM: this section assumes PayTree.me never touches funds. If that changes, review it with counsel before launch.]",
+        "[CONFIRM: this section assumes PayTree never touches funds. If that changes, review it with counsel before launch.]",
       ],
     },
     {
@@ -93,7 +93,7 @@ export const TERMS: LegalDocument = {
       id: "billing",
       title: "Subscriptions and billing",
       intro: [
-        "PayTree.me is a paid subscription: $2.99 per month or $24.99 per year, plus any applicable taxes. Billing is handled by [BILLING PROVIDER].",
+        "PayTree is a paid subscription: $2.99 per month or $24.99 per year, plus any applicable taxes. Billing is handled by [BILLING PROVIDER].",
         "Your subscription renews automatically at the end of each billing period until you cancel. You can cancel at any time from your account settings. Cancellation takes effect at the end of the current period, and you keep access until then.",
         "We will tell you before a price change takes effect. Refunds: [REFUND POLICY].",
       ],
@@ -118,7 +118,7 @@ export const TERMS: LegalDocument = {
       title: "Payment risks",
       intro: [
         "Payments made with some methods, including Zelle, Apple Cash, ACH, wire transfers, checks and cryptocurrency, can be difficult or impossible to reverse. Verify the recipient before you send money.",
-        "Cryptocurrency must be sent on the network shown on the page. Funds sent on a different network can be lost permanently. Links to other websites are added by the page owner, are not reviewed by PayTree.me, and open sites we do not control.",
+        "Cryptocurrency must be sent on the network shown on the page. Funds sent on a different network can be lost permanently. Links to other websites are added by the page owner, are not reviewed by PayTree, and open sites we do not control.",
       ],
     },
     {
@@ -126,7 +126,7 @@ export const TERMS: LegalDocument = {
       title: "Your content and our property",
       intro: [
         "You keep ownership of what you add to your page. You give us a limited, worldwide license to host, display and process it only to run the Service.",
-        "PayTree.me, its design and its software belong to us and our licensors. These Terms give you no rights to them except to use the Service.",
+        "PayTree, its design and its software belong to us and our licensors. These Terms give you no rights to them except to use the Service.",
       ],
     },
     {
@@ -194,7 +194,7 @@ export const PRIVACY: LegalDocument = {
   summary: "What we collect, why, and the choices you have.",
   lastUpdated: "[EFFECTIVE DATE]",
   intro:
-    "This Privacy Policy explains what [COMPANY LEGAL NAME] (“PayTree,” “we,” “us”) collects when you use PayTree.me, and how we use and protect it. It covers two groups of people: account holders who build pages, and visitors who view those pages.",
+    "This Privacy Policy explains what [COMPANY LEGAL NAME] (“PayTree,” “we,” “us”) collects when you use PayTree, and how we use and protect it. It covers two groups of people: account holders who build pages, and visitors who view those pages.",
   sections: [
     {
       id: "collect-account",
@@ -210,7 +210,7 @@ export const PRIVACY: LegalDocument = {
     {
       id: "collect-visitors",
       title: "Information from visitors",
-      intro: ["When someone views a PayTree.me page, we record:"],
+      intro: ["When someone views a PayTree page, we record:"],
       bullets: [
         "that the page was viewed;",
         "which payment button was tapped, and whether it opened an app or copied details;",
@@ -293,7 +293,7 @@ export const PRIVACY: LegalDocument = {
       id: "children",
       title: "Children",
       intro: [
-        "PayTree.me is not directed to anyone under 18, and we do not knowingly collect personal information from them. If you believe a child has given us information, contact us and we will delete it.",
+        "PayTree is not directed to anyone under 18, and we do not knowingly collect personal information from them. If you believe a child has given us information, contact us and we will delete it.",
       ],
     },
     {

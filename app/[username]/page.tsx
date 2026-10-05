@@ -30,11 +30,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const profile = await getProfileByUsername(username);
 
   if (!profile) {
-    return { title: "Page not found · PayTree.me", robots: { index: false } };
+    return { title: "Page not found · PayTree", robots: { index: false } };
   }
 
   return {
-    title: `${profile.displayName} · PayTree.me`,
+    title: `${profile.displayName} · PayTree`,
     description: `Pay ${profile.displayName} with Cash App, Venmo, PayPal, Zelle, bank transfer, card, Wise or crypto.`,
   };
 }

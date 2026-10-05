@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 
 import { logIn, resendConfirmation } from "@/app/auth-actions";
 import { Field, Notice } from "@/components/auth/fields";
+import { GoogleSignIn } from "@/components/auth/google-button";
 import { AuthShell } from "@/components/auth/shell";
 import { SubmitButton } from "@/components/auth/submit-button";
 import { AuthTabs } from "@/components/auth/tabs";
@@ -18,6 +19,7 @@ const ERRORS: Record<string, string> = {
   invalid: "That email and password do not match. Try again, or reset your password.",
   rate: "Too many attempts. Please wait a few minutes and try again.",
   link: "That link has expired or was already used. Log in, or ask for a new link.",
+  google: "Google sign-in did not finish. Please try again, or use your email.",
 };
 
 const NOTICES: Record<string, string> = {
@@ -42,6 +44,7 @@ export default async function LogInPage({ searchParams }: { searchParams: Search
   return (
     <AuthShell title="Welcome back" subtitle="Log in to manage your payment page.">
       <AuthTabs active="login" />
+      <GoogleSignIn />
 
       {error === "unconfirmed" ? (
         <div className="mb-5 flex flex-col gap-3">

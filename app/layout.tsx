@@ -26,27 +26,27 @@ const serif = Instrument_Serif({
 });
 
 const DESCRIPTION =
-  "One refined page for every way to get paid. Share a single PayTree.me link with Cash App, Venmo, Zelle, cards, bank transfer and more.";
+  "One refined page for every way to get paid. Share a single PayTree link with Cash App, Venmo, Zelle, cards, bank transfer and more.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "PayTree.me · Every payment link. One refined page.",
-    template: "%s · PayTree.me",
+    default: "PayTree · Every payment link. One refined page.",
+    template: "%s · PayTree",
   },
   description: DESCRIPTION,
-  applicationName: "PayTree.me",
+  applicationName: "PayTree",
   openGraph: {
     type: "website",
-    siteName: "PayTree.me",
-    title: "PayTree.me · Every payment link. One refined page.",
+    siteName: "PayTree",
+    title: "PayTree · Every payment link. One refined page.",
     description: DESCRIPTION,
     url: "/",
     locale: "en_US",
   },
   twitter: {
     card: "summary",
-    title: "PayTree.me · Every payment link. One refined page.",
+    title: "PayTree · Every payment link. One refined page.",
     description: DESCRIPTION,
   },
 };
