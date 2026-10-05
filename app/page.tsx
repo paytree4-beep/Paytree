@@ -9,6 +9,7 @@ import Link from "next/link";
 import { ArrowUpRight, Copy, DollarSign, Mail, Smartphone, Wallet } from "lucide-react";
 
 import { Logo } from "@/components/brand/logo";
+import { ExampleAvatar } from "@/components/marketing/example-avatar";
 import { ExampleQr } from "@/components/marketing/example-qr";
 import { Cta } from "@/components/marketing/cta";
 import { Pricing } from "@/components/marketing/pricing";
@@ -40,9 +41,9 @@ const STEPS: { n: string; title: string; body: string }[] = [
 ];
 
 const EXAMPLE = [
-  { id: "cashapp", name: "Cash App", detail: "$hartwell", Icon: DollarSign, copy: false },
-  { id: "venmo", name: "Venmo", detail: "@hartwell-studio", Icon: Wallet, copy: false },
-  { id: "zelle", name: "Zelle", detail: "pay@hartwell.studio", Icon: Mail, copy: true },
+  { id: "cashapp", name: "Cash App", detail: "$cedarcoffee", Icon: DollarSign, copy: false },
+  { id: "venmo", name: "Venmo", detail: "@cedar-coffee-co", Icon: Wallet, copy: false },
+  { id: "zelle", name: "Zelle", detail: "pay@cedarcoffee.co", Icon: Mail, copy: true },
   { id: "applecash", name: "Apple Cash", detail: "(555) 010-0142", Icon: Smartphone, copy: true },
 ] as const;
 
@@ -123,15 +124,16 @@ export default function HomePage() {
             <h2 className={`text-center ${headingClass}`}>What your clients see</h2>
             <div
               role="img"
-              aria-label="Example PayTree page on a phone, with Cash App, Venmo, Zelle, Apple Cash and a QR code"
+              aria-label="Example PayTree page for Cedar Coffee Co. on a phone, with Cash App, Venmo, Zelle, Apple Cash and a QR code"
               className="w-full max-w-[320px] overflow-hidden rounded-[44px] border-[10px] border-[#0B1F18] bg-[#FBFBFB] shadow-[0_40px_80px_-40px_rgba(6,78,59,0.55)]"
             >
               <div className="flex flex-col items-center gap-1 bg-[#064E3B] px-4 pb-4 pt-6 text-center text-[#FBFBFB]">
-                <span className="mb-1 flex h-12 w-12 items-center justify-center rounded-full bg-[#FBFBFB] font-serif text-2xl text-[#064E3B] ring-[3px] ring-[#D9B873]/55">
-                  H
+                <span className="mb-1">
+                  <ExampleAvatar size={56} />
                 </span>
-                <span className="font-serif text-[22px] leading-tight">Hartwell Studio</span>
-                <span className="text-[11px] text-[#FBFBFB]/75">{SITE_HOST}/hartwell</span>
+                <span className="font-serif text-[22px] leading-tight">Cedar Coffee Co.</span>
+                <span className="text-[11px] text-[#FBFBFB]/75">{SITE_HOST}/cedarcoffee</span>
+                <span className="mt-1 text-[12px] text-[#FBFBFB]/90">Specialty coffee and fresh pastries.</span>
               </div>
               <div className="flex flex-col gap-2 p-3.5">
                 {EXAMPLE.map(({ id, name, detail, Icon, copy }) => {
