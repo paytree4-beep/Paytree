@@ -12,11 +12,10 @@ import { PRICING } from "@/lib/site";
 type PlanKey = "monthly" | "annual";
 
 const PLAN_FEATURES = [
-  "14 payment methods on one page",
-  "Your personal PayTree address",
-  "Reorder, hide and edit methods any time",
-  "A QR code you can share or print",
-  "Privacy-first visitor insights",
+  "Every popular payment app",
+  "Your own PayTree link",
+  "Your own QR code",
+  "Edit any time",
 ];
 
 export function Pricing() {
