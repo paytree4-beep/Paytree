@@ -1,6 +1,6 @@
 // lib/supabase/public.ts
 //
-// Signed-out Supabase client for public pages (paytree.me/<username>). It never
+// Signed-out Supabase client for public pages (paytree.to/<username>). It never
 // touches cookies, so it sees exactly what any visitor may see under Row Level
 // Security: published profiles and their visible payment methods.
 

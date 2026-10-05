@@ -1,6 +1,6 @@
 // app/[username]/page.tsx
 //
-// Public payment page: paytree.me/<username>
+// Public payment page: paytree.to/<username>
 // A Server Component. It loads the profile, validates every payment method on
 // the server, and hands only safe, ready-to-render buttons to the client.
 // The icons and interactivity live in ./payment-methods.tsx, because buttons

@@ -7,15 +7,15 @@
 
 /**
  * Public address of the site, with no trailing slash.
- * Order: NEXT_PUBLIC_SITE_URL if set, then the production address Vercel
- * provides automatically (for example paytree-ashy.vercel.app), then a default.
+ * NEXT_PUBLIC_SITE_URL if set, otherwise https://paytree.to in production.
  */
 function resolveSiteUrl(): string {
   const explicit = process.env.NEXT_PUBLIC_SITE_URL;
   if (explicit) return explicit;
-  const vercel = process.env.VERCEL_PROJECT_PRODUCTION_URL;
-  if (vercel) return `https://${vercel}`;
-  return process.env.NODE_ENV === "production" ? "https://paytree.me" : "http://localhost:3000";
+  if (process.env.NODE_ENV !== "production") return "http://localhost:3000";
+  // Production on Vercel always uses the real domain, so links, QR codes and
+  // emails never point at a temporary *.vercel.app address.
+  return "https://paytree.to";
 }
 
 export const SITE_URL = resolveSiteUrl().replace(/\/+$/, "");

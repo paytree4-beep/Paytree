@@ -1,4 +1,4 @@
-// app/page.tsx  ->  paytree.me
+// app/page.tsx  ->  paytree.to
 //
 // Marketing homepage. A faithful port of the approved landing-page design,
 // with the copy kept to what PayTree actually does (it displays payment

@@ -1,4 +1,4 @@
-// app/privacy/page.tsx  ->  paytree.me/privacy
+// app/privacy/page.tsx  ->  paytree.to/privacy
 import type { Metadata } from "next";
 
 import { LegalLayout } from "@/components/legal-layout";

@@ -11,9 +11,9 @@ import { QRCodeSVG } from "qrcode.react";
 import { Download } from "lucide-react";
 
 type QrCardProps = {
-  /** Full public address, for example https://paytree.me/hartwell */
+  /** Full public address, for example https://paytree.to/hartwell */
   url: string;
-  /** Shown under the code, for example paytree.me/hartwell */
+  /** Shown under the code, for example paytree.to/hartwell */
   label: string;
 };
 

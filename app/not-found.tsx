@@ -1,7 +1,7 @@
 // app/not-found.tsx
 //
 // Shown for any address that does not exist, and whenever a page calls
-// notFound(), for example paytree.me/<username> for a name nobody has claimed.
+// notFound(), for example paytree.to/<username> for a name nobody has claimed.
 
 import type { Metadata } from "next";
 import Link from "next/link";
