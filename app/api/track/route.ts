@@ -1,0 +1,70 @@
+// app/api/track/route.ts
+//
+// Receives view / open / copy events from the public page.
+// Same-origin only, tiny payloads only, bots ignored, nothing identifying stored.
+
+import {
+  countryFromHeaders,
+  deviceFromUserAgent,
+  parseTrackPayload,
+  recordEvent,
+  referrerHost,
+} from "@/lib/analytics";
+import { getProfileByUsername } from "@/lib/profiles";
+
+export const runtime = "nodejs";
+
+const MAX_BODY_CHARS = 2048;
+
+function status(code: number): Response {
+  return new Response(null, { status: code });
+}
+
+export async function POST(request: Request): Promise<Response> {
+  const host = request.headers.get("host");
+
+  // Only our own pages may report events.
+  const origin = request.headers.get("origin");
+  if (origin) {
+    let originHost: string;
+    try {
+      originHost = new URL(origin).host;
+    } catch {
+      return status(400);
+    }
+    if (host && originHost !== host) return status(403);
+  }
+
+  const text = await request.text();
+  if (text.length > MAX_BODY_CHARS) return status(413);
+
+  let json: unknown;
+  try {
+    json = JSON.parse(text);
+  } catch {
+    return status(400);
+  }
+
+  const payload = parseTrackPayload(json);
+  if (!payload) return status(400);
+
+  // Crawlers and link-preview bots are not visitors.
+  const device = deviceFromUserAgent(request.headers.get("user-agent"));
+  if (device === "bot") return status(204);
+
+  // Ignore events for pages that do not exist.
+  const profile = await getProfileByUsername(payload.username);
+  if (!profile) return status(404);
+
+  await recordEvent({
+    username: profile.username,
+    action: payload.action,
+    method: payload.method,
+    referrerHost: referrerHost(payload.referrer, host),
+    device,
+    country: countryFromHeaders(request.headers),
+    occurredAt: new Date(),
+  });
+
+  return status(204);
+}
