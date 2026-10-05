@@ -37,7 +37,7 @@ export async function signUp(formData: FormData): Promise<void> {
   });
 
   if (error) {
-    const code = error.code === "over_email_send_rate_limit" || error.status === 429 ? "rate" : "signup";
+    const code = String(error.code) === "over_email_send_rate_limit" || error.status === 429 ? "rate" : "signup";
     redirect(`/signup${qs({ error: code, email })}`);
   }
 
@@ -59,7 +59,7 @@ export async function resendConfirmation(formData: FormData): Promise<void> {
     options: { emailRedirectTo: `${origin}/auth/callback?next=/onboarding` },
   });
 
-  if (error && (error.code === "over_email_send_rate_limit" || error.status === 429)) {
+  if (error && (String(error.code) === "over_email_send_rate_limit" || error.status === 429)) {
     redirect(`/check-email${qs({ email, error: "rate" })}`);
   }
   redirect(`/check-email${qs({ email, sent: "1" })}`);
@@ -77,7 +77,7 @@ export async function logIn(formData: FormData): Promise<void> {
   const { error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) {
-    if (error.code === "email_not_confirmed") {
+    if (String(error.code) === "email_not_confirmed") {
       redirect(`/login${qs({ error: "unconfirmed", email })}`);
     }
     const code = error.status === 429 ? "rate" : "invalid";
@@ -97,7 +97,7 @@ export async function sendPasswordReset(formData: FormData): Promise<void> {
     redirectTo: `${origin}/auth/callback?next=/reset-password`,
   });
 
-  if (error && (error.code === "over_email_send_rate_limit" || error.status === 429)) {
+  if (error && (String(error.code) === "over_email_send_rate_limit" || error.status === 429)) {
     redirect("/forgot?error=rate");
   }
   // Same answer whether or not the account exists.
@@ -112,7 +112,7 @@ export async function updatePassword(formData: FormData): Promise<void> {
   const supabase = await createClient();
   const { error } = await supabase.auth.updateUser({ password: String(password) });
   if (error) {
-    const code = error.code === "same_password" ? "same" : "update";
+    const code = String(error.code) === "same_password" ? "same" : "update";
     redirect(`/reset-password?error=${code}`);
   }
   redirect("/dashboard?notice=password");

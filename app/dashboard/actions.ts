@@ -76,7 +76,7 @@ export async function updateProfile(formData: FormData): Promise<void> {
     .maybeSingle();
 
   if (error || !data) redirect("/dashboard?error=save");
-  revalidatePath(`/${data.username}`);
+  revalidatePath(`/${(data as { username: string }).username}`);
   redirect("/dashboard?notice=saved");
 }
 
@@ -91,6 +91,6 @@ export async function setPublished(formData: FormData): Promise<void> {
     .maybeSingle();
 
   if (error || !data) redirect("/dashboard?error=save");
-  revalidatePath(`/${data.username}`);
+  revalidatePath(`/${(data as { username: string }).username}`);
   redirect(`/dashboard?notice=${publish ? "published" : "hidden"}`);
 }

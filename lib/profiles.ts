@@ -769,12 +769,13 @@ export async function getProfileByUsername(rawUsername: string): Promise<Profile
     return SAMPLE_PROFILES[username] ?? null;
   }
 
-  const { data: profile, error } = await supabase
+  const { data, error } = await supabase
     .from("profiles")
     .select("id, username, display_name, bio")
     .eq("username", username)
     .maybeSingle();
-  if (error || !profile) return null;
+  if (error || !data) return null;
+  const profile = data as { id: string; username: string; display_name: string; bio: string | null };
 
   const { data: rows } = await supabase
     .from("payment_methods")
