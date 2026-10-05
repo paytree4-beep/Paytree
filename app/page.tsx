@@ -227,9 +227,6 @@ export default function HomePage() {
               <h2 className={headingClass}>One simple price</h2>
             </div>
             <Pricing />
-            <p className="max-w-[560px] text-center text-sm text-[#4B6358]">
-              US dollars, plus any taxes. Cancel any time.
-            </p>
           </div>
         </section>
 
