@@ -5,20 +5,32 @@
 // dashboard and (later) billing can never disagree. The legal text in
 // content/legal.ts quotes the same figures and must be updated with them.
 
-/** Public address of the site, with no trailing slash. */
-export const SITE_URL = (
-  process.env.NEXT_PUBLIC_SITE_URL ??
-  (process.env.NODE_ENV === "production" ? "https://paytree.me" : "http://localhost:3000")
-).replace(/\/+$/, "");
+/**
+ * Public address of the site, with no trailing slash.
+ * Order: NEXT_PUBLIC_SITE_URL if set, then the production address Vercel
+ * provides automatically (for example paytree-ashy.vercel.app), then a default.
+ */
+function resolveSiteUrl(): string {
+  const explicit = process.env.NEXT_PUBLIC_SITE_URL;
+  if (explicit) return explicit;
+  const vercel = process.env.VERCEL_PROJECT_PRODUCTION_URL;
+  if (vercel) return `https://${vercel}`;
+  return process.env.NODE_ENV === "production" ? "https://paytree.me" : "http://localhost:3000";
+}
+
+export const SITE_URL = resolveSiteUrl().replace(/\/+$/, "");
 
 export const SITE_HOST = SITE_URL.replace(/^https?:\/\//, "");
 
 /**
- * Sign-up and log-in screens arrive in the next phase. Until then the homepage
- * must not link to pages that do not exist. Set NEXT_PUBLIC_SIGNUPS_OPEN=true
- * once /signup and /login are live.
+ * Sign-up and log-in are open once Supabase is connected (its public URL is
+ * present). Set NEXT_PUBLIC_SIGNUPS_OPEN to "false" to close them again, or to
+ * "true" to force them open.
  */
-export const SIGNUPS_OPEN = process.env.NEXT_PUBLIC_SIGNUPS_OPEN === "true";
+const signupsFlag = process.env.NEXT_PUBLIC_SIGNUPS_OPEN;
+export const SIGNUPS_OPEN =
+  signupsFlag === "true" ||
+  (signupsFlag !== "false" && Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL));
 
 /** Membership prices in US dollars. */
 export const PRICES = {

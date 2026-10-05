@@ -658,7 +658,7 @@ export function resolveMethods(settings: PaymentSettings): ResolvedMethod[] {
 }
 
 /* -------------------------------------------------------------------------- */
-/* Data access (replace with your database)                                   */
+/* Data access                                                                */
 /* -------------------------------------------------------------------------- */
 
 // SAMPLE DATA ONLY. These addresses and numbers are placeholders so the page
@@ -687,18 +687,105 @@ const SAMPLE_PROFILES: Record<string, Profile> = {
   },
 };
 
+type MethodRow = { method_id: string; public_config: unknown };
+
+const TEXT_METHODS = [
+  "cashapp",
+  "venmo",
+  "paypal",
+  "zelle",
+  "stripe",
+  "wise",
+  "square",
+  "applecash",
+  "chime",
+] as const;
+type TextMethod = (typeof TEXT_METHODS)[number];
+
+function text(value: unknown): string | undefined {
+  return typeof value === "string" && value.length > 0 ? value : undefined;
+}
+
 /**
- * Loads a profile by username. Returns null when the username is invalid or
- * unknown, which the page turns into a 404.
+ * Turns payment_methods rows into PaymentSettings. public_config holds:
+ *   text methods: { "value": "..." }        custom: { "label", "url" }
+ *   crypto: { "address" }                    check: { "payableTo", "line1", "line2"?, "city", "state", "zip" }
+ * ACH and wire need the encrypted bank details (payment_method_secrets), which
+ * arrive with the bank-details phase, so they are skipped here.
+ * Everything is validated again by resolveMethods before it reaches a page.
+ */
+export function settingsFromRows(rows: MethodRow[]): PaymentSettings {
+  const settings: PaymentSettings = {};
+  for (const row of rows) {
+    const config =
+      typeof row.public_config === "object" &&
+      row.public_config !== null &&
+      !Array.isArray(row.public_config)
+        ? (row.public_config as Record<string, unknown>)
+        : {};
+    const id = row.method_id;
+
+    const textId = TEXT_METHODS.find((m) => m === id);
+    if (textId) {
+      const value = text(config.value);
+      if (value) settings[textId as TextMethod] = value;
+    } else if (id === "custom") {
+      const label = text(config.label);
+      const url = text(config.url);
+      if (label && url) settings.custom = { label, url };
+    } else if (id === "crypto") {
+      const address = text(config.address);
+      if (address) settings.crypto = { address };
+    } else if (id === "check") {
+      const payableTo = text(config.payableTo);
+      const line1 = text(config.line1);
+      const city = text(config.city);
+      const state = text(config.state);
+      const zip = text(config.zip);
+      if (payableTo && line1 && city && state && zip) {
+        settings.check = { payableTo, line1, line2: text(config.line2), city, state, zip };
+      }
+    }
+  }
+  return settings;
+}
+
+/**
+ * Loads a published profile by username from Supabase, as a signed-out visitor
+ * would see it. Returns null when the username is invalid, unknown or hidden,
+ * which the page turns into a 404.
  *
- * TODO: replace the body with a real query, for example:
- *   const row = await db.profile.findUnique({ where: { username } });
- * Until then, sample data is served only outside production so that
- * placeholder payment details can never go live by accident.
+ * Without Supabase (local development), the sample profile above is served,
+ * and only outside production, so placeholder payment details never go live.
  */
 export async function getProfileByUsername(rawUsername: string): Promise<Profile | null> {
   const username = normalizeUsername(rawUsername);
   if (!username) return null;
-  if (process.env.NODE_ENV === "production") return null;
-  return SAMPLE_PROFILES[username] ?? null;
+
+  const { createPublicClient } = await import("./supabase/public");
+  const supabase = createPublicClient();
+  if (!supabase) {
+    if (process.env.NODE_ENV === "production") return null;
+    return SAMPLE_PROFILES[username] ?? null;
+  }
+
+  const { data: profile, error } = await supabase
+    .from("profiles")
+    .select("id, username, display_name, bio")
+    .eq("username", username)
+    .maybeSingle();
+  if (error || !profile) return null;
+
+  const { data: rows } = await supabase
+    .from("payment_methods")
+    .select("method_id, public_config")
+    .eq("profile_id", profile.id)
+    .order("position", { ascending: true });
+
+  return {
+    username: String(profile.username),
+    displayName: String(profile.display_name),
+    bio: typeof profile.bio === "string" && profile.bio ? profile.bio : undefined,
+    payments: settingsFromRows((rows ?? []) as MethodRow[]),
+  };
 }

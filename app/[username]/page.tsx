@@ -11,11 +11,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { getProfileByUsername, resolveMethods } from "@/lib/profiles";
+import { SITE_HOST, SITE_URL } from "@/lib/site";
 import { PaymentMethods } from "./payment-methods";
 import { QrCard } from "./qr-card";
 
-// Public address of the site, no trailing slash. Set NEXT_PUBLIC_SITE_URL in production.
-const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://paytree.me").replace(/\/+$/, "");
 
 // Always read fresh data, so a change saved in the dashboard shows up on the
 // public page immediately. Swap for tag-based revalidation if you add caching.
@@ -66,7 +65,9 @@ export default async function PublicPaymentPage({ params }: PageProps) {
           <h1 className="font-serif text-[2.9rem] font-normal leading-[1.05] tracking-tight">
             {profile.displayName}
           </h1>
-          <p className="text-[15px] text-[#FBFBFB]/80">paytree.me/{profile.username}</p>
+          <p className="text-[15px] text-[#FBFBFB]/80">
+            {SITE_HOST}/{profile.username}
+          </p>
           {profile.bio ? (
             <p className="max-w-[420px] text-[#FBFBFB]/90">{profile.bio}</p>
           ) : null}
@@ -83,7 +84,7 @@ export default async function PublicPaymentPage({ params }: PageProps) {
 
         <QrCard
           url={`${SITE_URL}/${profile.username}`}
-          label={`${SITE_URL.replace(/^https?:\/\//, "")}/${profile.username}`}
+          label={`${SITE_HOST}/${profile.username}`}
         />
 
         <p className="mt-8 text-center text-[13px] text-[#4B6358]">
