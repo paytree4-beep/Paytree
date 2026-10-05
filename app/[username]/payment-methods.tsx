@@ -31,7 +31,8 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
-import type { MethodGroup, MethodIcon, ResolvedMethod } from "@/lib/profiles";
+import { badgeColor } from "@/lib/payment-colors";
+import type { MethodGroup, MethodIcon, MethodId, ResolvedMethod } from "@/lib/profiles";
 import { track } from "./track";
 
 const TOAST_MS = 2400;
@@ -66,7 +67,7 @@ const GROUPS: { id: MethodGroup; title: string; hint: string }[] = [
   {
     id: "online",
     title: "PAY ONLINE",
-    hint: "Opens the app on your phone, or the secure website on a computer.",
+    hint: "Tap to pay with the service you already use.",
   },
   {
     id: "bank",
@@ -285,13 +286,16 @@ export function PaymentMethods({ username, displayName, methods }: PaymentMethod
 const ROW_CLASSES =
   "flex min-h-[72px] w-full items-center gap-3.5 rounded-[18px] border border-[#DCE5DF] bg-white px-[18px] py-3.5 text-left text-[#0B1F18] transition duration-150 hover:-translate-y-px hover:shadow-[0_10px_24px_-14px_rgba(6,78,59,0.55)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D9B873] motion-reduce:transition-none motion-reduce:hover:transform-none";
 
-/** Round badge with the method's Lucide icon, sitting to the left of the label. */
-function IconBadge({ icon }: { icon: MethodIcon }) {
+
+/** Round badge with the method's icon on its signature color. */
+function IconBadge({ icon, id }: { icon: MethodIcon; id: MethodId }) {
   const Icon = ICONS[icon];
+  const color = badgeColor(id);
   return (
     <span
       aria-hidden="true"
-      className="flex h-11 w-11 flex-none items-center justify-center rounded-full bg-[#E3F0EA] text-[#064E3B]"
+      style={{ backgroundColor: color.bg, color: color.fg }}
+      className="flex h-11 w-11 flex-none items-center justify-center rounded-full"
     >
       <Icon className="h-5 w-5" strokeWidth={1.75} />
     </span>
@@ -330,7 +334,7 @@ function LinkRow({
       {...(isWeb ? { target: "_blank", rel: "noopener noreferrer nofollow ugc" } : {})}
       className={ROW_CLASSES}
     >
-      <IconBadge icon={method.icon} />
+      <IconBadge icon={method.icon} id={method.id} />
       <RowText method={method} />
       <ArrowUpRight className="h-5 w-5 flex-none text-[#064E3B]" strokeWidth={2} aria-hidden="true" />
     </a>
@@ -353,7 +357,7 @@ function CopyRow({
       aria-label={`Copy ${method.label} details`}
       className={ROW_CLASSES}
     >
-      <IconBadge icon={method.icon} />
+      <IconBadge icon={method.icon} id={method.id} />
       <RowText method={method} />
       <span
         className={`inline-flex min-h-9 flex-none items-center gap-1.5 rounded-full px-3.5 text-sm font-semibold ${

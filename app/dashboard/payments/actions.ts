@@ -27,7 +27,15 @@ export async function savePaymentMethod(formData: FormData): Promise<void> {
   if (!form) redirect("/dashboard/payments");
 
   const config = configFromForm(form, formData);
-  if (!config) redirect(`/dashboard/payments?error=invalid&method=${form.id}#${form.id}`);
+  if (!config) {
+    // Send the typed values back so the person does not have to retype them.
+    const keep = new URLSearchParams({ error: "invalid", method: form.id });
+    for (const field of form.fields) {
+      const value = formData.get(field.name);
+      if (typeof value === "string" && value) keep.set(`v_${field.name}`, value.slice(0, field.maxLength));
+    }
+    redirect(`/dashboard/payments?${keep}#${form.id}`);
+  }
 
   const { supabase, userId, username } = await signedIn();
 

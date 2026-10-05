@@ -11,6 +11,7 @@ import { Field, Notice } from "@/components/auth/fields";
 import { SubmitButton } from "@/components/auth/submit-button";
 import { Logo } from "@/components/brand/logo";
 import { param, type SearchParams } from "@/lib/auth";
+import { badgeColor } from "@/lib/payment-colors";
 import { METHOD_FORMS, findMethodForm, formValues } from "@/lib/payment-forms";
 import { createClient } from "@/lib/supabase/server";
 import { removePaymentMethod, savePaymentMethod } from "./actions";
@@ -71,9 +72,21 @@ export default async function PaymentsPage({ searchParams }: { searchParams: Sea
           <p className="mt-2 text-[#4B6358]">
             Add the ways clients can pay you. Only the methods you fill in appear on your page.
           </p>
+          <p className="mt-2 text-[15px] text-[#4B6358]">
+            After adding each one, tap it on your page to check it opens your own account.
+          </p>
         </div>
 
-        {saved ? <Notice tone="success">{saved.title} is saved and live on your page.</Notice> : null}
+        {saved ? (
+          <Notice tone="success">
+            <strong>{saved.title} is live on your page.</strong> Now open your page and tap it to make
+            sure it opens <strong>your own</strong> account. One wrong letter can send a client&rsquo;s
+            money to a stranger.{" "}
+            <Link href={`/${username}`} className="font-bold underline underline-offset-2">
+              Check it now
+            </Link>
+          </Notice>
+        ) : null}
         {removed ? <Notice tone="success">{removed.title} was removed from your page.</Notice> : null}
 
         <div className="flex flex-wrap items-center gap-3">
@@ -91,8 +104,16 @@ export default async function PaymentsPage({ searchParams }: { searchParams: Sea
         <div className="flex flex-col gap-3">
           {METHOD_FORMS.map((form) => {
             const isAdded = stored.has(form.id);
-            const values = formValues(form, stored.get(form.id));
             const hasError = errorMethod === form.id && Boolean(error);
+            const values = formValues(form, stored.get(form.id));
+            if (hasError) {
+              // Show what the person typed, not what was saved before.
+              for (const field of form.fields) {
+                const typed = param(params, `v_${field.name}`);
+                if (typed !== undefined) values[field.name] = typed;
+              }
+            }
+            const color = badgeColor(form.id);
             const open = hasError || saved?.id === form.id;
             return (
               <details
@@ -102,7 +123,14 @@ export default async function PaymentsPage({ searchParams }: { searchParams: Sea
                 className="group scroll-mt-4 rounded-2xl border border-[#DCE5DF] bg-white"
               >
                 <summary className="flex min-h-[60px] cursor-pointer list-none items-center justify-between gap-3 px-5 [&::-webkit-details-marker]:hidden">
-                  <span className="font-semibold">{form.title}</span>
+                  <span className="flex items-center gap-3 font-semibold">
+                    <span
+                      aria-hidden="true"
+                      style={{ backgroundColor: color.bg }}
+                      className="h-3.5 w-3.5 flex-none rounded-full"
+                    />
+                    {form.title}
+                  </span>
                   <span
                     className={`inline-flex min-h-8 items-center rounded-full px-3 text-[13px] font-semibold ${
                       isAdded ? "bg-[#E3F0EA] text-[#064E3B]" : "bg-[#F1F4F2] text-[#4B6358]"
