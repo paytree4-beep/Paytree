@@ -8,6 +8,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { normalizeUsername } from "@/lib/profiles";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
 function cleanDisplayName(raw: FormDataEntryValue | null): string | null {
@@ -93,4 +94,32 @@ export async function setPublished(formData: FormData): Promise<void> {
   if (error || !data) redirect("/dashboard?error=save");
   revalidatePath(`/${(data as { username: string }).username}`);
   redirect(`/dashboard?notice=${publish ? "published" : "hidden"}`);
+}
+
+/**
+ * Permanently deletes the signed-in account. Removing the sign-in record
+ * cascades in the database to the profile, payment methods, bank details,
+ * subscription row and page analytics.
+ */
+export async function deleteAccount(formData: FormData): Promise<void> {
+  const { supabase, user } = await requireUser();
+
+  const { data } = await supabase.from("profiles").select("username").eq("id", user.id).maybeSingle();
+  const username = data ? (data as { username: string }).username : null;
+
+  const typed = formData.get("confirm");
+  const expected = username ?? "delete";
+  if (typeof typed !== "string" || typed.trim().toLowerCase() !== expected) {
+    redirect("/dashboard?error=confirm#delete");
+  }
+
+  const admin = createAdminClient();
+  if (!admin) redirect("/dashboard?error=delete#delete");
+
+  const { error } = await admin.auth.admin.deleteUser(user.id);
+  if (error) redirect("/dashboard?error=delete#delete");
+
+  await supabase.auth.signOut();
+  if (username) revalidatePath(`/${username}`);
+  redirect("/login?notice=deleted");
 }

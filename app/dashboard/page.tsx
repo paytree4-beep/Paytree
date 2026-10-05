@@ -14,7 +14,7 @@ import { Logo } from "@/components/brand/logo";
 import { param, type SearchParams } from "@/lib/auth";
 import { SITE_HOST } from "@/lib/site";
 import { createClient } from "@/lib/supabase/server";
-import { setPublished, updateProfile } from "./actions";
+import { deleteAccount, setPublished, updateProfile } from "./actions";
 
 export const metadata: Metadata = { title: "Dashboard", robots: { index: false } };
 export const dynamic = "force-dynamic";
@@ -30,6 +30,8 @@ const NOTICES: Record<string, string> = {
 const ERRORS: Record<string, string> = {
   name: "Your display name needs 2 to 60 characters.",
   save: "We could not save that. Please try again.",
+  confirm: "The link name you typed does not match. Your account was not deleted.",
+  delete: "We could not delete your account. Please try again, or contact us.",
 };
 
 type ProfileRow = {
@@ -169,6 +171,37 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
               {profile.is_published ? "Hide my page" : "Make my page public"}
             </SubmitButton>
           </form>
+        </section>
+        <section
+          id="delete"
+          className="scroll-mt-4 rounded-2xl border border-[#B42318]/30 bg-white p-5 sm:p-6"
+        >
+          <h2 className="text-sm font-bold uppercase tracking-[0.1em] text-[#7A271A]">
+            Delete account
+          </h2>
+          <p className="mt-2 text-[15px] text-[#4B6358]">
+            This permanently deletes your account, your page and your payment methods. Your link
+            stops working right away. This cannot be undone.
+          </p>
+          <details className="mt-4">
+            <summary className="inline-flex min-h-11 cursor-pointer list-none items-center rounded-full border border-[#B42318]/40 px-6 font-bold text-[#B42318] [&::-webkit-details-marker]:hidden">
+              Delete my account
+            </summary>
+            <form action={deleteAccount} className="mt-4 flex flex-col gap-4">
+              <Field
+                label={`To confirm, type your link name: ${profile.username}`}
+                name="confirm"
+                autoComplete="off"
+                maxLength={30}
+              />
+              <button
+                type="submit"
+                className="flex min-h-[52px] w-full items-center justify-center rounded-full bg-[#B42318] px-7 font-bold text-white sm:max-w-[280px]"
+              >
+                Permanently delete my account
+              </button>
+            </form>
+          </details>
         </section>
       </main>
     </div>

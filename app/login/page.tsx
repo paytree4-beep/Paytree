@@ -25,6 +25,7 @@ const ERRORS: Record<string, string> = {
 const NOTICES: Record<string, string> = {
   confirmed: "Your email is confirmed. Log in to continue.",
   loggedout: "You are logged out.",
+  deleted: "Your account and page have been deleted.",
 };
 
 export default async function LogInPage({ searchParams }: { searchParams: SearchParams }) {
