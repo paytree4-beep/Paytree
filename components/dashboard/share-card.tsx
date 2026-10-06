@@ -17,7 +17,7 @@ const DURATION = 12; // seconds of video
 const APPLE_PATH =
   "M32 19c-4-4-12-5-17 0-6 6-5 18 0 26 4 7 9 11 13 10 2-.4 3-1.4 4-1.4s2 1 4 1.4c4 1 9-3 13-10 5-8 6-20 0-26-5-5-13-4-17 0z";
 const LEAF_PATH = "M34 13c4-6 11-6 14-4-3 5-9 7-14 4z";
-const COLORS = ["#E5484D", "#7BC86C", "#F2C94C"];
+const COLORS = ["#E5484D", "#7BC86C", "#F2C94C", "#D9B873"];
 
 function appleSvg(color: string): string {
   // Explicit width/height so phones rasterize it large and sharp.
