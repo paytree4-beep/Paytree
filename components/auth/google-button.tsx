@@ -3,6 +3,8 @@
 // "Continue with Google", followed by an "or use your email" divider. Renders
 // nothing until GOOGLE_SIGNIN is switched on (see lib/site.ts).
 
+import Link from "next/link";
+
 import { continueWithGoogle } from "@/app/auth-actions";
 import { GOOGLE_SIGNIN } from "@/lib/site";
 
@@ -55,8 +57,8 @@ export function GoogleSignIn() {
         </button>
         <p className="text-center text-[12px] text-[#4B6358]">
           New here? By continuing with Google you agree to our{" "}
-          <a href="/terms" className="underline underline-offset-2">Terms</a> and{" "}
-          <a href="/privacy" className="underline underline-offset-2">Privacy Policy</a>.
+          <Link href="/terms" className="underline underline-offset-2">Terms</Link> and{" "}
+          <Link href="/privacy" className="underline underline-offset-2">Privacy Policy</Link>.
         </p>
       </form>
       <div className="flex items-center gap-3 text-[13px] text-[#4B6358]">

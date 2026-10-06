@@ -250,12 +250,12 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
               </strong>{" "}
               Subscribe before {trialEndDate} to keep your page live.
             </p>
-            <a
+            <Link
               href="/dashboard?view=billing"
               className="inline-flex min-h-11 flex-none items-center justify-center rounded-full bg-[#064E3B] px-6 font-bold text-[#FBFBFB]"
             >
               Subscribe
-            </a>
+            </Link>
           </div>
         ) : null}
         {access.reason === "ended" ? (
@@ -264,12 +264,12 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
               <strong>Your free trial has ended, so your page is paused.</strong> Everything is saved. Subscribe
               and it comes back right away.
             </p>
-            <a
+            <Link
               href="/dashboard?view=billing"
               className="inline-flex min-h-11 flex-none items-center justify-center rounded-full bg-[#064E3B] px-6 font-bold text-[#FBFBFB]"
             >
               Subscribe
-            </a>
+            </Link>
           </div>
         ) : null}
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
