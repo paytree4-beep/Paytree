@@ -25,6 +25,9 @@ function qs(values: Record<string, string | undefined>): string {
 
 export async function signUp(formData: FormData): Promise<void> {
   const email = cleanEmail(formData.get("email"));
+  if (formData.get("agree") !== "yes") {
+    redirect(`/signup${qs({ error: "agree", email: email ?? undefined })}`);
+  }
   if (!email) redirect(`/signup${qs({ error: "email" })}`);
 
   const password = formData.get("password");
@@ -135,7 +138,11 @@ export async function updatePassword(formData: FormData): Promise<void> {
   redirect("/dashboard?notice=password");
 }
 
-export async function continueWithGoogle(): Promise<void> {
+export async function continueWithGoogle(formData?: FormData): Promise<void> {
+  // On the sign-up page the Terms box must be ticked first.
+  if (formData && formData.get("from") === "signup" && formData.get("agree") !== "yes") {
+    redirect("/signup?error=agree");
+  }
   const origin = await requestOrigin();
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signInWithOAuth({

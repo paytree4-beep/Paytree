@@ -17,11 +17,35 @@ function GoogleMark() {
   );
 }
 
+/** Google button that submits the surrounding form (used on sign-up, so the
+ * Terms checkbox travels with it). */
+export function GoogleButtonInForm() {
+  if (!GOOGLE_SIGNIN) return null;
+  return (
+    <div className="flex flex-col gap-6">
+      <button
+        type="submit"
+        formAction={continueWithGoogle}
+        formNoValidate
+        className="flex min-h-[52px] w-full items-center justify-center gap-3 rounded-full border border-[#C9D6CE] bg-white px-7 font-bold text-[#0B1F18] hover:border-[#064E3B]"
+      >
+        <GoogleMark />
+        Continue with Google
+      </button>
+      <div className="flex items-center gap-3 text-[13px] text-[#4B6358]">
+        <span className="h-px flex-1 bg-[#DCE5DF]" aria-hidden="true" />
+        or use your email
+        <span className="h-px flex-1 bg-[#DCE5DF]" aria-hidden="true" />
+      </div>
+    </div>
+  );
+}
+
 export function GoogleSignIn() {
   if (!GOOGLE_SIGNIN) return null;
   return (
     <div className="mb-6 flex flex-col gap-6">
-      <form action={continueWithGoogle}>
+      <form action={continueWithGoogle} className="flex flex-col gap-2">
         <button
           type="submit"
           className="flex min-h-[52px] w-full items-center justify-center gap-3 rounded-full border border-[#C9D6CE] bg-white px-7 font-bold text-[#0B1F18] hover:border-[#064E3B]"
@@ -29,6 +53,11 @@ export function GoogleSignIn() {
           <GoogleMark />
           Continue with Google
         </button>
+        <p className="text-center text-[12px] text-[#4B6358]">
+          New here? By continuing with Google you agree to our{" "}
+          <a href="/terms" className="underline underline-offset-2">Terms</a> and{" "}
+          <a href="/privacy" className="underline underline-offset-2">Privacy Policy</a>.
+        </p>
       </form>
       <div className="flex items-center gap-3 text-[13px] text-[#4B6358]">
         <span className="h-px flex-1 bg-[#DCE5DF]" aria-hidden="true" />
