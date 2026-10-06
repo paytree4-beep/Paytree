@@ -22,6 +22,8 @@ import { deleteAccount, setPublished, updateProfile } from "./actions";
 import { setPaymentLog } from "./log/actions";
 import { SaleCelebration } from "@/components/dashboard/sale-celebration";
 import { OwnerCookie } from "@/components/dashboard/owner-cookie";
+import { AppleBasket } from "@/components/dashboard/apple-basket";
+import { ADMIN_EMAIL, summarizeBasket, type AppleRow } from "@/lib/referrals";
 import { AppleCelebration } from "@/components/marketing/apple-celebration";
 import { cookies } from "next/headers";
 import { openBillingPortal, startCheckout } from "./billing-actions";
@@ -134,6 +136,14 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
   const seenSale = seenRaw ? decodeURIComponent(seenRaw) : null;
   const celebrate =
     newestSale !== null && (seenSale === null || new Date(newestSale).getTime() > new Date(seenSale).getTime());
+
+  // Apple basket (referral program). Read on its own so it never breaks the page.
+  const { data: appleData, error: appleError } = await supabase
+    .from("referral_apples")
+    .select("plan, amount_cents, paid_at")
+    .eq("referrer_id", user.id);
+  const basket = appleError ? null : summarizeBasket((appleData ?? []) as AppleRow[]);
+  const isAdmin = (user.email ?? "").toLowerCase() === ADMIN_EMAIL;
 
   const { data: subData } = await supabase
     .from("subscriptions")
@@ -318,6 +328,23 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
           </div>
           <QrCard url={`${SITE_URL}/${profile.username}`} label={`${SITE_HOST}/${profile.username}`} />
         </section>
+
+        {basket ? (
+          <AppleBasket
+            link={`${SITE_URL}/?ref=${profile.username}`}
+            name={profile.display_name}
+            basket={basket}
+            now={Date.now()}
+          />
+        ) : null}
+        {isAdmin ? (
+          <Link
+            href="/dashboard/harvest"
+            className="inline-flex min-h-11 items-center justify-center rounded-full border-2 border-[#C9A048] bg-white px-6 font-bold text-[#7A5A12]"
+          >
+            🧺 Harvest (admin)
+          </Link>
+        ) : null}
 
         <section className="rounded-2xl border border-[#DCE5DF] bg-white p-5 sm:p-6">
           <h2 className="text-sm font-bold uppercase tracking-[0.1em] text-[#4B6358]">Last 7 days</h2>

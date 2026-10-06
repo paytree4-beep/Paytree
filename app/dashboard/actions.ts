@@ -5,9 +5,11 @@
 // signed-in user, so Row Level Security only lets people change their own row.
 
 import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { normalizeUsername } from "@/lib/profiles";
+import { cleanRef } from "@/lib/referrals";
 import { cancelSubscription } from "@/lib/stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
@@ -59,6 +61,22 @@ export async function claimPage(formData: FormData): Promise<void> {
     }
     if (error.message.includes("username_reserved")) redirect(`/onboarding?error=reserved&${keep}`);
     redirect(`/onboarding?error=save&${keep}`);
+  }
+
+  // Remember who referred this new member (apple basket). Never blocks sign-up.
+  try {
+    const raw = (await cookies()).get("pt_ref")?.value;
+    const ref = cleanRef(raw ? decodeURIComponent(raw) : null);
+    const admin = createAdminClient();
+    if (ref && ref !== username && admin) {
+      const { data: referrer } = await admin.from("profiles").select("id").eq("username", ref).maybeSingle();
+      const referrerId = (referrer as { id?: string } | null)?.id;
+      if (referrerId && referrerId !== user.id) {
+        await admin.from("profiles").update({ referred_by: referrerId }).eq("id", user.id).is("referred_by", null);
+      }
+    }
+  } catch {
+    // ignore
   }
 
   redirect("/dashboard?notice=welcome");

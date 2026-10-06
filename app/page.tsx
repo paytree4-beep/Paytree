@@ -159,6 +159,36 @@ function PhoneExample() {
           </div>
         </div>
       </div>
+
+      {/* Example dashboard card: shows owners what they get. Sample numbers. */}
+      <div
+        aria-label="Example dashboard: $3,480 received and 1,240 page views this month"
+        role="img"
+        className="pt-float absolute -bottom-8 -left-6 z-10 w-[190px] rounded-[22px] border border-white/90 bg-white/85 p-3.5 text-left shadow-[0_24px_50px_-20px_rgba(6,78,59,0.5)] backdrop-blur-xl sm:-left-20"
+        style={{ animationDuration: "9s" }}
+      >
+        <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#9A6E1A]">Your dashboard</p>
+        <div className="mt-2 grid grid-cols-2 gap-2">
+          <div>
+            <p className="font-serif text-[22px] leading-none text-[#064E3B]">$3,480</p>
+            <p className="mt-0.5 text-[10px] text-[#4B6358]">received</p>
+          </div>
+          <div>
+            <p className="font-serif text-[22px] leading-none text-[#064E3B]">1,240</p>
+            <p className="mt-0.5 text-[10px] text-[#4B6358]">page views</p>
+          </div>
+        </div>
+        <div className="mt-3 flex h-10 items-end gap-1" aria-hidden="true">
+          {[38, 52, 44, 70, 58, 84, 100].map((h, i) => (
+            <span
+              key={i}
+              className="flex-1 rounded-t-[4px]"
+              style={{ height: `${h}%`, backgroundColor: i === 6 ? "#C9A048" : "#7BC86C" }}
+            />
+          ))}
+        </div>
+        <p className="mt-1.5 text-[10px] font-semibold text-[#064E3B]">This month · +18%</p>
+      </div>
     </div>
   );
 }

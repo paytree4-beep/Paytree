@@ -165,7 +165,7 @@ export default async function PublicPaymentPage({ params, searchParams }: PagePr
         style={{ paddingBottom: "max(0.875rem, env(safe-area-inset-bottom))" }}
       >
         <Link
-          href="/"
+          href={`/?ref=${profile.username}`}
           className="inline-flex min-h-11 items-center justify-center font-semibold hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D9B873]"
         >
           <span aria-hidden="true">👉</span>

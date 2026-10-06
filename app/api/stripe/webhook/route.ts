@@ -12,6 +12,8 @@
 import { revalidatePath } from "next/cache";
 
 import { saveStripeSubscription } from "@/lib/billing";
+import { APPLE_VALUE_CENTS, offerOpen } from "@/lib/referrals";
+import { normalizeStatus, planForPrice } from "@/lib/stripe";
 import { getSubscription, verifyWebhook, type StripeSubscription } from "@/lib/stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
 
@@ -80,6 +82,23 @@ export async function POST(request: Request): Promise<Response> {
 
     if (userId && UUID.test(userId) && subscription) {
       await saveStripeSubscription(userId, subscription);
+
+      // Apple basket: the first paid subscription of a referred member puts
+      // one apple in the referrer's basket (red = annual, green = monthly).
+      const status = normalizeStatus(subscription.status);
+      if ((status === "active" || status === "trialing") && offerOpen(Date.now())) {
+        const { data: me } = await admin.from("profiles").select("referred_by").eq("id", userId).maybeSingle();
+        const referrerId = (me as { referred_by?: string | null } | null)?.referred_by;
+        if (referrerId) {
+          const plan = planForPrice(subscription.items?.data?.[0]?.price?.id) ?? "monthly";
+          await admin
+            .from("referral_apples")
+            .upsert(
+              { referrer_id: referrerId, referred_id: userId, plan, amount_cents: APPLE_VALUE_CENTS[plan] },
+              { onConflict: "referred_id", ignoreDuplicates: true },
+            );
+        }
+      }
       const { data } = await admin.from("profiles").select("username").eq("id", userId).maybeSingle();
       const username = (data as { username?: string } | null)?.username;
       if (username) revalidatePath(`/${username}`);
