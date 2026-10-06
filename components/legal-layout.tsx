@@ -6,6 +6,8 @@
 
 import Link from "next/link";
 
+import { LogoMark } from "@/components/brand/logo";
+
 import { LEGAL_TEMPLATE_NOTICE } from "@/content/legal";
 import type { LegalDocument } from "@/content/legal";
 
@@ -22,22 +24,7 @@ export function LegalLayout({ doc, active }: { doc: LegalDocument; active: Activ
       <header className="bg-[#064E3B] px-5 pb-10 pt-6 text-[#FBFBFB]">
         <div className="mx-auto max-w-[1100px]">
           <Link href="/" className="inline-flex min-h-11 items-center gap-2.5 font-bold">
-            <svg
-              width="32"
-              height="32"
-              viewBox="0 0 32 32"
-              fill="none"
-              stroke="#D9B873"
-              strokeWidth="2.2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <path d="M11 10 L16 5 L21 10" />
-              <path d="M9 16 L16 9 L23 16" />
-              <path d="M7 22 L16 13 L25 22" />
-              <path d="M16 22 V28" />
-            </svg>
+            <LogoMark size={34} onDark />
             <span className="text-xl">
               PayTree
             </span>

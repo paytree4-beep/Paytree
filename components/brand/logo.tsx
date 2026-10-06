@@ -1,28 +1,25 @@
 // components/brand/logo.tsx
 //
-// The PayTree mark and wordmark, drawn exactly as on the legal pages and the
-// design previews.
+// The PayTree mark (an apple tree whose trunk is a dollar sign) and the
+// wordmark. The mark is a transparent PNG in /public.
 
 import Link from "next/link";
 
-export function LogoMark({ size = 36 }: { size?: number }) {
+export function LogoMark({ size = 36, onDark = false }: { size?: number; onDark?: boolean }) {
+  const img = (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src="/logo-mark.png" alt="" width={size} height={size} className="block" style={{ width: size, height: size }} />
+  );
+  // On dark green the leaves need a light backdrop to stay visible.
+  if (!onDark) return img;
   return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 32 32"
-      fill="none"
-      stroke="#D9B873"
-      strokeWidth="2.2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
+    <span
       aria-hidden="true"
+      className="inline-flex items-center justify-center rounded-[28%] bg-[#FAF5EA]"
+      style={{ width: size + 8, height: size + 8 }}
     >
-      <path d="M11 10 L16 5 L21 10" />
-      <path d="M9 16 L16 9 L23 16" />
-      <path d="M7 22 L16 13 L25 22" />
-      <path d="M16 22 V28" />
-    </svg>
+      {img}
+    </span>
   );
 }
 
@@ -39,13 +36,11 @@ export function Logo({
   return (
     <Link
       href="/"
-      className={`inline-flex min-h-11 items-center gap-2.5 font-bold ${tone === "dark" ? "text-[#064E3B]" : "text-[#FBFBFB]"} ${className}`}
+      className={`inline-flex min-h-11 items-center gap-2 font-bold ${tone === "dark" ? "text-[#064E3B]" : "text-[#FBFBFB]"} ${className}`}
       aria-label="PayTree home"
     >
-      <LogoMark size={size} />
-      <span className="text-[21px]">
-        PayTree
-      </span>
+      <LogoMark size={Math.round(size * 1.25)} onDark={tone !== "dark"} />
+      <span className="text-[21px]">PayTree</span>
     </Link>
   );
 }
