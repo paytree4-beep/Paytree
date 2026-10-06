@@ -24,7 +24,12 @@ function GoogleMark() {
 export function GoogleButtonInForm() {
   if (!GOOGLE_SIGNIN) return null;
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-5">
+      <div className="flex items-center gap-3 text-[13px] text-[#4B6358]">
+        <span className="h-px flex-1 bg-[#DCE5DF]" aria-hidden="true" />
+        or
+        <span className="h-px flex-1 bg-[#DCE5DF]" aria-hidden="true" />
+      </div>
       <button
         type="submit"
         formAction={continueWithGoogle}
@@ -34,11 +39,6 @@ export function GoogleButtonInForm() {
         <GoogleMark />
         Continue with Google
       </button>
-      <div className="flex items-center gap-3 text-[13px] text-[#4B6358]">
-        <span className="h-px flex-1 bg-[#DCE5DF]" aria-hidden="true" />
-        or use your email
-        <span className="h-px flex-1 bg-[#DCE5DF]" aria-hidden="true" />
-      </div>
     </div>
   );
 }

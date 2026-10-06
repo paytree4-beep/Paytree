@@ -42,9 +42,29 @@ export default async function SignUpPage({ searchParams }: { searchParams: Searc
       <form action={signUp} className="flex flex-col gap-5" noValidate>
         {error && ERRORS[error] ? <Notice tone="error">{ERRORS[error]}</Notice> : null}
         <input type="hidden" name="from" value="signup" />
+        <Field
+          label="Email address"
+          name="email"
+          type="email"
+          inputMode="email"
+          autoComplete="email"
+          defaultValue={email}
+          required={false}
+          maxLength={254}
+        />
+        <Field
+          label="Password"
+          name="password"
+          type="password"
+          autoComplete="new-password"
+          required={false}
+          minLength={8}
+          maxLength={72}
+          hint="At least 8 characters, with a letter and a number."
+        />
         <label
-          className={`flex cursor-pointer items-start gap-3 rounded-2xl border p-4 text-[15px] leading-snug ${
-            error === "agree" ? "border-[#B42318] bg-[#FEF3F2]" : "border-[#DCE5DF] bg-white"
+          className={`flex cursor-pointer items-start gap-3 text-[14px] leading-snug text-[#2F4A3E] ${
+            error === "agree" ? "rounded-xl bg-[#FEF3F2] p-3 text-[#7A271A]" : ""
           }`}
         >
           <input
@@ -66,28 +86,8 @@ export default async function SignUpPage({ searchParams }: { searchParams: Searc
             .
           </span>
         </label>
-        <GoogleButtonInForm />
-        <Field
-          label="Email address"
-          name="email"
-          type="email"
-          inputMode="email"
-          autoComplete="email"
-          defaultValue={email}
-          required={false}
-          maxLength={254}
-        />
-        <Field
-          label="Password"
-          name="password"
-          type="password"
-          autoComplete="new-password"
-          required={false}
-          minLength={8}
-          maxLength={72}
-          hint="At least 8 characters, with a letter and a number."
-        />
         <SubmitButton pendingText="Building your page…">Build your payment page</SubmitButton>
+        <GoogleButtonInForm />
       </form>
     </AuthShell>
   );
