@@ -22,6 +22,7 @@ import { deleteAccount, setPublished, updateProfile } from "./actions";
 import { setPaymentLog } from "./log/actions";
 import { SaleCelebration } from "@/components/dashboard/sale-celebration";
 import { OwnerCookie } from "@/components/dashboard/owner-cookie";
+import { InstallCard } from "@/components/dashboard/install-card";
 import { AppleBasket } from "@/components/dashboard/apple-basket";
 import { ADMIN_EMAIL, summarizeBasket, type AppleRow } from "@/lib/referrals";
 import { AppleCelebration } from "@/components/marketing/apple-celebration";
@@ -279,6 +280,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
             </Link>
           </div>
         ) : null}
+            <InstallCard />
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
               {tiles.map((t) => (
                 <Link

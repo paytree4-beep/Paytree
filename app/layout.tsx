@@ -37,6 +37,7 @@ export const metadata: Metadata = {
   },
   description: DESCRIPTION,
   applicationName: "PayTree",
+  appleWebApp: { capable: true, title: "PayTree", statusBarStyle: "default" },
   openGraph: {
     type: "website",
     siteName: "PayTree",
@@ -55,7 +56,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#064E3B",
+  themeColor: "#FAF5EA",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

@@ -38,6 +38,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 
   return {
+    manifest: `/${profile.username}/manifest.webmanifest`,
+    appleWebApp: { capable: true, title: profile.displayName.slice(0, 20), statusBarStyle: "default" },
     title: `${profile.displayName} · PayTree`,
     description: `Pay ${profile.displayName} with Cash App, Venmo, PayPal, Zelle, bank transfer, card, Wise or crypto.`,
   };
