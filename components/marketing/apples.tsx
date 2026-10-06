@@ -51,7 +51,7 @@ const SPOTS: Spot[] = [
   { color: "red", size: 64, top: "13%", left: "-2%", rot: -12, delay: 0, edge: true },
   { color: "green", size: 54, top: "16%", left: "88%", rot: 14, delay: 1.5, edge: true },
   { color: "yellow", size: 46, top: "38%", left: "92%", rot: -8, delay: 3, opacity: 0.85, edge: true },
-  { color: "gold", size: 80, top: "46%", left: "-6%", rot: 10, delay: 2, blur: true, opacity: 0.45, edge: true },
+  { color: "yellow", size: 80, top: "46%", left: "-6%", rot: 10, delay: 2, blur: true, opacity: 0.45, edge: true },
   { color: "red", size: 40, top: "60%", left: "72%", rot: 18, delay: 4, opacity: 0.75 },
   { color: "green", size: 70, top: "74%", left: "-4%", rot: -16, delay: 1, blur: true, opacity: 0.5, edge: true },
   { color: "yellow", size: 52, top: "86%", left: "90%", rot: 6, delay: 2.5, edge: true },
@@ -91,7 +91,7 @@ export function AppleHalo({ compact = false }: { compact?: boolean }) {
     { color: "red", size: 34 * k, style: { top: "8%", left: "12%", "--pt-rot": "-14deg" } as CSSProperties, delay: 0 },
     { color: "green", size: 28 * k, style: { top: "4%", right: "14%", "--pt-rot": "12deg" } as CSSProperties, delay: 1.2 },
     { color: "yellow", size: 24 * k, style: { top: "46%", left: "4%", "--pt-rot": "8deg" } as CSSProperties, delay: 2.1 },
-    { color: "gold", size: 30 * k, style: { top: "50%", right: "5%", "--pt-rot": "-8deg" } as CSSProperties, delay: 0.6 },
+    { color: "red", size: 30 * k, style: { top: "50%", right: "5%", "--pt-rot": "-8deg" } as CSSProperties, delay: 0.6 },
     { color: "green", size: 20 * k, style: { bottom: "10%", left: "22%", "--pt-rot": "18deg" } as CSSProperties, delay: 1.8 },
     { color: "red", size: 22 * k, style: { bottom: "14%", right: "22%", "--pt-rot": "-18deg" } as CSSProperties, delay: 2.6 },
   ];

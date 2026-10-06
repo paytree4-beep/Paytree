@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 
 import { Apple, type AppleColor } from "./apples";
 
-const COLORS: AppleColor[] = ["red", "green", "yellow", "gold"];
+const COLORS: AppleColor[] = ["red", "green", "yellow"];
 const COUNT = 18;
 const DURATION_MS = 4200;
 

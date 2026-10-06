@@ -3,22 +3,25 @@
 //
 // "Pay me here" / "Tip me" card maker for Instagram Stories, Reels and TikTok.
 // Draws a 1080x1920 card on a canvas (name, photo, QR code, apples) and saves
-// it as an image, or records a 5-second video of apples falling into place.
+// it as a sharp image, or records a 12-second video with music.
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
 
+import { scheduleTune } from "./card-music";
+
 const W = 1080;
 const H = 1920;
-const DURATION = 5; // seconds of video
+const DURATION = 12; // seconds of video
 
 const APPLE_PATH =
   "M32 19c-4-4-12-5-17 0-6 6-5 18 0 26 4 7 9 11 13 10 2-.4 3-1.4 4-1.4s2 1 4 1.4c4 1 9-3 13-10 5-8 6-20 0-26-5-5-13-4-17 0z";
 const LEAF_PATH = "M34 13c4-6 11-6 14-4-3 5-9 7-14 4z";
-const COLORS = ["#E5484D", "#7BC86C", "#F2C94C", "#D9B873"];
+const COLORS = ["#E5484D", "#7BC86C", "#F2C94C"];
 
 function appleSvg(color: string): string {
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><path d="${APPLE_PATH}" fill="${color}"/><ellipse cx="22" cy="28" rx="4" ry="7" fill="#fff" opacity=".35" transform="rotate(-20 22 28)"/><path d="M32 19c0-5 1-8 3-11" stroke="#6B4A2B" stroke-width="2.6" fill="none" stroke-linecap="round"/><path d="${LEAF_PATH}" fill="#3E8E3A"/></svg>`;
+  // Explicit width/height so phones rasterize it large and sharp.
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 64 64"><path d="${APPLE_PATH}" fill="${color}"/><ellipse cx="22" cy="28" rx="4" ry="7" fill="#fff" opacity=".35" transform="rotate(-20 22 28)"/><path d="M32 19c0-5 1-8 3-11" stroke="#6B4A2B" stroke-width="2.6" fill="none" stroke-linecap="round"/><path d="${LEAF_PATH}" fill="#3E8E3A"/></svg>`;
 }
 
 function loadImage(src: string, cors = false): Promise<HTMLImageElement | null> {
@@ -40,10 +43,16 @@ function makeDrops(): Drop[] {
     x,
     size: 110 + ((i * 37) % 60),
     color: i % COLORS.length,
-    delay: (i % 7) * 0.18,
+    delay: 0.15 + (i % 7) * 0.22,
     floor: 1785 - ((i * 53) % 90),
     spin: ((i % 2 ? 1 : -1) * (20 + ((i * 29) % 40)) * Math.PI) / 180,
   }));
+}
+
+const FALL = 1.6;
+/** Seconds after start when each apple first touches the ground. */
+export function landingTimes(drops: Drop[]): number[] {
+  return drops.map((d) => d.delay + FALL * 0.55);
 }
 
 /** Falls, bounces twice, settles. 0..1 progress -> y offset factor. */
@@ -91,14 +100,14 @@ export function ShareCardMaker({
   const drops = useRef<Drop[]>(makeDrops());
   const [mode, setMode] = useState<"pay" | "tip">(tip ? "tip" : "pay");
   const [ready, setReady] = useState(false);
-  const [busy, setBusy] = useState<"" | "image" | "video">("");
+  const [busy, setBusy] = useState<"" | "image" | "video" | "preview">("");
   const [status, setStatus] = useState("");
   const [canVideo, setCanVideo] = useState(false);
   const link = pageUrl ?? `https://paytree.to/${username}`;
   const shortLink = link.replace(/^https?:\/\//, "");
 
   const draw = useCallback(
-    (t: number) => {
+    (t: number, still = false) => {
       const canvas = canvasRef.current;
       const a = assets.current;
       if (!canvas || !a) return;
@@ -113,8 +122,11 @@ export function ShareCardMaker({
       ctx.fillStyle = bg;
       ctx.fillRect(0, 0, W, H);
 
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "high";
+
       // Card fades and rises in
-      const cardIn = Math.min(1, Math.max(0, (t - 0.6) / 0.9));
+      const cardIn = still ? 1 : Math.min(1, Math.max(0, (t - 1.0) / 1.0));
       ctx.save();
       ctx.globalAlpha = cardIn;
       ctx.translate(0, (1 - cardIn) * 60);
@@ -170,16 +182,70 @@ export function ShareCardMaker({
       }
       ctx.fillText(name, cx, 770);
 
-      ctx.font = "800 72px -apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif";
-      ctx.fillStyle = "#B8893A";
-      ctx.fillText(mode === "tip" ? "Tip me 💸" : "Pay me here 🌳", cx, 875);
+      // Headline, with a gentle heartbeat in the video
+      const pulse = still || t < 3 ? 1 : 1 + 0.035 * Math.max(0, Math.sin((t - 3) * 2.4));
+      ctx.save();
+      ctx.translate(cx, 875);
+      ctx.scale(pulse, pulse);
+      ctx.font = "800 80px -apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif";
+      {
+        // Each letter in the colors of the falling apples (a touch deeper, for contrast on white).
+        const headline = mode === "tip" ? "Tip me 💸" : "Pay me here";
+        // First letter of every word is red; the others take the other apple colors.
+        const letterColors = ["#3FA34D", "#E8AE1C"];
+        const chars = Array.from(headline);
+        const widths = chars.map((ch) => ctx.measureText(ch).width);
+        let x = -widths.reduce((a, w) => a + w, 0) / 2;
+        let colorIndex = 0;
+        let wordStart = true;
+        ctx.textAlign = "left";
+        ctx.shadowColor = "rgba(6,78,59,0.18)";
+        ctx.shadowBlur = 6;
+        ctx.shadowOffsetY = 3;
+        chars.forEach((ch, i) => {
+          if (!ch.trim()) {
+            wordStart = true;
+          } else if (wordStart) {
+            ctx.fillStyle = "#E5484D";
+            wordStart = false;
+          } else {
+            ctx.fillStyle = letterColors[colorIndex % letterColors.length];
+            colorIndex += 1;
+          }
+          ctx.fillText(ch, x, 0);
+          x += widths[i];
+        });
+        ctx.shadowColor = "transparent";
+        ctx.textAlign = "center";
+      }
+      ctx.restore();
 
       // QR code
       if (a.qr) {
         ctx.fillStyle = "#F4F8F6";
         roundRect(ctx, cx - 250, 945, 500, 500, 40);
         ctx.fill();
+        // Pixel-sharp QR code
+        ctx.imageSmoothingEnabled = false;
         ctx.drawImage(a.qr, cx - 210, 985, 420, 420);
+        ctx.imageSmoothingEnabled = true;
+        // A soft shine sweeps across every few seconds
+        if (!still && t > 2.5) {
+          const phase = ((t - 2.5) % 3.2) / 1.1;
+          if (phase < 1) {
+            ctx.save();
+            roundRect(ctx, cx - 250, 945, 500, 500, 40);
+            ctx.clip();
+            const sx = cx - 500 + phase * 1000;
+            const g = ctx.createLinearGradient(sx - 120, 945, sx + 120, 1445);
+            g.addColorStop(0, "rgba(255,255,255,0)");
+            g.addColorStop(0.5, "rgba(255,255,255,0.55)");
+            g.addColorStop(1, "rgba(255,255,255,0)");
+            ctx.fillStyle = g;
+            ctx.fillRect(cx - 250, 945, 500, 500);
+            ctx.restore();
+          }
+        }
       }
 
       ctx.fillStyle = "#064E3B";
@@ -194,8 +260,9 @@ export function ShareCardMaker({
       drops.current.forEach((d) => {
         const img = a.apples[d.color];
         if (!img) return;
-        const p = Math.min(1, Math.max(0, (t - d.delay) / 1.6));
-        const y = -200 + (d.floor + 200) * bounce(p);
+        const p = still ? 1 : Math.min(1, Math.max(0, (t - d.delay) / FALL));
+        const settled = !still && p >= 1 ? Math.sin((t - d.delay - FALL) * 1.8 + d.x) * 5 : 0;
+        const y = -200 + (d.floor + 200) * bounce(p) + settled;
         ctx.save();
         ctx.translate(d.x, y);
         ctx.rotate(d.spin * p);
@@ -234,7 +301,7 @@ export function ShareCardMaker({
 
   // Show the finished card
   useEffect(() => {
-    if (ready) draw(DURATION);
+    if (ready) draw(DURATION, true);
   }, [ready, draw]);
 
   const deliver = async (blob: Blob, fileName: string) => {
@@ -267,7 +334,7 @@ export function ShareCardMaker({
     const canvas = canvasRef.current;
     if (!canvas || !ready) return;
     setBusy("image");
-    draw(DURATION);
+    draw(DURATION, true);
     canvas.toBlob(async (blob) => {
       if (blob) await deliver(blob, `paytree-${username}.png`);
       else setStatus("Could not create the image. Please try again.");
@@ -275,41 +342,74 @@ export function ShareCardMaker({
     }, "image/png");
   };
 
-  const saveVideo = async () => {
+  /** Plays the animation with music; records it when `record` is true. */
+  const play = async (record: boolean) => {
     const canvas = canvasRef.current;
     if (!canvas || !ready) return;
-    const types = ["video/mp4;codecs=avc1", "video/mp4", "video/webm;codecs=vp9", "video/webm"];
-    const type = types.find((t) => (window.MediaRecorder as typeof MediaRecorder).isTypeSupported?.(t));
-    if (!type) {
-      setStatus("Your browser cannot record video. Save the image instead.");
-      return;
+    let type: string | undefined;
+    if (record) {
+      const types = [
+        "video/mp4;codecs=avc1,mp4a.40.2",
+        "video/mp4",
+        "video/webm;codecs=vp9,opus",
+        "video/webm;codecs=vp8,opus",
+        "video/webm",
+      ];
+      type = types.find((t) => (window.MediaRecorder as typeof MediaRecorder).isTypeSupported?.(t));
+      if (!type) {
+        setStatus("Your browser cannot record video. Save the image instead.");
+        return;
+      }
     }
-    setBusy("video");
-    setStatus("Recording your 5-second video…");
-    const stream = (canvas as HTMLCanvasElement & { captureStream: (fps: number) => MediaStream }).captureStream(30);
-    const recorder = new MediaRecorder(stream, { mimeType: type, videoBitsPerSecond: 6_000_000 });
+    setBusy(record ? "video" : "preview");
+    setStatus(record ? "Recording your video with music… keep this screen open." : "");
+
+    const AudioCtx = window.AudioContext ?? (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+    const audio = new AudioCtx();
+    await audio.resume();
+    const mix = audio.createGain();
+    mix.connect(audio.destination);
+    const dest = record ? audio.createMediaStreamDestination() : null;
+    if (dest) mix.connect(dest);
+    const startAt = audio.currentTime + 0.15;
+    scheduleTune(audio, mix, startAt, DURATION, landingTimes(drops.current));
+
+    let recorder: MediaRecorder | null = null;
     const chunks: Blob[] = [];
-    recorder.ondataavailable = (e) => {
-      if (e.data.size > 0) chunks.push(e.data);
-    };
-    const finished = new Promise<void>((resolve) => {
-      recorder.onstop = () => resolve();
-    });
-    recorder.start(250);
-    const start = performance.now();
+    let finished: Promise<void> = Promise.resolve();
+    if (record && type && dest) {
+      const video = (canvas as HTMLCanvasElement & { captureStream: (fps: number) => MediaStream }).captureStream(30);
+      const stream = new MediaStream([...video.getVideoTracks(), ...dest.stream.getAudioTracks()]);
+      const rec = new MediaRecorder(stream, { mimeType: type, videoBitsPerSecond: 10_000_000, audioBitsPerSecond: 160_000 });
+      rec.ondataavailable = (e) => {
+        if (e.data.size > 0) chunks.push(e.data);
+      };
+      finished = new Promise<void>((resolve) => {
+        rec.onstop = () => resolve();
+      });
+      draw(0);
+      rec.start(250);
+      recorder = rec;
+    }
+
     await new Promise<void>((resolve) => {
       const tick = () => {
-        const t = (performance.now() - start) / 1000;
-        draw(Math.min(t, DURATION));
-        if (t < DURATION + 0.4) requestAnimationFrame(tick);
+        const t = audio.currentTime - startAt;
+        draw(Math.max(0, Math.min(t, DURATION)));
+        if (t < DURATION + 0.3) requestAnimationFrame(tick);
         else resolve();
       };
       requestAnimationFrame(tick);
     });
-    recorder.stop();
-    await finished;
-    const blob = new Blob(chunks, { type: type.split(";")[0] });
-    await deliver(blob, `paytree-${username}.${type.startsWith("video/mp4") ? "mp4" : "webm"}`);
+
+    if (recorder && type) {
+      recorder.stop();
+      await finished;
+      const blob = new Blob(chunks, { type: type.split(";")[0] });
+      await deliver(blob, `paytree-${username}.${type.startsWith("video/mp4") ? "mp4" : "webm"}`);
+    }
+    await audio.close().catch(() => null);
+    draw(DURATION, true);
     setBusy("");
   };
 
@@ -320,7 +420,8 @@ export function ShareCardMaker({
           {mode === "tip" ? "Tip me card 💸" : "Pay me here card 📸"}
         </h1>
         <p className="mt-1 text-[15px] text-[#3F574C]">
-          Made for Instagram Stories, Reels and TikTok. Post it, and put your link in your bio.
+          Made for Instagram Stories, Reels and TikTok. The video is 12 seconds with our own music. Tip: on TikTok you
+          can also add a trending sound.
         </p>
       </div>
 
@@ -336,7 +437,7 @@ export function ShareCardMaker({
               mode === m ? "bg-[#064E3B] text-[#FBFBFB]" : "border border-[#DCE5DF] bg-white text-[#064E3B]"
             }`}
           >
-            {m === "pay" ? "Pay me here 🌳" : "Tip me 💸"}
+            {m === "pay" ? "Pay me here" : "Tip me 💸"}
           </button>
         ))}
       </div>
@@ -361,7 +462,7 @@ export function ShareCardMaker({
         {canVideo ? (
           <button
             type="button"
-            onClick={saveVideo}
+            onClick={() => play(true)}
             disabled={!ready || busy !== ""}
             className="inline-flex min-h-[52px] items-center justify-center rounded-full border-2 border-[#064E3B] bg-white px-4 font-bold text-[#064E3B] disabled:opacity-60"
           >
@@ -369,13 +470,21 @@ export function ShareCardMaker({
           </button>
         ) : null}
       </div>
+      <button
+        type="button"
+        onClick={() => play(false)}
+        disabled={!ready || busy !== ""}
+        className="mx-auto inline-flex min-h-11 items-center gap-2 rounded-full px-4 text-[15px] font-bold text-[#064E3B] underline underline-offset-4 disabled:opacity-60"
+      >
+        {busy === "preview" ? "Playing…" : "▶ Watch with music 🎵"}
+      </button>
       <p role="status" aria-live="polite" className="min-h-5 text-center text-[13px] font-semibold text-[#064E3B]">
         {status}
       </p>
 
       {/* Source for the QR image drawn on the canvas */}
       <div ref={qrRef} className="hidden" aria-hidden="true">
-        <QRCodeSVG value={link} size={420} level="M" marginSize={1} fgColor="#064E3B" bgColor="#FFFFFF" />
+        <QRCodeSVG value={link} size={840} level="M" marginSize={1} fgColor="#064E3B" bgColor="#FFFFFF" />
       </div>
     </section>
   );
