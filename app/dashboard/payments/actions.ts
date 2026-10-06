@@ -8,7 +8,6 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { configFromForm, findMethodForm, METHOD_FORMS } from "@/lib/payment-forms";
-import { methodLimitFor } from "@/lib/billing";
 import { createClient } from "@/lib/supabase/server";
 
 async function signedIn() {
@@ -61,17 +60,6 @@ export async function savePaymentMethod(formData: FormData): Promise<void> {
     .eq("profile_id", userId)
     .eq("method_id", form.id)
     .maybeSingle();
-
-  if (!existing) {
-    const limit = await methodLimitFor(userId);
-    if (limit !== null) {
-      const { count } = await supabase
-        .from("payment_methods")
-        .select("id", { count: "exact", head: true })
-        .eq("profile_id", userId);
-      if ((count ?? 0) >= limit) redirect(`/dashboard/payments?error=limit&method=${form.id}#${form.id}`);
-    }
-  }
 
   const { error } = existing
     ? await supabase

@@ -48,8 +48,25 @@ export default async function PublicPaymentPage({ params }: PageProps) {
   }
 
   // Only methods the user entered, and that passed validation, come back.
-  const ordered = applyOrder(resolveMethods(profile.payments), profile.order);
-  const methods = profile.methodLimit ? ordered.slice(0, profile.methodLimit) : ordered;
+  if (profile.paused) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center gap-5 bg-[#FBFBFB] px-6 text-center text-[#0B1F18]">
+        <p className="text-sm font-bold tracking-[0.12em] text-[#064E3B]">PAGE PAUSED</p>
+        <h1 className="font-serif text-[clamp(34px,6vw,52px)] font-normal leading-[1.08] text-[#064E3B]">
+          {profile.displayName}&rsquo;s page is paused
+        </h1>
+        <p className="max-w-[420px] text-[#4B6358]">
+          This payment page is not available right now. Please contact {profile.displayName} for another
+          way to pay.
+        </p>
+        <Link href="/login" className="text-sm font-semibold text-[#064E3B] underline underline-offset-2">
+          Is this your page? Log in to turn it back on
+        </Link>
+      </div>
+    );
+  }
+
+  const methods = applyOrder(resolveMethods(profile.payments), profile.order);
   const initial = profile.displayName.trim().charAt(0).toUpperCase() || "P";
 
   return (

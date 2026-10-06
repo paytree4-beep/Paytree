@@ -12,9 +12,8 @@ import { SubmitButton } from "@/components/auth/submit-button";
 import { Logo } from "@/components/brand/logo";
 import { ReorderList } from "@/components/dashboard/reorder-list";
 import { param, type SearchParams } from "@/lib/auth";
-import { methodLimitFor } from "@/lib/billing";
 import { badgeColor } from "@/lib/payment-colors";
-import { METHOD_FORMS, findMethodForm, formValues } from "@/lib/payment-forms";
+import { CATEGORIES, METHOD_FORMS, findMethodForm, formValues } from "@/lib/payment-forms";
 import { createClient } from "@/lib/supabase/server";
 import { removePaymentMethod, savePaymentMethod } from "./actions";
 
@@ -52,8 +51,6 @@ export default async function PaymentsPage({ searchParams }: { searchParams: Sea
   const saved = findMethodForm(param(params, "saved"));
   const removed = findMethodForm(param(params, "removed"));
   const addedCount = METHOD_FORMS.filter((m) => stored.has(m.id)).length;
-  const limit = await methodLimitFor(user.id);
-  const atLimit = limit !== null && addedCount >= limit;
   const orderItems = ((data ?? []) as Row[])
     .map((row) => METHOD_FORMS.find((m) => m.id === row.method_id))
     .filter((m): m is (typeof METHOD_FORMS)[number] => Boolean(m))
@@ -98,15 +95,6 @@ export default async function PaymentsPage({ searchParams }: { searchParams: Sea
         ) : null}
         {removed ? <Notice tone="success">{removed.title} was removed from your page.</Notice> : null}
 
-        {limit !== null ? (
-          <div className="rounded-2xl border border-[#D9B873] bg-[#FBF6EA] p-4 text-[15px] text-[#5C4513]">
-            <strong>Free plan:</strong> {addedCount} of {limit} payment methods used.{" "}
-            <Link href="/dashboard#billing" className="font-bold text-[#064E3B] underline underline-offset-2">
-              Upgrade for unlimited
-            </Link>
-          </div>
-        ) : null}
-
         <div className="flex flex-wrap items-center gap-3">
           <Link
             href={`/${username}`}
@@ -130,98 +118,109 @@ export default async function PaymentsPage({ searchParams }: { searchParams: Sea
         ) : null}
 
         <h2 className="mt-2 text-sm font-bold uppercase tracking-[0.1em] text-[#4B6358]">Add or edit</h2>
-        <div className="flex flex-col gap-3">
-          {METHOD_FORMS.map((form) => {
-            const isAdded = stored.has(form.id);
-            const hasError = errorMethod === form.id && Boolean(error);
-            const values = formValues(form, stored.get(form.id));
-            if (hasError) {
-              // Show what the person typed, not what was saved before.
-              for (const field of form.fields) {
-                const typed = param(params, `v_${field.name}`);
-                if (typed !== undefined) values[field.name] = typed;
-              }
-            }
-            const color = badgeColor(form.id);
-            const open = hasError || saved?.id === form.id;
+        <div className="flex flex-col gap-4">
+          {CATEGORIES.map((cat) => {
+            const forms = METHOD_FORMS.filter((f) => f.category === cat.id);
+            const added = forms.filter((f) => stored.has(f.id)).length;
+            const openCat =
+              forms.some((f) => f.id === errorMethod || f.id === saved?.id) || (cat.id === "apps" && addedCount === 0);
             return (
-              <details
-                key={form.id}
-                id={form.id}
-                open={open}
-                className="group scroll-mt-4 rounded-2xl border border-[#DCE5DF] bg-white"
-              >
-                <summary className="flex min-h-[60px] cursor-pointer list-none items-center justify-between gap-3 px-5 [&::-webkit-details-marker]:hidden">
-                  <span className="flex items-center gap-3 font-semibold">
-                    <span
-                      aria-hidden="true"
-                      style={{ backgroundColor: color.bg }}
-                      className="h-3.5 w-3.5 flex-none rounded-full"
-                    />
-                    {form.title}
+              <details key={cat.id} open={openCat} className="group/cat rounded-[22px] border border-[#DCE5DF] bg-[#F4F8F6]">
+                <summary className="flex min-h-[68px] cursor-pointer list-none items-center justify-between gap-3 px-5 [&::-webkit-details-marker]:hidden">
+                  <span className="min-w-0">
+                    <span className="block text-[17px] font-bold text-[#064E3B]">{cat.title}</span>
+                    <span className="block truncate text-[13px] text-[#4B6358]">{cat.hint}</span>
                   </span>
-                  <span
-                    className={`inline-flex min-h-8 items-center rounded-full px-3 text-[13px] font-semibold ${
-                      isAdded ? "bg-[#E3F0EA] text-[#064E3B]" : "bg-[#F1F4F2] text-[#4B6358]"
-                    }`}
-                  >
-                    {isAdded ? "Added" : "Add"}
+                  <span className="flex flex-none items-center gap-2">
+                    {added > 0 ? (
+                      <span className="inline-flex min-h-7 items-center rounded-full bg-[#064E3B] px-2.5 text-[12px] font-bold text-[#FBFBFB]">
+                        {added} added
+                      </span>
+                    ) : null}
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#064E3B" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="transition-transform group-open/cat:rotate-180">
+                      <path d="M6 9l6 6 6-6" />
+                    </svg>
                   </span>
                 </summary>
+                <div className="flex flex-col gap-3 px-3 pb-3">
+          {forms.map((form) => {
+                  const isAdded = stored.has(form.id);
+                  const hasError = errorMethod === form.id && Boolean(error);
+                  const values = formValues(form, stored.get(form.id));
+                  if (hasError) {
+                    // Show what the person typed, not what was saved before.
+                    for (const field of form.fields) {
+                      const typed = param(params, `v_${field.name}`);
+                      if (typed !== undefined) values[field.name] = typed;
+                    }
+                  }
+                  const color = badgeColor(form.id);
+                  const open = hasError || saved?.id === form.id;
+                  return (
+                    <details
+                      key={form.id}
+                      id={form.id}
+                      open={open}
+                      className="group scroll-mt-4 rounded-2xl border border-[#DCE5DF] bg-white"
+                    >
+                      <summary className="flex min-h-[60px] cursor-pointer list-none items-center justify-between gap-3 px-5 [&::-webkit-details-marker]:hidden">
+                        <span className="flex items-center gap-3 font-semibold">
+                          <span
+                            aria-hidden="true"
+                            style={{ backgroundColor: color.bg }}
+                            className="h-3.5 w-3.5 flex-none rounded-full"
+                          />
+                          {form.title}
+                        </span>
+                        <span
+                          className={`inline-flex min-h-8 items-center rounded-full px-3 text-[13px] font-semibold ${
+                            isAdded ? "bg-[#E3F0EA] text-[#064E3B]" : "bg-[#F1F4F2] text-[#4B6358]"
+                          }`}
+                        >
+                          {isAdded ? "Added" : "Add"}
+                        </span>
+                      </summary>
 
-                <div className="flex flex-col gap-4 border-t border-[#DCE5DF] px-5 pb-5 pt-4">
-                  {hasError ? (
-                    <Notice tone="error">
-                      {error === "invalid"
-                        ? "That does not look right. Check the format under each field and try again."
-                        : error === "limit"
-                          ? "The free plan includes 2 payment methods. Upgrade to add more."
-                          : "We could not save that. Please try again."}
-                    </Notice>
-                  ) : null}
+                      <div className="flex flex-col gap-4 border-t border-[#DCE5DF] px-5 pb-5 pt-4">
+                        {hasError ? (
+                          <Notice tone="error">
+                            {error === "invalid"
+                              ? "That does not look right. Check the format under each field and try again."
+                              : "We could not save that. Please try again."}
+                          </Notice>
+                        ) : null}
 
-                  {atLimit && !isAdded ? (
-                    <div className="flex flex-col gap-3">
-                      <p className="text-[15px] text-[#4B6358]">
-                        The free plan includes {limit} payment methods. Upgrade to add {form.title} and
-                        as many more as you like.
-                      </p>
-                      <Link
-                        href="/dashboard#billing"
-                        className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#064E3B] px-6 font-bold text-[#FBFBFB] sm:max-w-[240px]"
-                      >
-                        Upgrade
-                      </Link>
-                    </div>
-                  ) : (
-                  <form action={savePaymentMethod} className="flex flex-col gap-4">
-                    <input type="hidden" name="method" value={form.id} />
-                    {form.fields.map((field) => (
-                      <Field
-                        key={field.name}
-                        label={field.label}
-                        name={field.name}
-                        hint={field.hint}
-                        defaultValue={values[field.name]}
-                        required={field.required ?? true}
-                        maxLength={field.maxLength}
-                        inputMode={field.inputMode}
-                      />
-                    ))}
-                    <div className="sm:max-w-[240px]">
-                      <SubmitButton pendingText="Saving…">{isAdded ? "Save changes" : "Add to my page"}</SubmitButton>
-                    </div>
-                  </form>
-                  )}
+                        <form action={savePaymentMethod} className="flex flex-col gap-4">
+                          <input type="hidden" name="method" value={form.id} />
+                          {form.fields.map((field) => (
+                            <Field
+                              key={field.name}
+                              label={field.label}
+                              name={field.name}
+                              hint={field.hint}
+                              defaultValue={values[field.name]}
+                              required={field.required ?? true}
+                              maxLength={field.maxLength}
+                              inputMode={field.inputMode}
+                            />
+                          ))}
+                          <div className="sm:max-w-[240px]">
+                            <SubmitButton pendingText="Saving…">{isAdded ? "Save changes" : "Add to my page"}</SubmitButton>
+                          </div>
+                        </form>
 
-                  {isAdded ? (
-                    <form action={removePaymentMethod} className="sm:max-w-[240px]">
-                      <input type="hidden" name="method" value={form.id} />
-                      <SubmitButton variant="outline" pendingText="Removing…">
-                        Remove from my page
-                      </SubmitButton>
-                    </form>
-                  ) : null}
+                        {isAdded ? (
+                          <form action={removePaymentMethod} className="sm:max-w-[240px]">
+                            <input type="hidden" name="method" value={form.id} />
+                            <SubmitButton variant="outline" pendingText="Removing…">
+                              Remove from my page
+                            </SubmitButton>
+                          </form>
+                        ) : null}
+                      </div>
+                    </details>
+                  );
+                })}
                 </div>
               </details>
             );

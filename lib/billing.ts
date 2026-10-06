@@ -3,7 +3,7 @@
 // SERVER ONLY. Reads and writes the subscriptions table with the service
 // role, and answers "is this page allowed to be public?".
 
-import { FREE_METHOD_LIMIT } from "./site";
+import { TRIAL_DAYS } from "./site";
 import { createAdminClient } from "./supabase/admin";
 import {
   billingConfigured,
@@ -33,27 +33,64 @@ export function grantsAccess(row: SubscriptionRow | null): boolean {
   return false;
 }
 
-/**
- * Whether this account has a paid membership. While billing is not configured
- * (no Stripe keys yet) everyone counts as a member, so nothing is limited
- * before launch. If the check itself cannot run, the account is treated as
- * free (the safe side).
- */
-export async function pageIsPaid(userId: string): Promise<boolean> {
-  if (!billingConfigured()) return true;
-  const admin = createAdminClient();
-  if (!admin) return false;
-  const { data, error } = await admin.rpc("has_active_subscription", { uid: userId });
-  if (error) return false;
-  return data === true;
+export type AccessReason = "prelaunch" | "member" | "trial" | "ended";
+
+export interface Access {
+  /** True when the public page is live. */
+  active: boolean;
+  reason: AccessReason;
+  /** When the free trial ends (or ended), ISO string. */
+  trialEndsAt: string | null;
+  /** Whole days left in the trial, 0 when it has ended. */
+  trialDaysLeft: number;
+}
+
+export function trialEndFrom(createdAt: string | null | undefined): Date | null {
+  if (!createdAt) return null;
+  const start = new Date(createdAt).getTime();
+  if (Number.isNaN(start)) return null;
+  return new Date(start + TRIAL_DAYS * 86_400_000);
 }
 
 /**
- * How many payment methods this account may show. Unlimited (null) for
- * members, and for everyone while billing is not configured.
+ * Decides whether a page is live. Before billing is configured (no Stripe
+ * keys), every page is live. After that: members are live, accounts inside
+ * their free trial are live, and everyone else is paused (never deleted).
  */
-export async function methodLimitFor(userId: string): Promise<number | null> {
-  return (await pageIsPaid(userId)) ? null : FREE_METHOD_LIMIT;
+export function computeAccess(
+  createdAt: string | null | undefined,
+  subscription: SubscriptionRow | null,
+  now = Date.now(),
+): Access {
+  const end = trialEndFrom(createdAt);
+  const trialEndsAt = end ? end.toISOString() : null;
+  const msLeft = end ? end.getTime() - now : 0;
+  const trialDaysLeft = msLeft > 0 ? Math.ceil(msLeft / 86_400_000) : 0;
+
+  if (!billingConfigured()) return { active: true, reason: "prelaunch", trialEndsAt, trialDaysLeft };
+  if (grantsAccess(subscription)) return { active: true, reason: "member", trialEndsAt, trialDaysLeft };
+  if (msLeft > 0) return { active: true, reason: "trial", trialEndsAt, trialDaysLeft };
+  return { active: false, reason: "ended", trialEndsAt, trialDaysLeft: 0 };
+}
+
+/** Access for any account, read with the service role (used by public pages). */
+export async function accessFor(userId: string): Promise<Access> {
+  if (!billingConfigured()) return computeAccess(null, null);
+  const admin = createAdminClient();
+  if (!admin) return { active: false, reason: "ended", trialEndsAt: null, trialDaysLeft: 0 };
+
+  const [{ data: profile }, { data: sub }] = await Promise.all([
+    admin.from("profiles").select("created_at").eq("id", userId).maybeSingle(),
+    admin
+      .from("subscriptions")
+      .select("provider, provider_customer_id, provider_subscription_id, plan, status, current_period_end, cancel_at_period_end")
+      .eq("user_id", userId)
+      .maybeSingle(),
+  ]);
+  return computeAccess(
+    (profile as { created_at?: string } | null)?.created_at,
+    (sub as SubscriptionRow | null) ?? null,
+  );
 }
 
 /** Saves a Stripe subscription for a user. Uses the service role. */

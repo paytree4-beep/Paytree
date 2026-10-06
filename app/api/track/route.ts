@@ -54,7 +54,7 @@ export async function POST(request: Request): Promise<Response> {
 
   // Ignore events for pages that do not exist.
   const profile = await getProfileByUsername(payload.username);
-  if (!profile?.id) return status(404);
+  if (!profile?.id || profile.paused) return status(404);
 
   await recordEvent({
     profileId: profile.id,

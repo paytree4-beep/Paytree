@@ -39,12 +39,6 @@ export const SIGNUPS_OPEN =
  */
 export const GOOGLE_SIGNIN = process.env.NEXT_PUBLIC_GOOGLE_SIGNIN === "true";
 
-/**
- * Free plan: this many payment methods on a public page. Members get
- * unlimited methods. The limit only applies once billing (Stripe) is set up.
- */
-export const FREE_METHOD_LIMIT = 2;
-
 /** Free trial length for new accounts. */
 export const TRIAL_DAYS = 14;
 

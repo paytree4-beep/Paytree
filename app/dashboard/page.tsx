@@ -16,11 +16,11 @@ import { ShareLink } from "@/components/dashboard/share-link";
 import { QrCard } from "@/app/[username]/qr-card";
 import { param, type SearchParams } from "@/lib/auth";
 import { avatarUrl } from "@/lib/avatar";
-import { FREE_METHOD_LIMIT, PRICING, SITE_HOST, SITE_URL } from "@/lib/site";
+import { PRICING, SITE_HOST, SITE_URL } from "@/lib/site";
 import { createClient } from "@/lib/supabase/server";
 import { deleteAccount, setPublished, updateProfile } from "./actions";
 import { openBillingPortal, startCheckout } from "./billing-actions";
-import { grantsAccess, type SubscriptionRow } from "@/lib/billing";
+import { computeAccess, grantsAccess, type SubscriptionRow } from "@/lib/billing";
 import { billingConfigured } from "@/lib/stripe";
 
 export const metadata: Metadata = { title: "Dashboard", robots: { index: false } };
@@ -52,6 +52,7 @@ type ProfileRow = {
   bio: string | null;
   is_published: boolean;
   avatar_path: string | null;
+  created_at: string;
 };
 
 export default async function DashboardPage({ searchParams }: { searchParams: SearchParams }) {
@@ -63,7 +64,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
 
   const { data } = await supabase
     .from("profiles")
-    .select("username, display_name, bio, is_published, avatar_path")
+    .select("username, display_name, bio, is_published, avatar_path, created_at")
     .eq("id", user.id)
     .maybeSingle();
   if (!data) redirect("/onboarding");
@@ -100,6 +101,10 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
   const subscription = subData as SubscriptionRow | null;
   const billingOn = billingConfigured();
   const isMember = !billingOn || grantsAccess(subscription);
+  const access = computeAccess(profile.created_at, subscription);
+  const trialEndDate = access.trialEndsAt
+    ? new Date(access.trialEndsAt).toLocaleDateString("en-US", { month: "long", day: "numeric" })
+    : null;
   const periodEnd = subscription?.current_period_end
     ? new Date(subscription.current_period_end).toLocaleDateString("en-US", {
         month: "long",
@@ -140,6 +145,37 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
         {notice && NOTICES[notice] ? <Notice tone="success">{NOTICES[notice]}</Notice> : null}
         {error && ERRORS[error] ? <Notice tone="error">{ERRORS[error]}</Notice> : null}
 
+        {access.reason === "trial" ? (
+          <div className="flex flex-col gap-3 rounded-2xl border border-[#D9B873] bg-[#FBF6EA] p-5 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-[15px] text-[#5C4513]">
+              <strong className="text-[#064E3B]">
+                {access.trialDaysLeft === 1 ? "1 day" : `${access.trialDaysLeft} days`} left in your free trial.
+              </strong>{" "}
+              Subscribe before {trialEndDate} to keep your page live.
+            </p>
+            <a
+              href="#billing"
+              className="inline-flex min-h-11 flex-none items-center justify-center rounded-full bg-[#064E3B] px-6 font-bold text-[#FBFBFB]"
+            >
+              Subscribe
+            </a>
+          </div>
+        ) : null}
+        {access.reason === "ended" ? (
+          <div className="flex flex-col gap-3 rounded-2xl border border-[#B42318]/30 bg-[#FEF3F2] p-5 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-[15px] text-[#7A271A]">
+              <strong>Your free trial has ended, so your page is paused.</strong> Everything is saved. Subscribe
+              and it comes back right away.
+            </p>
+            <a
+              href="#billing"
+              className="inline-flex min-h-11 flex-none items-center justify-center rounded-full bg-[#064E3B] px-6 font-bold text-[#FBFBFB]"
+            >
+              Subscribe
+            </a>
+          </div>
+        ) : null}
+
         {billingOn ? (
           <section
             id="billing"
@@ -170,8 +206,16 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
             ) : (
               <>
                 <p className="mt-2 text-[15px] text-[#0B1F18]">
-                  <strong>You are on the free plan:</strong> up to {FREE_METHOD_LIMIT} payment methods.
-                  Upgrade for unlimited methods. Cancel any time.
+                  {access.reason === "trial" ? (
+                    <>
+                      <strong>Free trial:</strong> {access.trialDaysLeft} days left, with every feature. Choose a
+                      plan to keep your page live after {trialEndDate}.
+                    </>
+                  ) : (
+                    <>
+                      <strong>Your page is paused.</strong> Choose a plan to turn it back on. Cancel any time.
+                    </>
+                  )}
                 </p>
                 <div className="mt-4 grid gap-3 sm:grid-cols-2">
                   <form action={startCheckout}>
@@ -216,10 +260,10 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
             </Link>
             <span
               className={`inline-flex min-h-8 items-center rounded-full px-3 text-[13px] font-semibold ${
-                profile.is_published ? "bg-[#E3F0EA] text-[#064E3B]" : "bg-[#FEF3F2] text-[#7A271A]"
+                access.active && profile.is_published ? "bg-[#E3F0EA] text-[#064E3B]" : "bg-[#FEF3F2] text-[#7A271A]"
               }`}
             >
-              {profile.is_published ? "Public" : "Hidden"}
+              {!access.active ? "Paused" : profile.is_published ? "Public" : "Hidden"}
             </span>
           </div>
           <div className="mt-4">

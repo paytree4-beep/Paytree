@@ -121,8 +121,8 @@ export interface Profile {
   avatarUrl?: string;
   /** The owner's chosen order of payment methods, first to last. */
   order?: MethodId[];
-  /** Free plan: show only this many methods. Absent means unlimited. */
-  methodLimit?: number;
+  /** True when the free trial has ended without a subscription. */
+  paused?: boolean;
   payments: PaymentSettings;
 }
 
@@ -793,9 +793,9 @@ export async function getProfileByUsername(rawUsername: string): Promise<Profile
     avatar_path: string | null;
   };
 
-  // Free accounts show their first few methods; members show all of them.
-  const { methodLimitFor } = await import("./billing");
-  const methodLimit = await methodLimitFor(profile.id);
+  // After the free trial, an unsubscribed page is paused (never deleted).
+  const { accessFor } = await import("./billing");
+  const access = await accessFor(profile.id);
 
   const { data: rows } = await supabase
     .from("payment_methods")
@@ -806,7 +806,7 @@ export async function getProfileByUsername(rawUsername: string): Promise<Profile
   const methodRows = (rows ?? []) as MethodRow[];
   return {
     id: profile.id,
-    methodLimit: methodLimit ?? undefined,
+    paused: !access.active,
     order: methodRows
       .map((row) => METHOD_IDS.find((m) => m === row.method_id))
       .filter((m): m is MethodId => Boolean(m)),

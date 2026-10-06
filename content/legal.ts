@@ -92,7 +92,7 @@ export const TERMS: LegalDocument = {
       id: "billing",
       title: "Subscriptions and billing",
       intro: [
-        "PayTree has a free plan that shows up to 2 payment methods, and a paid membership for unlimited methods: $4.99 per month or $39.99 per year, plus any applicable taxes. Payments are processed by Stripe; we never see or store your full card number.",
+        "New accounts get a 14-day free trial with every feature; no card is needed to start. After the trial, PayTree is a paid membership: $4.99 per month or $39.99 per year, plus any applicable taxes. If you do not subscribe, your page is paused (not deleted) until you do. Payments are processed by Stripe; we never see or store your full card number.",
         "Your subscription renews automatically at the end of each billing period until you cancel. You can cancel at any time from your dashboard (Manage billing). Cancellation takes effect at the end of the current period, and you keep access until then.",
         "We will tell you before a price change takes effect. Refunds: [REFUND POLICY].",
       ],
