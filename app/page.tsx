@@ -197,70 +197,25 @@ function PhoneExample() {
         <p className="mt-2 text-center text-[12px] font-semibold text-[#2F4A3E]">Your page</p>
       </div>
 
-      {/* Phone 2: the owner's statistics, same look as the real Statistics page */}
-      <div className="mt-8 w-1/2 max-w-[200px]">
-        <div
-          role="img"
-          aria-label="Example statistics: 1,240 page views, 312 taps and a 25% tap rate in 30 days"
-          className={PHONE}
-          style={{ animationDuration: "8s", animationDelay: "1.2s" }}
-        >
-          <div className="flex flex-col gap-2 p-2.5 pt-4">
-            <span className="font-serif text-[17px] leading-none text-[#064E3B]">Statistics</span>
-            <div className="flex gap-1">
-              {["7 days", "30 days", "90 days"].map((r, i) => (
-                <span
-                  key={r}
-                  className={`rounded-full px-1.5 py-0.5 text-[7px] font-semibold ${
-                    i === 1 ? "bg-[#064E3B] text-[#FBFBFB]" : "border border-[#DCE5DF] bg-white"
-                  }`}
-                >
-                  {r}
-                </span>
-              ))}
-            </div>
-            <div className="grid grid-cols-3 gap-1">
-              {[
-                ["Page views", "1,240"],
-                ["Taps", "312"],
-                ["Tap rate", "25%"],
-              ].map(([label, value]) => (
-                <div key={label} className="rounded-[8px] border border-[#DCE5DF] bg-white p-1.5">
-                  <span className="block text-[6.5px] font-semibold text-[#4B6358]">{label}</span>
-                  <span className="mt-0.5 block font-serif text-[13px] leading-none text-[#064E3B]">{value}</span>
-                </div>
-              ))}
-            </div>
-            <div className="rounded-[10px] border border-[#DCE5DF] bg-white p-2">
-              <span className="block text-[7px] font-bold uppercase tracking-[0.08em] text-[#4B6358]">Visits per day</span>
-              <div className="mt-1.5 flex h-10 items-end gap-[3px]" aria-hidden="true">
-                {[30, 45, 38, 60, 52, 74, 66, 88, 70, 100].map((h, i) => (
-                  <span key={i} className="flex-1 rounded-t-[2px] bg-[#7BC86C]" style={{ height: `${h}%` }} />
-                ))}
-              </div>
-            </div>
-            <div className="rounded-[10px] border border-[#DCE5DF] bg-white p-2">
-              <span className="block text-[7px] font-bold uppercase tracking-[0.08em] text-[#4B6358]">Taps by method</span>
-              {[
-                ["cashapp", "Cash App", 128, 100],
-                ["zelle", "Zelle", 96, 75],
-                ["venmo", "Venmo", 64, 50],
-                ["applecash", "Apple Cash", 24, 19],
-              ].map(([id, name, n, w]) => (
-                <div key={id as string} className="mt-1">
-                  <div className="flex justify-between text-[7.5px] font-semibold">
-                    <span>{name}</span>
-                    <span className="text-[#4B6358]">{n}</span>
-                  </div>
-                  <div className="mt-0.5 h-1 rounded-full bg-[#EEF3F0]">
-                    <div className="h-1 rounded-full" style={{ width: `${w}%`, backgroundColor: badgeColor(id as string).bg }} />
-                  </div>
-                </div>
-              ))}
-            </div>
+      {/* Next to the phone: the three standout features, stacked */}
+      <div className="flex w-1/2 max-w-[200px] flex-col gap-2.5 self-center">
+        {FEATURES.filter((f) => f.apple).map(({ title, body, Icon, tint }) => (
+          <div key={title} className={`flex flex-col gap-1 p-3 ring-2 ring-[#E2C27A]/70 ${glass}`}>
+            <span className="flex items-center gap-2">
+              <span
+                className="flex h-7 w-7 flex-none items-center justify-center rounded-lg text-white"
+                style={{ backgroundColor: tint }}
+                aria-hidden="true"
+              >
+                <Icon className="h-4 w-4" strokeWidth={2.2} />
+              </span>
+              <span className="text-[15px] font-extrabold leading-tight">
+                <AppleTitle text={title} />
+              </span>
+            </span>
+            <span className="text-[11.5px] leading-snug text-[#1F362B]">{body}</span>
           </div>
-        </div>
-        <p className="mt-2 text-center text-[12px] font-semibold text-[#2F4A3E]">Your statistics</p>
+        ))}
       </div>
     </div>
   );
@@ -375,8 +330,8 @@ export default function HomePage() {
                 <h2 className={headingClass}>Everything you need to get paid. Nothing you don&rsquo;t.</h2>
               </Reveal>
               <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-                {FEATURES.map(({ title, body, Icon, tint, apple }, i) => (
-                  <Reveal key={title} delay={i * 60}>
+                {FEATURES.filter((f) => !f.apple).map(({ title, body, Icon, tint, apple }, i) => (
+                  <Reveal key={title} delay={i * 60} className={i === 4 ? "col-span-2 lg:col-span-1" : ""}>
                     <div
                       className={`flex h-full flex-col gap-2 p-4 transition-transform duration-300 hover:-translate-y-1 motion-reduce:transition-none ${glass} ${
                         apple ? "ring-2 ring-[#E2C27A]/70" : ""
