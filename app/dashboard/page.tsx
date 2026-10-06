@@ -18,7 +18,8 @@ import { param, type SearchParams } from "@/lib/auth";
 import { avatarUrl } from "@/lib/avatar";
 import { PRICING, SITE_HOST, SITE_URL } from "@/lib/site";
 import { createClient } from "@/lib/supabase/server";
-import { deleteAccount, setPublished, updateProfile } from "./actions";
+import { deleteAccount, setPageMode, setPublished, updateProfile } from "./actions";
+import { ShareCardMaker } from "@/components/dashboard/share-card";
 import { setPaymentLog } from "./log/actions";
 import { SaleCelebration } from "@/components/dashboard/sale-celebration";
 import { OwnerCookie } from "@/components/dashboard/owner-cookie";
@@ -43,6 +44,8 @@ const NOTICES: Record<string, string> = {
   subscribed: "Thank you! Your membership is active and your page is live. It can take a few seconds to update.",
   "checkout-cancelled": "Checkout was cancelled. You have not been charged.",
   "log-on": "The payment log is on. Customers now see an \u201cI\u2019ve paid\u201d button on your page.",
+  "tip-on": "Tip me is on. Your page now says \u201cSend me a tip\u201d.",
+  "tip-off": "Your page is back to a regular payment page.",
   "log-off": "The payment log is off. The \u201cI\u2019ve paid\u201d button is hidden. Your history is kept.",
 };
 
@@ -138,6 +141,15 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
   const celebrate =
     newestSale !== null && (seenSale === null || new Date(newestSale).getTime() > new Date(seenSale).getTime());
 
+  // Tip me mode. Read on its own so a missing column never breaks the page.
+  const { data: modeRow, error: modeError } = await supabase
+    .from("profiles")
+    .select("page_mode")
+    .eq("id", user.id)
+    .maybeSingle();
+  const modeReady = !modeError;
+  const tipMode = (modeRow as { page_mode?: string } | null)?.page_mode === "tip";
+
   // Apple basket (referral program). Read on its own so it never breaks the page.
   const { data: appleData, error: appleError } = await supabase
     .from("referral_apples")
@@ -170,7 +182,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
   const notice = param(params, "notice");
   const error = param(params, "error");
   const pagePath = `/${profile.username}`;
-  const VIEWS = ["home", "link", "apples", "log", "profile", "settings", "billing"] as const;
+  const VIEWS = ["home", "link", "apples", "log", "profile", "settings", "billing", "share"] as const;
   const requestedView = param(params, "view");
   const view = VIEWS.find((v) => v === requestedView) ?? "home";
 
@@ -184,6 +196,8 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
       href: "/dashboard/payments",
       badge: methodCount === 0 ? "!" : undefined,
     },
+    { icon: "🍕", title: "Split the bill", detail: "Share a bill with friends", href: "/dashboard/split" },
+    { icon: "📸", title: tipMode ? "Tip me card" : "Pay me here card", detail: "For Instagram & TikTok", href: "/dashboard?view=share" },
     { icon: "📊", title: "Statistics", detail: `${views7} views · ${taps7} taps this week`, href: "/dashboard/stats" },
     ...(logReady
       ? [
@@ -553,6 +567,32 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
           </details>
         </section>
           </>
+        ) : null}
+        {view === "share" ? (
+          <ShareCardMaker
+            name={profile.display_name}
+            username={profile.username}
+            avatar={avatarUrl(profile.avatar_path) ?? null}
+            tip={tipMode}
+            pageUrl={`${SITE_URL}/${profile.username}`}
+          />
+        ) : null}
+
+        {view === "settings" && modeReady ? (
+          <section className="rounded-2xl border border-[#DCE5DF] bg-white p-5 sm:p-6">
+            <h2 className="text-sm font-bold uppercase tracking-[0.1em] text-[#4B6358]">Tip me 💸</h2>
+            <p className="mt-2 text-[15px] text-[#4B6358]">
+              {tipMode
+                ? "On. Your page says \u201cSend me a tip\u201d. Great for creators, musicians and streamers."
+                : "For creators, musicians and streamers: your page says \u201cSend me a tip\u201d instead of a payment page."}
+            </p>
+            <form action={setPageMode} className="mt-4 sm:max-w-[260px]">
+              <input type="hidden" name="mode" value={tipMode ? "pay" : "tip"} />
+              <SubmitButton variant={tipMode ? "outline" : "emerald"} pendingText="Saving…">
+                {tipMode ? "Turn off Tip me" : "Turn on Tip me"}
+              </SubmitButton>
+            </form>
+          </section>
         ) : null}
       </main>
     </div>

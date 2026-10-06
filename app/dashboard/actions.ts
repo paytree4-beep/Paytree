@@ -157,3 +157,13 @@ export async function deleteAccount(formData: FormData): Promise<void> {
   if (username) revalidatePath(`/${username}`);
   redirect("/login?notice=deleted");
 }
+
+/** Switches the public page between "Pay me" and "Tip me". */
+export async function setPageMode(formData: FormData): Promise<void> {
+  const { supabase, user } = await requireUser();
+  const mode = formData.get("mode") === "tip" ? "tip" : "pay";
+  const { data } = await supabase.from("profiles").update({ page_mode: mode }).eq("id", user.id).select("username").maybeSingle();
+  const username = (data as { username?: string } | null)?.username;
+  if (username) revalidatePath(`/${username}`);
+  redirect(`/dashboard?view=settings&notice=${mode === "tip" ? "tip-on" : "tip-off"}`);
+}

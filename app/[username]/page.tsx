@@ -40,8 +40,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     manifest: `/${profile.username}/manifest.webmanifest`,
     appleWebApp: { capable: true, title: profile.displayName.slice(0, 20), statusBarStyle: "default" },
-    title: `${profile.displayName} · PayTree`,
-    description: `Pay ${profile.displayName} with Cash App, Venmo, PayPal, Zelle, bank transfer, card, Wise or crypto.`,
+    title: profile.pageMode === "tip" ? `Tip ${profile.displayName} · PayTree` : `${profile.displayName} · PayTree`,
+    description: `${profile.pageMode === "tip" ? "Send a tip to" : "Pay"} ${profile.displayName} with Cash App, Venmo, PayPal, Zelle, bank transfer, card, Wise or crypto.`,
   };
 }
 
@@ -105,6 +105,11 @@ export default async function PublicPaymentPage({ params, searchParams }: PagePr
           <p className="text-[13px] text-[#4B6358]">
             {SITE_HOST}/{profile.username}
           </p>
+          {profile.pageMode === "tip" ? (
+            <p className="mt-1 rounded-full bg-white/80 px-4 py-1.5 text-[14px] font-bold text-[#064E3B] shadow-sm">
+              Send me a tip 💸
+            </p>
+          ) : null}
           {profile.bio ? (
             <p className="max-w-[420px] text-[15px] text-[#3F574C]">{profile.bio}</p>
           ) : null}
@@ -133,6 +138,7 @@ export default async function PublicPaymentPage({ params, searchParams }: PagePr
                 username={profile.username}
                 displayName={profile.displayName}
                 methods={methods}
+                mode={profile.pageMode}
                 extraIndex={profile.paidPosition}
                 extra={among ? paidBox : null}
               />

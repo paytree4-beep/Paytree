@@ -125,6 +125,8 @@ export interface Profile {
   paused?: boolean;
   /** True when the owner turned on the payment log ("I've paid" button). */
   paymentLog?: boolean;
+  /** "tip" turns the page into a tip jar ("Send me a tip"). */
+  pageMode?: "pay" | "tip";
   /** How many payment methods come before the "I've paid" box. null = after all. */
   paidPosition?: number | null;
   payments: PaymentSettings;
@@ -826,10 +828,19 @@ export async function getProfileByUsername(rawUsername: string): Promise<Profile
   const rawPos = (posRow as { paid_box_position?: number | null } | null)?.paid_box_position;
   const paidPosition = !posError && typeof rawPos === "number" ? rawPos : null;
 
+  const { data: modeRow, error: modeError } = await supabase
+    .from("profiles")
+    .select("page_mode")
+    .eq("id", profile.id)
+    .maybeSingle();
+  const pageMode: "pay" | "tip" =
+    !modeError && (modeRow as { page_mode?: string } | null)?.page_mode === "tip" ? "tip" : "pay";
+
   return {
     id: profile.id,
     paused: !access.active,
     paymentLog,
+    pageMode,
     paidPosition,
     order: methodRows
       .map((row) => METHOD_IDS.find((m) => m === row.method_id))
