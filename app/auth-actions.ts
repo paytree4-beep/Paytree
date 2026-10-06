@@ -9,6 +9,9 @@
 import { redirect } from "next/navigation";
 
 import { cleanEmail, passwordProblem, requestOrigin, safeNext } from "@/lib/auth";
+import { createClient as createPlainClient } from "@supabase/supabase-js";
+
+import { supabaseEnv } from "@/lib/supabase/env";
 import { createClient } from "@/lib/supabase/server";
 
 function qs(values: Record<string, string | undefined>): string {
@@ -92,7 +95,21 @@ export async function sendPasswordReset(formData: FormData): Promise<void> {
   if (!email) redirect("/forgot?error=email");
 
   const origin = await requestOrigin();
-  const supabase = await createClient();
+  const env = supabaseEnv();
+  if (!env) redirect("/forgot?error=link");
+  // The reset link must work wherever it is opened: most people ask in a
+  // browser and open the email in the Gmail or Mail app. The default (PKCE)
+  // link only works in the browser that asked for it, so this request uses
+  // the implicit flow. The link is still single-use and expires in 1 hour;
+  // /auth/callback turns it into a session.
+  const supabase = createPlainClient(env.url, env.key, {
+    auth: {
+      flowType: "implicit",
+      persistSession: false,
+      autoRefreshToken: false,
+      detectSessionInUrl: false,
+    },
+  });
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
     redirectTo: `${origin}/auth/callback?next=/reset-password`,
   });
