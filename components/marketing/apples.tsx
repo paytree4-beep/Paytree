@@ -34,18 +34,29 @@ export function Apple({ color, size = 64 }: { color: AppleColor; size?: number }
   );
 }
 
-type Spot = { color: AppleColor; size: number; top: string; left: string; rot: number; delay: number; blur?: boolean; opacity?: number };
+type Spot = {
+  color: AppleColor;
+  size: number;
+  top: string;
+  left: string;
+  rot: number;
+  delay: number;
+  blur?: boolean;
+  opacity?: number;
+  /** Sits at the screen edge, so it is safe to show on phones. */
+  edge?: boolean;
+};
 
 const SPOTS: Spot[] = [
-  { color: "red", size: 70, top: "6%", left: "4%", rot: -12, delay: 0 },
-  { color: "green", size: 54, top: "14%", left: "82%", rot: 14, delay: 1.5 },
-  { color: "yellow", size: 46, top: "34%", left: "90%", rot: -8, delay: 3, opacity: 0.8 },
-  { color: "gold", size: 88, top: "42%", left: "-3%", rot: 10, delay: 2, blur: true, opacity: 0.55 },
-  { color: "red", size: 40, top: "58%", left: "70%", rot: 18, delay: 4, opacity: 0.75 },
-  { color: "green", size: 76, top: "72%", left: "12%", rot: -16, delay: 1, blur: true, opacity: 0.6 },
-  { color: "yellow", size: 58, top: "84%", left: "84%", rot: 6, delay: 2.5 },
+  { color: "red", size: 64, top: "13%", left: "-2%", rot: -12, delay: 0, edge: true },
+  { color: "green", size: 54, top: "16%", left: "88%", rot: 14, delay: 1.5, edge: true },
+  { color: "yellow", size: 46, top: "38%", left: "92%", rot: -8, delay: 3, opacity: 0.85, edge: true },
+  { color: "gold", size: 80, top: "46%", left: "-6%", rot: 10, delay: 2, blur: true, opacity: 0.45, edge: true },
+  { color: "red", size: 40, top: "60%", left: "72%", rot: 18, delay: 4, opacity: 0.75 },
+  { color: "green", size: 70, top: "74%", left: "-4%", rot: -16, delay: 1, blur: true, opacity: 0.5, edge: true },
+  { color: "yellow", size: 52, top: "86%", left: "90%", rot: 6, delay: 2.5, edge: true },
   { color: "red", size: 34, top: "92%", left: "40%", rot: -4, delay: 3.5, opacity: 0.7 },
-];
+]
 
 /** Fixed layer of floating apples behind the whole landing page. */
 export function AppleBackdrop() {
@@ -54,7 +65,7 @@ export function AppleBackdrop() {
       {SPOTS.map((s, i) => (
         <span
           key={i}
-          className={`pt-float absolute ${s.blur ? "blur-[2px]" : ""}`}
+          className={`pt-float absolute ${s.blur ? "blur-[2px]" : ""} ${s.edge ? "" : "hidden lg:block"}`}
           style={
             {
               top: s.top,

@@ -64,6 +64,8 @@ export const PRICING = {
     period: "per year",
     note: `Equivalent to ${money(PRICES.annual / 12)} per month.`,
     perMonth: money(PRICES.annual / 12),
+    /** What 12 months on the monthly plan would cost. */
+    fullPrice: money(PRICES.monthly * 12),
     cta: "Start free trial",
     badge: `Save ${Math.round((1 - PRICES.annual / (PRICES.monthly * 12)) * 100)}%`,
   },

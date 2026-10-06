@@ -227,17 +227,16 @@ export default function HomePage() {
               <span className={goldText}>One simple link.</span>
             </h1>
             <p className="max-w-[520px] text-lg leading-[1.7] text-[#3F574C]">
-              Make it easier and faster for your customers to pay you. Cash App, Venmo, Zelle, PayPal, cards and
-              more, on one beautiful page with your own QR code.
+              Make it easier and faster for your customers to pay you.
             </p>
-            <ul aria-label="Included" className="flex flex-wrap gap-2.5">
+            <ul aria-label="Included" className="flex flex-wrap gap-2">
               {[
                 { label: "Your link", Icon: Link2 },
                 { label: "QR code", Icon: QrCode },
                 { label: "Statistics", Icon: BarChart3 },
               ].map(({ label, Icon }) => (
-                <li key={label} className={`inline-flex min-h-10 items-center gap-2 px-4 text-[15px] font-semibold text-[#064E3B] ${glass} rounded-full`}>
-                  <Icon className="h-[18px] w-[18px] text-[#9A6E1A]" aria-hidden="true" />
+                <li key={label} className={`inline-flex min-h-9 items-center gap-1.5 px-3 text-[13px] font-semibold text-[#064E3B] sm:min-h-10 sm:px-4 sm:text-[15px] ${glass} rounded-full`}>
+                  <Icon className="h-4 w-4 text-[#9A6E1A]" aria-hidden="true" />
                   {label}
                 </li>
               ))}
@@ -388,20 +387,20 @@ export default function HomePage() {
 
           {/* Final call to action */}
           <section id="signup" className="px-5 pb-16 sm:px-6">
-            <Reveal className="relative mx-auto max-w-[1180px] overflow-hidden rounded-[36px] bg-[#064E3B] px-7 py-14 text-[#FBFBFB] shadow-[0_40px_80px_-40px_rgba(6,78,59,0.8)] sm:px-14">
+            <Reveal className="relative mx-auto max-w-[1180px] overflow-hidden rounded-[36px] border-2 border-[#E2C27A] bg-gradient-to-br from-white/85 via-[#FBF3DF]/85 to-[#F4E3B8]/85 px-7 py-14 text-[#064E3B] shadow-[0_40px_80px_-40px_rgba(154,110,26,0.55)] backdrop-blur-xl sm:px-14">
               <div className="relative z-10 flex flex-col items-start gap-5">
                 <h2 className="font-serif text-[clamp(36px,5vw,64px)] font-normal leading-[1.05] [text-wrap:balance]">
                   Ready to get paid?
                 </h2>
-                <p className="max-w-[520px] text-lg text-[#FBFBFB]/85">
+                <p className="max-w-[520px] text-lg text-[#3F574C]">
                   Build your payment page in two minutes. {TRIAL_DAYS} days free, no card needed.
                 </p>
-                <Cta variant="gold" className="min-w-[260px]">
+                <Cta variant="emerald" className="min-w-[260px] shadow-[0_18px_40px_-18px_rgba(6,78,59,0.8)]">
                   {trialCta}
                 </Cta>
               </div>
-              <span aria-hidden="true" className="pointer-events-none absolute -right-10 -top-10 h-56 w-56 rounded-full bg-[#D9B873]/20 blur-3xl" />
-              <span aria-hidden="true" className="pointer-events-none absolute -bottom-16 right-24 h-64 w-64 rounded-full bg-[#7BC86C]/20 blur-3xl" />
+              <span aria-hidden="true" className="pointer-events-none absolute -right-10 -top-10 h-56 w-56 rounded-full bg-[#E5484D]/15 blur-3xl" />
+              <span aria-hidden="true" className="pointer-events-none absolute -bottom-16 right-24 h-64 w-64 rounded-full bg-[#7BC86C]/25 blur-3xl" />
             </Reveal>
           </section>
         </main>

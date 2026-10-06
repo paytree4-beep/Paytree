@@ -7,7 +7,9 @@
 import { useState } from "react";
 
 import { Cta } from "@/components/marketing/cta";
-import { PRICING } from "@/lib/site";
+import { PRICES, PRICING } from "@/lib/site";
+
+const money = (value: number) => `$${value.toFixed(2)}`;
 
 type PlanKey = "monthly" | "annual";
 
@@ -40,7 +42,7 @@ export function Pricing() {
               aria-pressed={selected}
               onClick={() => setPlan(key)}
               className={`min-h-11 min-w-[120px] rounded-full px-[22px] font-semibold transition-colors motion-reduce:transition-none ${
-                selected ? "bg-[#064E3B] text-[#FBFBFB]" : "bg-transparent text-[#0B1F18]"
+                selected ? "bg-[#064E3B] text-[#FBFBFB]" : "bg-transparent text-[#064E3B]"
               }`}
             >
               {key === "monthly" ? "Monthly" : "Yearly"}
@@ -49,65 +51,67 @@ export function Pricing() {
         })}
       </div>
 
-      <div className="flex w-full flex-wrap items-stretch gap-6">
+      <div className="flex w-full flex-wrap items-stretch gap-5">
         {keys.map((key) => {
           const info = PRICING[key];
           const selected = plan === key;
           const badge = "badge" in info ? info.badge : "";
+          const fullPrice = "fullPrice" in info ? info.fullPrice : "";
           return (
             <div
               key={key}
-              className={`flex min-w-0 flex-[1_1_340px] flex-col gap-[22px] rounded-[28px] border-[1.5px] p-[38px] ${
+              className={`relative flex min-w-0 flex-[1_1_320px] flex-col gap-5 rounded-[28px] p-8 backdrop-blur-xl transition-shadow ${
                 selected
-                  ? "border-[#064E3B] bg-[#064E3B] text-[#FBFBFB] shadow-[0_30px_60px_-30px_rgba(6,78,59,0.6)]"
-                  : "border-white/70 bg-white/60 text-[#0B1F18] backdrop-blur-xl"
+                  ? "border-2 border-[#C9A048] bg-white/80 shadow-[0_30px_70px_-30px_rgba(154,110,26,0.55)]"
+                  : "border border-white/70 bg-white/50 shadow-[0_20px_50px_-36px_rgba(6,78,59,0.45)]"
               }`}
             >
               <div className="flex items-center justify-between gap-3">
-                <span className="text-lg font-bold">{info.name}</span>
+                <span className="text-lg font-bold text-[#064E3B]">{info.name}</span>
                 {badge ? (
-                  <span className="rounded-full bg-[#D9B873] px-3 py-1 text-[13px] font-bold text-[#064E3B]">
+                  <span className="rounded-full bg-gradient-to-r from-[#C9A048] to-[#E2C27A] px-3.5 py-1.5 text-[13px] font-bold text-[#3D2A06] shadow-sm">
                     {badge}
                   </span>
                 ) : null}
               </div>
 
-              <div className="flex flex-wrap items-baseline gap-2">
-                <span className="font-serif text-[68px] leading-none">{info.price}</span>
-                <span className={selected ? "text-[#FBFBFB]/80" : "text-[#4B6358]"}>
-                  {info.period}
-                </span>
+              <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                {fullPrice ? (
+                  <span className="font-serif text-[30px] leading-none text-[#4B6358]/70 line-through decoration-[#B42318]/60 decoration-2">
+                    {fullPrice}
+                  </span>
+                ) : null}
+                <span className="font-serif text-[64px] leading-none text-[#064E3B]">{info.price}</span>
+                <span className="text-[#4B6358]">{info.period}</span>
               </div>
 
-              <p className={`min-h-6 text-[15px] ${selected ? "text-[#FBFBFB]/80" : "text-[#4B6358]"}`}>
-                {info.note}
+              <p className="min-h-6 text-[15px] text-[#4B6358]">
+                {fullPrice ? (
+                  <>
+                    <strong className="text-[#9A6E1A]">You save {money(PRICES.monthly * 12 - PRICES.annual)} a year.</strong>{" "}
+                    {info.note}
+                  </>
+                ) : (
+                  info.note
+                )}
               </p>
 
-              <div className={`h-px ${selected ? "bg-[#FBFBFB]/20" : "bg-[#E3EBE6]"}`} />
+              <div className="h-px bg-[#064E3B]/10" />
 
               <ul className="flex flex-1 flex-col gap-3">
                 {PLAN_FEATURES.map((text) => (
-                  <li key={text} className="flex items-start gap-3">
-                    <svg
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke={selected ? "#D9B873" : "#064E3B"}
-                      strokeWidth="2.4"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      aria-hidden="true"
-                      className="mt-[3px] flex-none"
-                    >
-                      <path d="M5 12.5l4.5 4.5L19 7.5" />
-                    </svg>
+                  <li key={text} className="flex items-start gap-3 text-[#0B1F18]">
+                    <span className="mt-[2px] flex h-5 w-5 flex-none items-center justify-center rounded-full bg-[#E3F0EA]">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#064E3B" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <path d="M5 12.5l4.5 4.5L19 7.5" />
+                      </svg>
+                    </span>
                     <span>{text}</span>
                   </li>
                 ))}
               </ul>
 
-              <Cta variant={selected ? "gold" : "emerald"}>{info.cta}</Cta>
+              <Cta variant={selected ? "emerald" : "outline"}>{info.cta}</Cta>
             </div>
           );
         })}
