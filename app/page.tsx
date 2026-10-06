@@ -21,7 +21,7 @@ import {
 import type { LucideIcon } from "lucide-react";
 
 import { Logo } from "@/components/brand/logo";
-import { AppleBackdrop } from "@/components/marketing/apples";
+import { AppleBackdrop, AppleHalo } from "@/components/marketing/apples";
 import { Cta } from "@/components/marketing/cta";
 import { ExampleAvatar } from "@/components/marketing/example-avatar";
 import { ExampleQr } from "@/components/marketing/example-qr";
@@ -137,15 +137,16 @@ function PhoneExample() {
       <div
         role="img"
         aria-label="Example PayTree page for Cedar Coffee Co. on a phone, with Cash App, Venmo, Zelle, Apple Cash and a QR code"
-        className="pt-bob overflow-hidden rounded-[44px] border-[10px] border-[#0B1F18] bg-[#FBFBFB] shadow-[0_40px_80px_-30px_rgba(6,78,59,0.6)]"
+        className="pt-bob overflow-hidden rounded-[44px] border-[10px] border-[#0B1F18] bg-[#FAF5EA] shadow-[0_40px_80px_-30px_rgba(6,78,59,0.6)]"
         style={{ animationDuration: "7s" }}
       >
-        <div className="flex flex-col items-center gap-1 bg-[#064E3B] px-4 pb-4 pt-6 text-center text-[#FBFBFB]">
-          <span className="mb-1">
+        <div className="relative flex flex-col items-center gap-1 overflow-hidden bg-gradient-to-b from-[#E6F2EA] to-[#FAF5EA] px-4 pb-4 pt-6 text-center text-[#064E3B]">
+          <AppleHalo compact />
+          <span className="relative mb-1">
             <ExampleAvatar size={52} />
           </span>
-          <span className="font-serif text-[21px] leading-tight">Cedar Coffee Co.</span>
-          <span className="text-[11px] text-[#FBFBFB]/75">{SITE_HOST}/cedarcoffee</span>
+          <span className="relative font-serif text-[21px] leading-tight">Cedar Coffee Co.</span>
+          <span className="relative text-[11px] text-[#4B6358]">{SITE_HOST}/cedarcoffee</span>
         </div>
         <div className="flex flex-col gap-2 p-3.5">
           {EXAMPLE.map(({ id, name, detail, Icon, copy }) => {
@@ -167,11 +168,11 @@ function PhoneExample() {
               </div>
             );
           })}
-          <div className="mt-1 flex items-center gap-3 rounded-[14px] bg-[#064E3B] px-3 py-2.5 text-[#FBFBFB]">
+          <div className="mt-1 flex items-center gap-3 rounded-[14px] border border-[#CFE3D6] bg-[#E6F2EA] px-3 py-2.5 text-[#064E3B]">
             <ExampleQr url={SITE_URL} />
             <span className="min-w-0">
               <span className="block text-[13px] font-semibold">Scan to pay</span>
-              <span className="block text-[11px] text-[#FBFBFB]/75">Point your camera here</span>
+              <span className="block text-[11px] text-[#4B6358]">Point your camera here</span>
             </span>
           </div>
         </div>

@@ -14,6 +14,7 @@ import { applyOrder, getProfileByUsername, resolveMethods } from "@/lib/profiles
 import { SITE_HOST, SITE_URL } from "@/lib/site";
 import { PaymentMethods } from "./payment-methods";
 import { QrCard } from "./qr-card";
+import { AppleHalo } from "@/components/marketing/apples";
 
 
 // Always read fresh data, so a change saved in the dashboard shows up on the
@@ -70,10 +71,11 @@ export default async function PublicPaymentPage({ params }: PageProps) {
   const initial = profile.displayName.trim().charAt(0).toUpperCase() || "P";
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#FBFBFB] font-sans text-[#0B1F18]">
+    <div className="flex min-h-screen flex-col bg-[#FAF5EA] font-sans text-[#0B1F18]">
       {/* Profile header */}
-      <header className="bg-[#064E3B] px-5 pb-6 pt-7 text-[#FBFBFB]">
-        <div className="mx-auto flex max-w-[560px] flex-col items-center gap-1.5 text-center">
+      <header className="relative overflow-hidden bg-gradient-to-b from-[#E6F2EA] via-[#F1F6EE] to-[#FAF5EA] px-5 pb-7 pt-8 text-[#064E3B]">
+        <AppleHalo />
+        <div className="relative mx-auto flex max-w-[560px] flex-col items-center gap-1.5 text-center">
           {profile.avatarUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -81,12 +83,12 @@ export default async function PublicPaymentPage({ params }: PageProps) {
               alt=""
               width={68}
               height={68}
-              className="mb-1.5 h-[68px] w-[68px] rounded-full bg-[#FBFBFB] object-cover ring-[3px] ring-[#D9B873]/55"
+              className="mb-1.5 h-[76px] w-[76px] rounded-full bg-white object-cover shadow-[0_12px_30px_-12px_rgba(6,78,59,0.5)] ring-4 ring-white"
             />
           ) : (
             <span
               aria-hidden="true"
-              className="mb-1.5 flex h-[68px] w-[68px] items-center justify-center rounded-full bg-[#FBFBFB] font-serif text-4xl leading-none text-[#064E3B] ring-[3px] ring-[#D9B873]/55"
+              className="mb-1.5 flex h-[76px] w-[76px] items-center justify-center rounded-full bg-[#064E3B] font-serif text-4xl leading-none text-[#FBFBFB] shadow-[0_12px_30px_-12px_rgba(6,78,59,0.5)] ring-4 ring-white"
             >
               {initial}
             </span>
@@ -94,11 +96,11 @@ export default async function PublicPaymentPage({ params }: PageProps) {
           <h1 className="font-serif text-[2rem] font-normal leading-[1.1] tracking-tight">
             {profile.displayName}
           </h1>
-          <p className="text-[13px] text-[#FBFBFB]/75">
+          <p className="text-[13px] text-[#4B6358]">
             {SITE_HOST}/{profile.username}
           </p>
           {profile.bio ? (
-            <p className="max-w-[420px] text-[15px] text-[#FBFBFB]/90">{profile.bio}</p>
+            <p className="max-w-[420px] text-[15px] text-[#3F574C]">{profile.bio}</p>
           ) : null}
         </div>
       </header>
@@ -132,7 +134,7 @@ export default async function PublicPaymentPage({ params }: PageProps) {
 
       {/* Persistent promotional footer: stays pinned to the bottom of the viewport */}
       <footer
-        className="sticky bottom-0 z-40 border-t border-[#D9B873]/45 bg-[#064E3B] px-4 pt-3.5 text-center text-[#FBFBFB]"
+        className="sticky bottom-0 z-40 border-t border-white/80 bg-white/75 px-4 pt-3.5 text-center text-[#064E3B] backdrop-blur-xl"
         style={{ paddingBottom: "max(0.875rem, env(safe-area-inset-bottom))" }}
       >
         <Link

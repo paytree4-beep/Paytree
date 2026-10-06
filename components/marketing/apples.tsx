@@ -82,3 +82,25 @@ export function AppleBackdrop() {
     </div>
   );
 }
+
+/** A few apples arranged around a profile photo. Decorative only. */
+export function AppleHalo({ compact = false }: { compact?: boolean }) {
+  const k = compact ? 0.7 : 1;
+  const items: { color: AppleColor; size: number; style: CSSProperties; delay: number }[] = [
+    { color: "red", size: 34 * k, style: { top: "8%", left: "12%", "--pt-rot": "-14deg" } as CSSProperties, delay: 0 },
+    { color: "green", size: 28 * k, style: { top: "4%", right: "14%", "--pt-rot": "12deg" } as CSSProperties, delay: 1.2 },
+    { color: "yellow", size: 24 * k, style: { top: "46%", left: "4%", "--pt-rot": "8deg" } as CSSProperties, delay: 2.1 },
+    { color: "gold", size: 30 * k, style: { top: "50%", right: "5%", "--pt-rot": "-8deg" } as CSSProperties, delay: 0.6 },
+    { color: "green", size: 20 * k, style: { bottom: "10%", left: "22%", "--pt-rot": "18deg" } as CSSProperties, delay: 1.8 },
+    { color: "red", size: 22 * k, style: { bottom: "14%", right: "22%", "--pt-rot": "-18deg" } as CSSProperties, delay: 2.6 },
+  ];
+  return (
+    <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
+      {items.map((it, i) => (
+        <span key={i} className="pt-float absolute opacity-90" style={{ ...it.style, animationDelay: `${it.delay}s` }}>
+          <Apple color={it.color} size={it.size} />
+        </span>
+      ))}
+    </div>
+  );
+}
