@@ -234,6 +234,13 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
               Hello, {profile.display_name}
             </h1>
             <p className="mt-1 text-[14px] text-[#4B6358]">{user.email}</p>
+            <Link
+              href={pagePath}
+              className="mt-4 flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full bg-[#064E3B] px-6 font-bold text-[#FBFBFB] shadow-[0_14px_30px_-16px_rgba(6,78,59,0.8)] sm:w-auto"
+            >
+              View my page
+              <span aria-hidden="true">↗</span>
+            </Link>
           </div>
         ) : null}
 
