@@ -3,7 +3,7 @@
 //
 // "Pay me here" / "Tip me" card maker for Instagram Stories, Reels and TikTok.
 // Draws a 1080x1920 card on a canvas (name, photo, QR code, apples) and saves
-// it as a sharp image, or records an 8-second video with music.
+// it as a sharp image, or records a 6-second video with music.
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
@@ -12,7 +12,7 @@ import { scheduleTune } from "./card-music";
 
 const W = 1080;
 const H = 1920;
-const DURATION = 8; // seconds of video
+const DURATION = 6; // seconds of video
 
 const APPLE_PATH =
   "M32 19c-4-4-12-5-17 0-6 6-5 18 0 26 4 7 9 11 13 10 2-.4 3-1.4 4-1.4s2 1 4 1.4c4 1 9-3 13-10 5-8 6-20 0-26-5-5-13-4-17 0z";
@@ -429,7 +429,7 @@ export function ShareCardMaker({
           {mode === "tip" ? "Tip me card 💸" : "Pay me here card 📸"}
         </h1>
         <p className="mt-1 text-[15px] text-[#3F574C]">
-          Made for Instagram Stories, Reels and TikTok. The video is 8 seconds with our own music. Tip: on TikTok you
+          Made for Instagram Stories, Reels and TikTok. The video is 6 seconds with our own music. Tip: on TikTok you
           can also add a trending sound.
         </p>
       </div>
