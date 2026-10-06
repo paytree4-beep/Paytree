@@ -21,7 +21,7 @@ export function AuthTabs({ active }: { active: "signup" | "login" }) {
   };
   return (
     <nav aria-label="Account" className="mb-7 flex rounded-full border border-[#DCE5DF] bg-white p-1">
-      {tab("signup", "/signup", "Create account")}
+      {tab("signup", "/signup", "Sign up")}
       {tab("login", "/login", "Log in")}
     </nav>
   );

@@ -112,7 +112,7 @@ export default function HomePage() {
             </ul>
             <div className="flex flex-wrap gap-3.5">
               <Cta variant="gold" className="min-w-[200px]">
-                Create your payment page
+                Build your payment page
               </Cta>
               <a
                 href="#pricing"
@@ -265,7 +265,7 @@ export default function HomePage() {
               </span>
             </div>
             <Cta variant="gold" className="min-w-[240px]">
-              Create my page
+              Build your payment page
             </Cta>
           </div>
         </section>

@@ -13,7 +13,7 @@ import { AuthTabs } from "@/components/auth/tabs";
 import { param, type SearchParams } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 
-export const metadata: Metadata = { title: "Create your page", robots: { index: false } };
+export const metadata: Metadata = { title: "Build your payment page", robots: { index: false } };
 
 const ERRORS: Record<string, string> = {
   email: "Please enter a valid email address.",
@@ -36,7 +36,7 @@ export default async function SignUpPage({ searchParams }: { searchParams: Searc
   const email = param(params, "email");
 
   return (
-    <AuthShell title="Create your page" subtitle="Start accepting payments from one refined link.">
+    <AuthShell title="Build your payment page" subtitle="All your payment methods. One simple link.">
       <AuthTabs active="signup" />
       <GoogleSignIn />
       <form action={signUp} className="flex flex-col gap-5" noValidate>
@@ -59,7 +59,7 @@ export default async function SignUpPage({ searchParams }: { searchParams: Searc
           maxLength={72}
           hint="At least 8 characters, with a letter and a number."
         />
-        <SubmitButton pendingText="Creating your account…">Create account</SubmitButton>
+        <SubmitButton pendingText="Building your page…">Build your payment page</SubmitButton>
         <p className="text-center text-[13px] text-[#4B6358]">
           By creating an account you agree to our{" "}
           <Link href="/terms" className="underline underline-offset-2">
