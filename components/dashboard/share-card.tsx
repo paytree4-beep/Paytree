@@ -3,7 +3,7 @@
 //
 // "Pay me here" / "Tip me" card maker for Instagram Stories, Reels and TikTok.
 // Draws a 1080x1920 card on a canvas (name, photo, QR code, apples) and saves
-// it as a sharp image, or records a 12-second video with music.
+// it as a sharp image, or records an 8-second video with music.
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
@@ -12,12 +12,12 @@ import { scheduleTune } from "./card-music";
 
 const W = 1080;
 const H = 1920;
-const DURATION = 12; // seconds of video
+const DURATION = 8; // seconds of video
 
 const APPLE_PATH =
   "M32 19c-4-4-12-5-17 0-6 6-5 18 0 26 4 7 9 11 13 10 2-.4 3-1.4 4-1.4s2 1 4 1.4c4 1 9-3 13-10 5-8 6-20 0-26-5-5-13-4-17 0z";
 const LEAF_PATH = "M34 13c4-6 11-6 14-4-3 5-9 7-14 4z";
-const COLORS = ["#E5484D", "#7BC86C", "#F2C94C", "#D9B873"];
+const COLORS = ["#E5484D", "#7BC86C", "#F2C94C"];
 
 function appleSvg(color: string): string {
   // Explicit width/height so phones rasterize it large and sharp.
@@ -191,17 +191,24 @@ export function ShareCardMaker({
       {
         // Each letter in the colors of the falling apples (a touch deeper, for contrast on white).
         const headline = mode === "tip" ? "Tip me 💸" : "Pay me here";
-        const letterColors = ["#E5484D", "#3FA34D", "#E8AE1C", "#C9A048"];
+        // First letter of every word is red; the others take the other apple colors.
+        const letterColors = ["#3FA34D", "#E8AE1C"];
         const chars = Array.from(headline);
         const widths = chars.map((ch) => ctx.measureText(ch).width);
         let x = -widths.reduce((a, w) => a + w, 0) / 2;
         let colorIndex = 0;
+        let wordStart = true;
         ctx.textAlign = "left";
         ctx.shadowColor = "rgba(6,78,59,0.18)";
         ctx.shadowBlur = 6;
         ctx.shadowOffsetY = 3;
         chars.forEach((ch, i) => {
-          if (ch.trim()) {
+          if (!ch.trim()) {
+            wordStart = true;
+          } else if (wordStart) {
+            ctx.fillStyle = "#E5484D";
+            wordStart = false;
+          } else {
             ctx.fillStyle = letterColors[colorIndex % letterColors.length];
             colorIndex += 1;
           }
@@ -413,7 +420,7 @@ export function ShareCardMaker({
           {mode === "tip" ? "Tip me card 💸" : "Pay me here card 📸"}
         </h1>
         <p className="mt-1 text-[15px] text-[#3F574C]">
-          Made for Instagram Stories, Reels and TikTok. The video is 12 seconds with our own music. Tip: on TikTok you
+          Made for Instagram Stories, Reels and TikTok. The video is 8 seconds with our own music. Tip: on TikTok you
           can also add a trending sound.
         </p>
       </div>
