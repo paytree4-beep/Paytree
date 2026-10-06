@@ -85,15 +85,15 @@ export function AppleBackdrop() {
 
 /** A few apples arranged around a profile photo. Decorative only. */
 export function AppleHalo({ compact = false }: { compact?: boolean }) {
-  // Full size around a real profile photo; compact for the small phone example.
-  const k = compact ? 0.5 : 1.4;
+  // Same size for every apple, placed evenly: three on each side.
+  const size = compact ? 16 : 34;
   const items: { color: AppleColor; size: number; style: CSSProperties; delay: number }[] = [
-    { color: "red", size: 34 * k, style: { top: "8%", left: "12%", "--pt-rot": "-14deg" } as CSSProperties, delay: 0 },
-    { color: "green", size: 28 * k, style: { top: "4%", right: "14%", "--pt-rot": "12deg" } as CSSProperties, delay: 1.2 },
-    { color: "yellow", size: 24 * k, style: { top: "46%", left: "4%", "--pt-rot": "8deg" } as CSSProperties, delay: 2.1 },
-    { color: "red", size: 30 * k, style: { top: "50%", right: "5%", "--pt-rot": "-8deg" } as CSSProperties, delay: 0.6 },
-    { color: "green", size: 20 * k, style: { bottom: "10%", left: "22%", "--pt-rot": "18deg" } as CSSProperties, delay: 1.8 },
-    { color: "red", size: 22 * k, style: { bottom: "14%", right: "22%", "--pt-rot": "-18deg" } as CSSProperties, delay: 2.6 },
+    { color: "red", size, style: { top: "10%", left: "12%", "--pt-rot": "-12deg" } as CSSProperties, delay: 0 },
+    { color: "green", size, style: { top: "10%", right: "12%", "--pt-rot": "12deg" } as CSSProperties, delay: 1.2 },
+    { color: "yellow", size, style: { top: "42%", left: "6%", "--pt-rot": "8deg" } as CSSProperties, delay: 2.1 },
+    { color: "red", size, style: { top: "42%", right: "6%", "--pt-rot": "-8deg" } as CSSProperties, delay: 0.6 },
+    { color: "green", size, style: { bottom: "12%", left: "14%", "--pt-rot": "14deg" } as CSSProperties, delay: 1.8 },
+    { color: "yellow", size, style: { bottom: "12%", right: "14%", "--pt-rot": "-14deg" } as CSSProperties, delay: 2.6 },
   ];
   return (
     <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
