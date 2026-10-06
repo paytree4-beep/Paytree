@@ -8,7 +8,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
-import { Download } from "lucide-react";
+import { Check, Download } from "lucide-react";
 
 type QrCardProps = {
   /** Full public address, for example https://paytree.to/hartwell */
@@ -45,6 +45,16 @@ export function QrCard({ url, label }: QrCardProps) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const [file, setFile] = useState<File | null>(null);
   const [hint, setHint] = useState("");
+  const [saved, setSaved] = useState(false);
+  const savedTimer = useRef<number>(0);
+  useEffect(() => () => window.clearTimeout(savedTimer.current), []);
+
+  function flashSaved(message: string) {
+    setSaved(true);
+    setHint(message);
+    window.clearTimeout(savedTimer.current);
+    savedTimer.current = window.setTimeout(() => setSaved(false), 3000);
+  }
   const fileName = `paytree-${label.split("/").pop() ?? "qr"}.png`;
 
   // Prepare the PNG ahead of time, so the tap can open the share sheet
@@ -72,7 +82,7 @@ export function QrCard({ url, label }: QrCardProps) {
     if (typeof nav.share === "function" && nav.canShare?.({ files: [file] })) {
       try {
         await nav.share({ files: [file], title: "My PayTree QR code" });
-        setHint("");
+        flashSaved("Done! If you chose Save Image, it is in your Photos.");
         return;
       } catch (error) {
         if (error instanceof DOMException && error.name === "AbortError") return;
@@ -87,7 +97,7 @@ export function QrCard({ url, label }: QrCardProps) {
     document.body.appendChild(a);
     a.click();
     a.remove();
-    setHint("If nothing downloaded, press and hold the QR code and choose Save Image.");
+    flashSaved("Downloaded. If nothing appeared, press and hold the QR code and choose Save Image.");
     window.setTimeout(() => URL.revokeObjectURL(href), 60_000);
   }
 
@@ -120,13 +130,24 @@ export function QrCard({ url, label }: QrCardProps) {
         <button
           type="button"
           onClick={downloadPng}
-          className="mt-2 inline-flex min-h-11 items-center gap-1.5 rounded-full bg-[#E3F0EA] px-4 text-sm font-semibold text-[#064E3B] hover:bg-[#D3E7DD] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D9B873]"
+          className={`mt-2 inline-flex min-h-11 items-center gap-1.5 rounded-full px-4 text-sm font-semibold transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D9B873] ${
+            saved ? "bg-[#16A34A] text-white" : "bg-[#E3F0EA] text-[#064E3B] hover:bg-[#D3E7DD]"
+          }`}
         >
-          <Download className="h-4 w-4" aria-hidden="true" />
-          Save QR code
+          {saved ? (
+            <>
+              <Check className="h-4 w-4" aria-hidden="true" />
+              Saved
+            </>
+          ) : (
+            <>
+              <Download className="h-4 w-4" aria-hidden="true" />
+              Save QR code
+            </>
+          )}
         </button>
         {hint ? (
-          <p role="status" className="mt-1.5 text-[13px] text-[#4B6358]">
+          <p role="status" aria-live="polite" className="mt-1.5 text-[13px] font-semibold text-[#064E3B]">
             {hint}
           </p>
         ) : null}
