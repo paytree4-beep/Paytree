@@ -22,7 +22,8 @@ function makeDrops(): Drop[] {
     size: 30 + Math.round(Math.random() * 26),
     color: COLORS[i % COLORS.length],
     delay: Math.random() * 0.9,
-    spin: (Math.random() < 0.5 ? -1 : 1) * (90 + Math.round(Math.random() * 200)),
+    // A small tilt only, so apples always land upright (stem up).
+    spin: (Math.random() < 0.5 ? -1 : 1) * (6 + Math.round(Math.random() * 14)),
     floor: 78 + Math.random() * 12,
   }));
 }
@@ -46,10 +47,10 @@ export function AppleCelebration() {
           0%   { transform: translateY(-20vh) rotate(0deg); animation-timing-function: cubic-bezier(.55,0,1,.45); }
           45%  { transform: translateY(var(--floor)) rotate(calc(var(--spin) * .6)); animation-timing-function: cubic-bezier(0,.55,.45,1); }
           62%  { transform: translateY(calc(var(--floor) - 16vh)) rotate(calc(var(--spin) * .8)); animation-timing-function: cubic-bezier(.55,0,1,.45); }
-          77%  { transform: translateY(var(--floor)) rotate(var(--spin)); animation-timing-function: cubic-bezier(0,.55,.45,1); }
-          86%  { transform: translateY(calc(var(--floor) - 5vh)) rotate(var(--spin)); animation-timing-function: cubic-bezier(.55,0,1,.45); }
-          94%  { transform: translateY(var(--floor)) rotate(var(--spin)); opacity: 1; }
-          100% { transform: translateY(var(--floor)) rotate(var(--spin)); opacity: 0; }
+          77%  { transform: translateY(var(--floor)) rotate(calc(var(--spin) * -0.5)); animation-timing-function: cubic-bezier(0,.55,.45,1); }
+          86%  { transform: translateY(calc(var(--floor) - 5vh)) rotate(calc(var(--spin) * 0.3)); animation-timing-function: cubic-bezier(.55,0,1,.45); }
+          94%  { transform: translateY(var(--floor)) rotate(0deg); opacity: 1; }
+          100% { transform: translateY(var(--floor)) rotate(0deg); opacity: 0; }
         }
       `}</style>
       {drops.map((d, i) => (
