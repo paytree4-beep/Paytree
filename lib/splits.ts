@@ -8,6 +8,8 @@ export interface SplitInput {
   title: string;
   totalCents: number;
   people: number;
+  /** The day of the occasion, "2026-10-09", or null. */
+  eventDate: string | null;
 }
 
 export type SplitError = "title" | "amount" | "people";
@@ -25,7 +27,7 @@ export function parseSplit(get: (name: string) => unknown): SplitInput | { error
   if (amount === null || amount === "invalid" || amount < 100 || amount > 10_000_000) return { error: "amount" };
   const people = Number(clean(get("people"), 3));
   if (!Number.isInteger(people) || people < 2 || people > 50) return { error: "people" };
-  return { title, totalCents: amount, people };
+  return { title, totalCents: amount, people, eventDate: parseEventDate(get("event_date")) };
 }
 
 /** Each person's share, rounded up to the cent so the bill is always covered. */
@@ -49,4 +51,24 @@ export function newSplitId(): string {
 
 export function isSplitId(raw: string): boolean {
   return /^[a-z0-9]{8}$/.test(raw);
+}
+
+/** "2026-10-09" -> kept if it is a real date within a sensible range, else null. */
+export function parseEventDate(raw: unknown): string | null {
+  if (typeof raw !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(raw)) return null;
+  const d = new Date(`${raw}T12:00:00Z`);
+  if (Number.isNaN(d.getTime()) || d.toISOString().slice(0, 10) !== raw) return null;
+  const year = d.getUTCFullYear();
+  return year >= 2020 && year <= 2100 ? raw : null;
+}
+
+/** "2026-10-09" -> "Friday, October 9, 2026". */
+export function formatEventDate(value: string): string {
+  return new Intl.DateTimeFormat("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(new Date(`${value}T12:00:00Z`));
 }

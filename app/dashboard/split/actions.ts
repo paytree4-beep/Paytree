@@ -32,6 +32,7 @@ export async function createSplit(formData: FormData): Promise<void> {
       title: split.title,
       total_cents: split.totalCents,
       people: split.people,
+      ...(split.eventDate ? { event_date: split.eventDate } : {}),
     });
     if (!error) {
       revalidatePath("/dashboard/split");

@@ -10,7 +10,6 @@ import {
   BarChart3,
   Copy,
   DollarSign,
-  LayoutList,
   Link2,
   Mail,
   QrCode,
@@ -18,11 +17,14 @@ import {
   Smartphone,
   ClipboardCheck,
   Wallet,
+  Pizza,
+  Clapperboard,
+  HandCoins,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 import { Logo } from "@/components/brand/logo";
-import { Apple, AppleBackdrop, AppleHalo, LabeledApple } from "@/components/marketing/apples";
+import { Apple, AppleBackdrop, AppleHalo } from "@/components/marketing/apples";
 import { Cta } from "@/components/marketing/cta";
 import { ExampleAvatar } from "@/components/marketing/example-avatar";
 import { ExampleQr } from "@/components/marketing/example-qr";
@@ -54,14 +56,40 @@ const METHODS = [
   { id: "check", name: "Check by mail" },
 ];
 
-const FEATURES: { title: string; body: string; Icon: LucideIcon; tint: string }[] = [
-  { title: "One link for everything", body: "Cash App, Venmo, Zelle, PayPal, cards and more behind a single address.", Icon: Link2, tint: "#E5484D" },
-  { title: "Your own QR code", body: "Print it for your counter, booth or business card. Customers scan and pay.", Icon: QrCode, tint: "#064E3B" },
-  { title: "Neatly organized", body: "Payment apps, cards, bank and crypto, each in its own tidy list.", Icon: LayoutList, tint: "#C9A048" },
-  { title: "Private statistics", body: "See visits and which methods get tapped. No cookies, no tracking people.", Icon: BarChart3, tint: "#7BC86C" },
-  { title: "Paid straight to you", body: "Money goes directly to your own accounts. PayTree never touches it.", Icon: ShieldCheck, tint: "#008CFF" },
-  { title: "Payment log", body: "Customers tap \u201cI\u2019ve paid\u201d, you confirm with one tap and see your daily and monthly totals.", Icon: ClipboardCheck, tint: "#6D1ED4" },
+const FEATURES: { title: string; body: string; Icon: LucideIcon; tint: string; apple?: boolean }[] = [
+  { title: "Split the bill", body: "Dinner or a trip: everyone sees their share and pays you.", Icon: Pizza, tint: "#E5484D", apple: true },
+  { title: "Pay me here", body: "A ready card for Stories, plus a video with music for TikTok and Reels.", Icon: Clapperboard, tint: "#3FA34D", apple: true },
+  { title: "Tip me", body: "Creators and musicians: turn your page into a tip jar.", Icon: HandCoins, tint: "#E8AE1C", apple: true },
+  { title: "One link", body: "Cash App, Venmo, Zelle, PayPal and more in one place.", Icon: Link2, tint: "#E5484D" },
+  { title: "Your QR code", body: "For your counter, booth or business card.", Icon: QrCode, tint: "#064E3B" },
+  { title: "Payment log", body: "Confirm payments and see daily and monthly totals.", Icon: ClipboardCheck, tint: "#6D1ED4" },
+  { title: "Private stats", body: "Visits and taps. No cookies, no tracking.", Icon: BarChart3, tint: "#7BC86C" },
+  { title: "Paid to you", body: "Money goes straight to your accounts.", Icon: ShieldCheck, tint: "#008CFF" },
 ];
+
+/** Title in the apple colors: first letter of each word red, the rest green and yellow. */
+function AppleTitle({ text }: { text: string }) {
+  const others = ["#3FA34D", "#E8AE1C"];
+  let n = 0;
+  let wordStart = true;
+  return (
+    <>
+      {Array.from(text).map((ch, i) => {
+        if (ch === " ") {
+          wordStart = true;
+          return " ";
+        }
+        const color = wordStart ? "#E5484D" : others[n++ % others.length];
+        wordStart = false;
+        return (
+          <span key={i} style={{ color }}>
+            {ch}
+          </span>
+        );
+      })}
+    </>
+  );
+}
 
 const STEPS = [
   { n: "1", title: "Sign up", body: "Pick your link name." },
@@ -320,28 +348,6 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Every feature on an apple */}
-        <section aria-label="What you get" className="px-5 pb-10 sm:px-6">
-          <ul className="mx-auto grid max-w-[720px] grid-cols-4 gap-x-2 gap-y-1 sm:gap-x-6">
-            {(
-              [
-                ["red", "One\nlink"],
-                ["green", "QR\ncode"],
-                ["yellow", "Split\nthe bill"],
-                ["red", "Tip\nme"],
-                ["green", "Pay me\ncard"],
-                ["yellow", "Payment\nlog"],
-                ["red", "Your\nstats"],
-                ["green", "Earn\napples"],
-              ] as const
-            ).map(([color, label]) => (
-              <li key={label} className="pt-bob" style={{ animationDuration: `${6 + label.length % 3}s` }}>
-                <LabeledApple color={color} label={label} />
-              </li>
-            ))}
-          </ul>
-        </section>
-
         {/* Moving strip of payment methods */}
         <section aria-label="Supported payment methods" className="border-y border-white/70 bg-white/40 py-5 backdrop-blur-md">
           <div className="overflow-hidden [mask-image:linear-gradient(90deg,transparent,black_10%,black_90%,transparent)]">
@@ -368,19 +374,25 @@ export default function HomePage() {
                 <span className="text-sm font-bold tracking-[0.14em] text-[#9A6E1A]">WHY PAYTREE</span>
                 <h2 className={headingClass}>Everything you need to get paid. Nothing you don&rsquo;t.</h2>
               </Reveal>
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {FEATURES.map(({ title, body, Icon, tint }, i) => (
-                  <Reveal key={title} delay={i * 80}>
-                    <div className={`flex h-full flex-col gap-3 p-6 transition-transform duration-300 hover:-translate-y-1 motion-reduce:transition-none ${glass}`}>
+              <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+                {FEATURES.map(({ title, body, Icon, tint, apple }, i) => (
+                  <Reveal key={title} delay={i * 60}>
+                    <div
+                      className={`flex h-full flex-col gap-2 p-4 transition-transform duration-300 hover:-translate-y-1 motion-reduce:transition-none ${glass} ${
+                        apple ? "ring-2 ring-[#E2C27A]/70" : ""
+                      }`}
+                    >
                       <span
-                        className="flex h-12 w-12 items-center justify-center rounded-2xl text-white"
+                        className="flex h-9 w-9 items-center justify-center rounded-xl text-white"
                         style={{ backgroundColor: tint }}
                         aria-hidden="true"
                       >
-                        <Icon className="h-6 w-6" strokeWidth={2} />
+                        <Icon className="h-[18px] w-[18px]" strokeWidth={2.2} />
                       </span>
-                      <h3 className="text-xl font-bold">{title}</h3>
-                      <p className="text-[17px] leading-[1.6] text-[#1F362B]">{body}</p>
+                      <h3 className={`font-extrabold leading-tight ${apple ? "text-[18px]" : "text-[16px]"}`}>
+                        {apple ? <AppleTitle text={title} /> : title}
+                      </h3>
+                      <p className="text-[14px] leading-snug text-[#1F362B]">{body}</p>
                     </div>
                   </Reveal>
                 ))}

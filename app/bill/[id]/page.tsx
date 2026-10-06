@@ -15,7 +15,7 @@ import { AppleHalo } from "@/components/marketing/apples";
 import { param, type SearchParams } from "@/lib/auth";
 import { formatMoney } from "@/lib/payment-log";
 import { applyOrder, getProfileByUsername, resolveMethods } from "@/lib/profiles";
-import { isSplitId, shareCents } from "@/lib/splits";
+import { formatEventDate, isSplitId, shareCents } from "@/lib/splits";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { markSplitPaid } from "./actions";
 
@@ -29,11 +29,11 @@ async function load(id: string) {
   if (!admin) return null;
   const { data: split } = await admin
     .from("bill_splits")
-    .select("id, owner_id, title, total_cents, people")
+    .select("id, owner_id, title, total_cents, people, event_date")
     .eq("id", id)
     .maybeSingle();
   if (!split) return null;
-  const s = split as { id: string; owner_id: string; title: string; total_cents: number; people: number };
+  const s = split as { id: string; owner_id: string; title: string; total_cents: number; people: number; event_date: string | null };
   const { data: owner } = await admin.from("profiles").select("username").eq("id", s.owner_id).maybeSingle();
   const username = (owner as { username?: string } | null)?.username;
   const profile = username ? await getProfileByUsername(username) : null;
@@ -86,6 +86,11 @@ export default async function BillPage({ params, searchParams }: Props) {
         <AppleHalo compact />
         <p className="relative text-[13px] font-bold tracking-[0.12em]">SPLIT THE BILL 🍕</p>
         <h1 className="relative mt-1 font-serif text-[34px] leading-[1.05]">{split.title}</h1>
+        {split.event_date ? (
+          <p className="relative mt-1 inline-flex rounded-full bg-white/80 px-3 py-1 text-[14px] font-semibold text-[#7A5A12]">
+            📅 {formatEventDate(split.event_date)}
+          </p>
+        ) : null}
         <p className="relative mt-1 text-[15px] text-[#3F574C]">
           {formatMoney(split.total_cents)} ÷ {split.people} people · pay {profile.displayName}
         </p>

@@ -57,3 +57,6 @@ create policy "Owners remove payments on their splits"
   on public.bill_split_payments for delete to authenticated
   using (exists (select 1 from public.bill_splits s where s.id = split_id and s.owner_id = (select auth.uid())));
 grant update (confirmed_at), delete on public.bill_split_payments to authenticated;
+
+-- Optional day of the occasion, shown on the bill.
+alter table public.bill_splits add column if not exists event_date date;

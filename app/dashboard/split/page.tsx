@@ -14,7 +14,7 @@ import { ShareLink } from "@/components/dashboard/share-link";
 import { param, type SearchParams } from "@/lib/auth";
 import { formatMoney } from "@/lib/payment-log";
 import { SITE_URL } from "@/lib/site";
-import { shareCents } from "@/lib/splits";
+import { formatEventDate, shareCents } from "@/lib/splits";
 import { createClient } from "@/lib/supabase/server";
 import { confirmSplitPayment, createSplit, deleteSplit, removeSplitPayment } from "./actions";
 
@@ -28,7 +28,7 @@ const ERRORS: Record<string, string> = {
   save: "We could not create the link. Please try again.",
 };
 
-type SplitRow = { id: string; title: string; total_cents: number; people: number; created_at: string };
+type SplitRow = { id: string; title: string; total_cents: number; people: number; created_at: string; event_date: string | null };
 
 const input =
   "min-h-[52px] w-full rounded-xl border border-[#C9D6CE] bg-white px-4 text-base text-[#0B1F18] outline-none focus:border-[#064E3B]";
@@ -46,7 +46,7 @@ export default async function SplitPage({ searchParams }: { searchParams: Search
 
   const { data, error: loadError } = await supabase
     .from("bill_splits")
-    .select("id, title, total_cents, people, created_at")
+    .select("id, title, total_cents, people, created_at, event_date")
     .eq("owner_id", user.id)
     .order("created_at", { ascending: false })
     .limit(30);
@@ -69,6 +69,7 @@ export default async function SplitPage({ searchParams }: { searchParams: Search
   const error = param(params, "error");
   const created = param(params, "created");
   const createdSplit = splits.find((s) => s.id === created);
+  const today = new Date().toISOString().slice(0, 10);
 
   return (
     <div className="min-h-screen bg-[#FAF5EA] text-[#0B1F18]">
@@ -100,6 +101,9 @@ export default async function SplitPage({ searchParams }: { searchParams: Search
           <section className="rounded-2xl border-2 border-[#C9A048] bg-white p-5">
             <p className="text-[13px] font-bold uppercase tracking-[0.1em] text-[#7A5A12]">Your link is ready</p>
             <p className="mt-1 font-serif text-[26px] leading-tight text-[#064E3B]">{createdSplit.title}</p>
+            {createdSplit.event_date ? (
+              <p className="text-[14px] font-semibold text-[#7A5A12]">📅 {formatEventDate(createdSplit.event_date)}</p>
+            ) : null}
             <p className="text-[15px] text-[#3F574C]">
               {formatMoney(createdSplit.total_cents)} ÷ {createdSplit.people} ={" "}
               <strong>{formatMoney(shareCents(createdSplit.total_cents, createdSplit.people))} each</strong>
@@ -116,6 +120,10 @@ export default async function SplitPage({ searchParams }: { searchParams: Search
             <label className="flex flex-col gap-1.5">
               <span className="text-sm font-semibold">What is it for?</span>
               <input name="title" maxLength={60} placeholder="Friday dinner" className={input} />
+            </label>
+            <label className="flex flex-col gap-1.5">
+              <span className="text-sm font-semibold">When? (optional)</span>
+              <input name="event_date" type="date" defaultValue={today} className={input} />
             </label>
             <div className="grid grid-cols-2 gap-3">
               <label className="flex flex-col gap-1.5">
@@ -149,6 +157,9 @@ export default async function SplitPage({ searchParams }: { searchParams: Search
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                       <div>
                         <p className="font-bold">{s.title}</p>
+                        {s.event_date ? (
+                          <p className="text-[13px] font-semibold text-[#7A5A12]">📅 {formatEventDate(s.event_date)}</p>
+                        ) : null}
                         <p className="text-[13px] text-[#4B6358]">
                           {formatMoney(s.total_cents)} · {formatMoney(shareCents(s.total_cents, s.people))} each ·{" "}
                           <strong className={paid >= s.people ? "text-[#16A34A]" : ""}>
