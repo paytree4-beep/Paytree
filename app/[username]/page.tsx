@@ -41,6 +41,17 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     manifest: `/${profile.username}/manifest.webmanifest`,
     appleWebApp: { capable: true, title: profile.displayName.slice(0, 20), statusBarStyle: "default" },
     title: profile.pageMode === "tip" ? `Tip ${profile.displayName} · PayTree` : `${profile.displayName} · PayTree`,
+    openGraph: {
+      type: "profile",
+      siteName: "PayTree",
+      url: `/${profile.username}`,
+      title: profile.pageMode === "tip" ? `Tip ${profile.displayName}` : `Pay ${profile.displayName}`,
+      description: "Cash App, Venmo, Zelle, PayPal and more. One simple link, by PayTree.",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: profile.pageMode === "tip" ? `Tip ${profile.displayName}` : `Pay ${profile.displayName}`,
+    },
     description: `${profile.pageMode === "tip" ? "Send a tip to" : "Pay"} ${profile.displayName} with Cash App, Venmo, PayPal, Zelle, bank transfer, card, Wise or crypto.`,
   };
 }
