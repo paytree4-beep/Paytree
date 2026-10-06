@@ -39,7 +39,7 @@ export const CATEGORIES: { id: MethodCategory; title: string; hint: string }[] =
   { id: "apps", title: "Payment apps", hint: "Cash App, Venmo, Zelle, PayPal and more" },
   { id: "cards", title: "Cards & online checkout", hint: "Stripe, Square and your own link" },
   { id: "bank", title: "Bank & international", hint: "Wise and check by mail" },
-  { id: "crypto", category: "crypto", title: "Crypto", hint: "USDT on the Tron network" },
+  { id: "crypto", title: "Crypto", hint: "USDT on the Tron network" },
 ];
 
 export interface MethodForm {
@@ -108,6 +108,7 @@ export const METHOD_FORMS: MethodForm[] = [
   },
   {
     id: "crypto",
+    category: "crypto",
     title: "Crypto (USDT)",
     fields: one("USDT address on the Tron (TRC-20) network", "Starts with T, 34 characters. Double-check it: crypto sent to a wrong address cannot be recovered.", 34),
   },
