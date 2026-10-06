@@ -88,15 +88,31 @@ export default function HomePage() {
 
         <div className="mx-auto flex max-w-[1200px] flex-wrap items-center gap-14 px-6 pb-[104px] pt-16">
           <div className="flex min-w-0 max-w-[720px] flex-col items-start gap-7">
-            <h1 className="font-serif text-[clamp(46px,6.2vw,84px)] font-normal leading-[1.04] tracking-[-0.02em] [text-wrap:balance]">
-              Get paid your way. <span className="text-[#D9B873]">One link. One QR code.</span>
+            <h1 className="font-serif text-[clamp(38px,5.4vw,72px)] font-normal uppercase leading-[1.06] tracking-[-0.01em] [text-wrap:balance]">
+              All your payment methods.
+              <br />
+              <span className="text-[#D9B873]">One simple link.</span>
             </h1>
             <p className="max-w-[520px] text-lg leading-[1.75] text-[#FBFBFB]/85">
-              All your payment apps on one page. Share the link, or let clients scan your QR code.
+              Make it easier and faster for your customers to pay you.
             </p>
+            <ul aria-label="Included" className="flex flex-wrap gap-2.5">
+              <li className="inline-flex min-h-10 items-center gap-2 rounded-full border border-[#D9B873]/60 px-4 text-[15px] font-semibold text-[#FBFBFB]">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D9B873" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1 M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1" />
+                </svg>
+                Link
+              </li>
+              <li className="inline-flex min-h-10 items-center gap-2 rounded-full border border-[#D9B873]/60 px-4 text-[15px] font-semibold text-[#FBFBFB]">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D9B873" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h3v3h-3z M20 14v.01 M14 20h.01 M17.5 20.5H21v-3" />
+                </svg>
+                QR code
+              </li>
+            </ul>
             <div className="flex flex-wrap gap-3.5">
               <Cta variant="gold" className="min-w-[200px]">
-                Claim your page
+                Create your payment page
               </Cta>
               <a
                 href="#pricing"
@@ -206,21 +222,18 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* How it works */}
-        <section id="how" className="bg-[#E9F1ED] py-24">
-          <div className="mx-auto flex max-w-[1200px] flex-col gap-14 px-6">
-            <h2 className={`max-w-[640px] ${headingClass}`}>Ready in 3 steps</h2>
-            <ol className="flex flex-wrap gap-10">
+        {/* How it works: three compact steps side by side, also on phones */}
+        <section id="how" className="bg-[#E9F1ED] py-12 sm:py-16">
+          <div className="mx-auto flex max-w-[1200px] flex-col gap-7 px-5 sm:px-6">
+            <h2 className={headingClass}>Ready in 3 steps</h2>
+            <ol className="grid grid-cols-3 gap-3 sm:gap-8">
               {STEPS.map((s) => (
-                <li
-                  key={s.n}
-                  className="flex min-w-0 flex-[1_1_260px] flex-col gap-3.5 border-t-2 border-[#064E3B] pt-[22px]"
-                >
-                  <span aria-hidden="true" className="font-serif text-[56px] leading-none text-[#064E3B]">
+                <li key={s.n} className="flex min-w-0 flex-col gap-1.5 border-t-2 border-[#064E3B] pt-3">
+                  <span aria-hidden="true" className="font-serif text-[32px] leading-none text-[#064E3B] sm:text-[44px]">
                     {s.n}
                   </span>
-                  <h3 className="text-xl font-bold">{s.title}</h3>
-                  <p className="text-[#3F574C]">{s.body}</p>
+                  <h3 className="text-[15px] font-bold leading-tight sm:text-lg">{s.title}</h3>
+                  <p className="text-[13px] leading-snug text-[#3F574C] sm:text-[15px]">{s.body}</p>
                 </li>
               ))}
             </ol>

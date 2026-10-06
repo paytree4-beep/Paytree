@@ -26,12 +26,12 @@ const serif = Instrument_Serif({
 });
 
 const DESCRIPTION =
-  "Get paid your way. One link and one QR code for Cash App, Venmo, Zelle, PayPal, cards and more.";
+  "All your payment methods. One simple link. Make it easier and faster for your customers to pay you, with your own link and QR code.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "PayTree · Get paid your way. One link. One QR code.",
+    default: "PayTree · All your payment methods. One simple link.",
     template: "%s · PayTree",
   },
   description: DESCRIPTION,
@@ -39,14 +39,14 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: "PayTree",
-    title: "PayTree · Get paid your way. One link. One QR code.",
+    title: "PayTree · All your payment methods. One simple link.",
     description: DESCRIPTION,
     url: "/",
     locale: "en_US",
   },
   twitter: {
     card: "summary",
-    title: "PayTree · Get paid your way. One link. One QR code.",
+    title: "PayTree · All your payment methods. One simple link.",
     description: DESCRIPTION,
   },
 };
