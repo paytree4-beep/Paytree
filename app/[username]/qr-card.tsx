@@ -6,7 +6,7 @@
 
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import { Download } from "lucide-react";
 
@@ -17,14 +17,9 @@ type QrCardProps = {
   label: string;
 };
 
-export function QrCard({ url, label }: QrCardProps) {
-  const wrapRef = useRef<HTMLDivElement>(null);
-
-  // Turns the on-screen SVG into a 1024 px PNG with a white margin.
-  function downloadPng() {
-    const svg = wrapRef.current?.querySelector("svg");
-    if (!svg) return;
-
+/** Renders the on-screen QR SVG into a 1024 px PNG with a white margin. */
+function svgToPng(svg: SVGSVGElement): Promise<Blob | null> {
+  return new Promise((resolve) => {
     const xml = new XMLSerializer().serializeToString(svg);
     const img = new Image();
     img.onload = () => {
@@ -34,23 +29,66 @@ export function QrCard({ url, label }: QrCardProps) {
       canvas.width = size;
       canvas.height = size;
       const ctx = canvas.getContext("2d");
-      if (!ctx) return;
+      if (!ctx) return resolve(null);
       ctx.fillStyle = "#FFFFFF";
       ctx.fillRect(0, 0, size, size);
       ctx.imageSmoothingEnabled = false;
       ctx.drawImage(img, pad, pad, size - pad * 2, size - pad * 2);
-
-      canvas.toBlob((blob) => {
-        if (!blob) return;
-        const href = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = href;
-        a.download = `paytree-${label.split("/").pop() ?? "qr"}.png`;
-        a.click();
-        URL.revokeObjectURL(href);
-      }, "image/png");
+      canvas.toBlob((blob) => resolve(blob), "image/png");
     };
+    img.onerror = () => resolve(null);
     img.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(xml)}`;
+  });
+}
+
+export function QrCard({ url, label }: QrCardProps) {
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const [file, setFile] = useState<File | null>(null);
+  const [hint, setHint] = useState("");
+  const fileName = `paytree-${label.split("/").pop() ?? "qr"}.png`;
+
+  // Prepare the PNG ahead of time, so the tap can open the share sheet
+  // straight away (iPhones only allow it right after a tap).
+  useEffect(() => {
+    const svg = wrapRef.current?.querySelector("svg");
+    if (!svg) return;
+    let cancelled = false;
+    svgToPng(svg).then((blob) => {
+      if (!cancelled && blob) setFile(new File([blob], fileName, { type: "image/png" }));
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [url, fileName]);
+
+  async function downloadPng() {
+    if (!file) {
+      setHint("One moment, preparing your QR code. Tap again.");
+      return;
+    }
+
+    // Phones: the share sheet has "Save Image", which puts it in Photos.
+    const nav = navigator as Navigator & { canShare?: (data: { files: File[] }) => boolean };
+    if (typeof nav.share === "function" && nav.canShare?.({ files: [file] })) {
+      try {
+        await nav.share({ files: [file], title: "My PayTree QR code" });
+        setHint("");
+        return;
+      } catch (error) {
+        if (error instanceof DOMException && error.name === "AbortError") return;
+      }
+    }
+
+    // Computers: a normal download.
+    const href = URL.createObjectURL(file);
+    const a = document.createElement("a");
+    a.href = href;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setHint("If nothing downloaded, press and hold the QR code and choose Save Image.");
+    window.setTimeout(() => URL.revokeObjectURL(href), 60_000);
   }
 
   return (
@@ -85,8 +123,13 @@ export function QrCard({ url, label }: QrCardProps) {
           className="mt-2 inline-flex min-h-11 items-center gap-1.5 rounded-full bg-[#E3F0EA] px-4 text-sm font-semibold text-[#064E3B] hover:bg-[#D3E7DD] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D9B873]"
         >
           <Download className="h-4 w-4" aria-hidden="true" />
-          Download PNG
+          Save QR code
         </button>
+        {hint ? (
+          <p role="status" className="mt-1.5 text-[13px] text-[#4B6358]">
+            {hint}
+          </p>
+        ) : null}
       </div>
     </section>
   );
