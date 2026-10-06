@@ -92,7 +92,7 @@ const FAQ = [
   },
   {
     q: "What is the apple basket?",
-    a: "Every PayTree page has its own referral link. When someone joins through it and subscribes, you earn an apple: $3 for a yearly member, $0.50 for a monthly member. On January 1, PayTree buys your apples and pays you.",
+    a: "Every PayTree page has its own referral link. When someone joins through it and subscribes, you earn an apple: $3 for a yearly member, $0.50 for a monthly member. On January 1, 2027, PayTree buys your apples and pays you.",
   },
   {
     q: "Is my information safe?",
@@ -393,7 +393,7 @@ export default function HomePage() {
                 <p className="text-[19px] leading-[1.65] text-[#1F362B]">
                   Share your link, or let your page do it for you: every page has a &ldquo;Get your own payment page&rdquo;
                   link that counts as yours. When someone joins PayTree through it, an apple drops in your basket.
-                  On January 1, PayTree buys your apples.
+                  On January 1, 2027, PayTree buys your apples.
                 </p>
                 <p className="text-[14px] text-[#2F4A3E]">Launch offer for new members who join by December 31, 2026.</p>
               </div>

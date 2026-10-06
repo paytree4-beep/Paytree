@@ -29,7 +29,7 @@ export function AppleBasket({ link, name, basket, now }: { link: string; name: s
         Share your link. When someone joins PayTree through it, an apple drops in your basket:{" "}
         <strong className="text-[#B9333A]">red apple</strong> for a yearly member ({formatMoney(APPLE_VALUE_CENTS.annual)}),{" "}
         <strong className="text-[#4E9A43]">green apple</strong> for a monthly member ({formatMoney(APPLE_VALUE_CENTS.monthly)}).
-        On January 1, PayTree buys all your apples.
+        On January 1, 2027, PayTree buys all your apples.
       </p>
 
       <p className="mt-4 break-all rounded-xl bg-white/80 px-4 py-3 font-semibold text-[#064E3B]">{link.replace(/^https?:\/\//, "")}</p>
