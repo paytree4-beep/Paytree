@@ -111,28 +111,39 @@ export default async function PublicPaymentPage({ params, searchParams }: PagePr
 
       {/* Payment methods */}
       <main className="mx-auto w-full max-w-[560px] flex-1 px-5 pb-28 pt-6">
-        <PaymentMethods
-          username={profile.username}
-          displayName={profile.displayName}
-          methods={methods}
-          extraIndex={profile.paidPosition}
-          extra={
-            profile.paymentLog ? (
-              <PaidForm
+        {(() => {
+          const paidBox = profile.paymentLog ? (
+            <PaidForm
+              username={profile.username}
+              displayName={profile.displayName}
+              methods={methods.map((m) => m.id)}
+              sent={param(query, "paid") === "1"}
+              error={param(query, "paid_error")}
+            />
+          ) : null;
+          // Placed among the methods only when the owner moved it up;
+          // otherwise it sits at the very bottom, after the QR code.
+          const among =
+            typeof profile.paidPosition === "number" && profile.paidPosition < methods.length;
+          return (
+            <>
+              <PaymentMethods
                 username={profile.username}
                 displayName={profile.displayName}
-                methods={methods.map((m) => m.id)}
-                sent={param(query, "paid") === "1"}
-                error={param(query, "paid_error")}
+                methods={methods}
+                extraIndex={profile.paidPosition}
+                extra={among ? paidBox : null}
               />
-            ) : null
-          }
-        />
 
-        <QrCard
-          url={`${SITE_URL}/${profile.username}`}
-          label={`${SITE_HOST}/${profile.username}`}
-        />
+              <QrCard
+                url={`${SITE_URL}/${profile.username}`}
+                label={`${SITE_HOST}/${profile.username}`}
+              />
+
+              {!among && paidBox ? <div className="mt-6">{paidBox}</div> : null}
+            </>
+          );
+        })()}
 
         <p className="mt-8 text-center text-[13px] text-[#4B6358]">
           Always confirm the recipient before you send money.
