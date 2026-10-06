@@ -39,7 +39,7 @@ export const LEGAL_TEMPLATE_NOTICE =
 export const TERMS: LegalDocument = {
   title: "Terms of Service",
   summary: "The rules for using PayTree.",
-  lastUpdated: "[EFFECTIVE DATE]",
+  lastUpdated: "October 6, 2026",
   intro:
     "These Terms of Service (the “Terms”) govern your use of PayTree (the “Service”), operated by [COMPANY LEGAL NAME] (“PayTree,” “we,” “us”). By creating an account or using the Service, you agree to these Terms.",
   sections: [
@@ -64,7 +64,6 @@ export const TERMS: LegalDocument = {
       intro: [
         "PayTree is not a bank, payment processor or money transmitter. We do not receive, hold, transmit, convert or refund funds. When someone pays you, the payment happens directly between them and the third-party service or network they choose, under that provider’s terms.",
         "We are not a party to any transaction between you and the people who pay you. We are not responsible for disputes, chargebacks, failed payments or payments sent to the wrong place.",
-        "[CONFIRM: this section assumes PayTree never touches funds. If that changes, review it with counsel before launch.]",
       ],
     },
     {
@@ -78,7 +77,7 @@ export const TERMS: LegalDocument = {
         "accept responsibility for everything that happens under your account.",
       ],
       closing: [
-        "Some usernames are reserved for the Service. We may reclaim a reserved or abandoned username [USERNAME POLICY].",
+        "Some usernames are reserved for the Service. We may reclaim a username that is reserved, that impersonates someone else, or whose account has been deleted or closed.",
       ],
     },
     {
@@ -93,7 +92,7 @@ export const TERMS: LegalDocument = {
       id: "billing",
       title: "Subscriptions and billing",
       intro: [
-        "PayTree is a paid subscription: $4.99 per month or $39.99 per year, plus any applicable taxes. Payments are processed by Stripe; we never see or store your full card number.",
+        "PayTree has a free plan that shows up to 2 payment methods, and a paid membership for unlimited methods: $4.99 per month or $39.99 per year, plus any applicable taxes. Payments are processed by Stripe; we never see or store your full card number.",
         "Your subscription renews automatically at the end of each billing period until you cancel. You can cancel at any time from your dashboard (Manage billing). Cancellation takes effect at the end of the current period, and you keep access until then.",
         "We will tell you before a price change takes effect. Refunds: [REFUND POLICY].",
       ],
@@ -192,7 +191,7 @@ export const TERMS: LegalDocument = {
 export const PRIVACY: LegalDocument = {
   title: "Privacy Policy",
   summary: "What we collect, why, and the choices you have.",
-  lastUpdated: "[EFFECTIVE DATE]",
+  lastUpdated: "October 6, 2026",
   intro:
     "This Privacy Policy explains what [COMPANY LEGAL NAME] (“PayTree,” “we,” “us”) collects when you use PayTree, and how we use and protect it. It covers two groups of people: account holders who build pages, and visitors who view those pages.",
   sections: [
@@ -203,7 +202,7 @@ export const PRIVACY: LegalDocument = {
       bullets: [
         "Account details: your email address, username, display name, bio and photo.",
         "Payment details you choose to publish: handles, a Zelle email or phone number, bank routing and account numbers, a card checkout link, a Wise link and wallet addresses.",
-        "Subscription details: your plan, billing status, and the brand and last four digits of your card. Full card numbers are handled by [BILLING PROVIDER] and are not stored by us.",
+        "Subscription details: your plan, billing status, and the brand and last four digits of your card. Full card numbers are handled by Stripe and are never stored by us.",
         "Messages you send to our support team.",
       ],
     },
@@ -218,14 +217,14 @@ export const PRIVACY: LegalDocument = {
         "the website the visitor came from (the domain only), the type of device (mobile, tablet or desktop) and an approximate country.",
       ],
       closing: [
-        "We do not collect visitors’ names, email addresses or payment information, and we do not store visitor IP addresses or set cookies for analytics. [CONFIRM: matches your logging setup.]",
+        "We do not collect visitors’ names, email addresses or payment information, and we do not store visitor IP addresses or set cookies for analytics.",
       ],
     },
     {
       id: "collect-logs",
       title: "Security logs",
       intro: [
-        "Our servers keep standard logs, which include IP addresses, for [LOG RETENTION PERIOD, for example 30 days]. We use them to detect abuse and keep the Service running.",
+        "Our servers keep standard logs, which include IP addresses, for up to 30 days. We use them to detect abuse and keep the Service running.",
       ],
     },
     {
@@ -252,7 +251,7 @@ export const PRIVACY: LegalDocument = {
       title: "How we share information",
       intro: [
         "We do not sell your personal information, and we do not share it for cross-context behavioral advertising.",
-        "We share information with service providers who help us run the Service under contract: [LIST OF PROVIDERS, for example hosting, database, email and billing].",
+        "We share information with service providers who help us run the Service under contract: Vercel (hosting), Supabase (database and sign-in), Resend (email) and Stripe (payments).",
         "We may disclose information to comply with the law or legal process, to protect rights, safety and security, or in a merger or sale of the business, with notice where required.",
       ],
     },
@@ -261,15 +260,15 @@ export const PRIVACY: LegalDocument = {
       title: "Cookies and similar technologies",
       intro: [
         "We use cookies that are necessary to keep you signed in and to secure your account. We do not use advertising or cross-site tracking cookies, and visitor analytics do not use cookies.",
-        "We honor Global Privacy Control and Do Not Track signals by not recording analytics for visitors who send them. [CONFIRM before launch.]",
+        "We honor Global Privacy Control and Do Not Track signals by not recording analytics for visitors who send them.",
       ],
     },
     {
       id: "retention",
       title: "How long we keep information",
       bullets: [
-        "Account data: until you delete your account, then removed within [DELETION WINDOW, for example 30 days] unless the law requires us to keep it.",
-        "Analytics events: [ANALYTICS RETENTION PERIOD, for example 25 months].",
+        "Account data: until you delete your account, then removed within 30 days unless the law requires us to keep it.",
+        "Analytics events: kept for 13 months, then deleted.",
         "Billing records: as long as tax and accounting law require.",
       ],
     },

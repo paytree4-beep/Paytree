@@ -14,7 +14,7 @@ import { ExampleQr } from "@/components/marketing/example-qr";
 import { Cta } from "@/components/marketing/cta";
 import { Pricing } from "@/components/marketing/pricing";
 import { badgeColor } from "@/lib/payment-colors";
-import { PRICING, SIGNUPS_OPEN, SITE_HOST, SITE_URL } from "@/lib/site";
+import { FREE_METHOD_LIMIT, PRICING, SIGNUPS_OPEN, SITE_HOST, SITE_URL } from "@/lib/site";
 
 const FEATURES: { title: string; body: string; icon: string }[] = [
   {
@@ -231,7 +231,10 @@ export default function HomePage() {
         <section id="pricing" className="py-[104px]">
           <div className="mx-auto flex max-w-[1000px] flex-col items-center gap-10 px-6">
             <div className="flex max-w-[620px] flex-col items-center gap-3.5 text-center">
-              <h2 className={headingClass}>One simple price</h2>
+              <h2 className={headingClass}>Start free</h2>
+              <p className="text-lg text-[#4B6358]">
+                Free with up to {FREE_METHOD_LIMIT} payment methods. Upgrade any time for unlimited.
+              </p>
             </div>
             <Pricing />
           </div>

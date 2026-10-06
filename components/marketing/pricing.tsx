@@ -12,7 +12,7 @@ import { PRICING } from "@/lib/site";
 type PlanKey = "monthly" | "annual";
 
 const PLAN_FEATURES = [
-  "Every popular payment app",
+  "Unlimited payment methods",
   "Your own PayTree link",
   "Your own QR code",
   "Edit any time",

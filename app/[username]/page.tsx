@@ -48,7 +48,8 @@ export default async function PublicPaymentPage({ params }: PageProps) {
   }
 
   // Only methods the user entered, and that passed validation, come back.
-  const methods = applyOrder(resolveMethods(profile.payments), profile.order);
+  const ordered = applyOrder(resolveMethods(profile.payments), profile.order);
+  const methods = profile.methodLimit ? ordered.slice(0, profile.methodLimit) : ordered;
   const initial = profile.displayName.trim().charAt(0).toUpperCase() || "P";
 
   return (

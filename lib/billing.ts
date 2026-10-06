@@ -3,6 +3,7 @@
 // SERVER ONLY. Reads and writes the subscriptions table with the service
 // role, and answers "is this page allowed to be public?".
 
+import { FREE_METHOD_LIMIT } from "./site";
 import { createAdminClient } from "./supabase/admin";
 import {
   billingConfigured,
@@ -33,10 +34,10 @@ export function grantsAccess(row: SubscriptionRow | null): boolean {
 }
 
 /**
- * Whether a public page may be shown. While billing is not configured (no
- * Stripe keys yet) every page is shown, so nothing breaks before launch.
- * Once it is configured, only subscribed pages are public. If the check
- * itself cannot run, the page is hidden rather than shown for free.
+ * Whether this account has a paid membership. While billing is not configured
+ * (no Stripe keys yet) everyone counts as a member, so nothing is limited
+ * before launch. If the check itself cannot run, the account is treated as
+ * free (the safe side).
  */
 export async function pageIsPaid(userId: string): Promise<boolean> {
   if (!billingConfigured()) return true;
@@ -45,6 +46,14 @@ export async function pageIsPaid(userId: string): Promise<boolean> {
   const { data, error } = await admin.rpc("has_active_subscription", { uid: userId });
   if (error) return false;
   return data === true;
+}
+
+/**
+ * How many payment methods this account may show. Unlimited (null) for
+ * members, and for everyone while billing is not configured.
+ */
+export async function methodLimitFor(userId: string): Promise<number | null> {
+  return (await pageIsPaid(userId)) ? null : FREE_METHOD_LIMIT;
 }
 
 /** Saves a Stripe subscription for a user. Uses the service role. */

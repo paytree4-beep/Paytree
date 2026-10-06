@@ -12,6 +12,7 @@ import { SubmitButton } from "@/components/auth/submit-button";
 import { Logo } from "@/components/brand/logo";
 import { ReorderList } from "@/components/dashboard/reorder-list";
 import { param, type SearchParams } from "@/lib/auth";
+import { methodLimitFor } from "@/lib/billing";
 import { badgeColor } from "@/lib/payment-colors";
 import { METHOD_FORMS, findMethodForm, formValues } from "@/lib/payment-forms";
 import { createClient } from "@/lib/supabase/server";
@@ -51,6 +52,8 @@ export default async function PaymentsPage({ searchParams }: { searchParams: Sea
   const saved = findMethodForm(param(params, "saved"));
   const removed = findMethodForm(param(params, "removed"));
   const addedCount = METHOD_FORMS.filter((m) => stored.has(m.id)).length;
+  const limit = await methodLimitFor(user.id);
+  const atLimit = limit !== null && addedCount >= limit;
   const orderItems = ((data ?? []) as Row[])
     .map((row) => METHOD_FORMS.find((m) => m.id === row.method_id))
     .filter((m): m is (typeof METHOD_FORMS)[number] => Boolean(m))
@@ -94,6 +97,15 @@ export default async function PaymentsPage({ searchParams }: { searchParams: Sea
           </Notice>
         ) : null}
         {removed ? <Notice tone="success">{removed.title} was removed from your page.</Notice> : null}
+
+        {limit !== null ? (
+          <div className="rounded-2xl border border-[#D9B873] bg-[#FBF6EA] p-4 text-[15px] text-[#5C4513]">
+            <strong>Free plan:</strong> {addedCount} of {limit} payment methods used.{" "}
+            <Link href="/dashboard#billing" className="font-bold text-[#064E3B] underline underline-offset-2">
+              Upgrade for unlimited
+            </Link>
+          </div>
+        ) : null}
 
         <div className="flex flex-wrap items-center gap-3">
           <Link
@@ -162,10 +174,26 @@ export default async function PaymentsPage({ searchParams }: { searchParams: Sea
                     <Notice tone="error">
                       {error === "invalid"
                         ? "That does not look right. Check the format under each field and try again."
-                        : "We could not save that. Please try again."}
+                        : error === "limit"
+                          ? "The free plan includes 2 payment methods. Upgrade to add more."
+                          : "We could not save that. Please try again."}
                     </Notice>
                   ) : null}
 
+                  {atLimit && !isAdded ? (
+                    <div className="flex flex-col gap-3">
+                      <p className="text-[15px] text-[#4B6358]">
+                        The free plan includes {limit} payment methods. Upgrade to add {form.title} and
+                        as many more as you like.
+                      </p>
+                      <Link
+                        href="/dashboard#billing"
+                        className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#064E3B] px-6 font-bold text-[#FBFBFB] sm:max-w-[240px]"
+                      >
+                        Upgrade
+                      </Link>
+                    </div>
+                  ) : (
                   <form action={savePaymentMethod} className="flex flex-col gap-4">
                     <input type="hidden" name="method" value={form.id} />
                     {form.fields.map((field) => (
@@ -184,6 +212,7 @@ export default async function PaymentsPage({ searchParams }: { searchParams: Sea
                       <SubmitButton pendingText="Saving…">{isAdded ? "Save changes" : "Add to my page"}</SubmitButton>
                     </div>
                   </form>
+                  )}
 
                   {isAdded ? (
                     <form action={removePaymentMethod} className="sm:max-w-[240px]">

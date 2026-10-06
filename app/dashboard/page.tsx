@@ -16,7 +16,7 @@ import { ShareLink } from "@/components/dashboard/share-link";
 import { QrCard } from "@/app/[username]/qr-card";
 import { param, type SearchParams } from "@/lib/auth";
 import { avatarUrl } from "@/lib/avatar";
-import { PRICING, SITE_HOST, SITE_URL } from "@/lib/site";
+import { FREE_METHOD_LIMIT, PRICING, SITE_HOST, SITE_URL } from "@/lib/site";
 import { createClient } from "@/lib/supabase/server";
 import { deleteAccount, setPublished, updateProfile } from "./actions";
 import { openBillingPortal, startCheckout } from "./billing-actions";
@@ -170,8 +170,8 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
             ) : (
               <>
                 <p className="mt-2 text-[15px] text-[#0B1F18]">
-                  <strong>Your page is not live yet.</strong> Choose a membership to publish it. Cancel
-                  any time.
+                  <strong>You are on the free plan:</strong> up to {FREE_METHOD_LIMIT} payment methods.
+                  Upgrade for unlimited methods. Cancel any time.
                 </p>
                 <div className="mt-4 grid gap-3 sm:grid-cols-2">
                   <form action={startCheckout}>
@@ -216,10 +216,10 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
             </Link>
             <span
               className={`inline-flex min-h-8 items-center rounded-full px-3 text-[13px] font-semibold ${
-                isMember && profile.is_published ? "bg-[#E3F0EA] text-[#064E3B]" : "bg-[#FEF3F2] text-[#7A271A]"
+                profile.is_published ? "bg-[#E3F0EA] text-[#064E3B]" : "bg-[#FEF3F2] text-[#7A271A]"
               }`}
             >
-              {!isMember ? "Not live" : profile.is_published ? "Public" : "Hidden"}
+              {profile.is_published ? "Public" : "Hidden"}
             </span>
           </div>
           <div className="mt-4">
