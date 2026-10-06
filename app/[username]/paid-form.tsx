@@ -4,6 +4,7 @@
 // payment log. A plain form inside <details>, so it works without JavaScript.
 
 import { SubmitButton } from "@/components/auth/submit-button";
+import { AppleCelebration } from "@/components/marketing/apple-celebration";
 import { methodLabel, type ClaimMethod } from "@/lib/payment-log";
 import { notifyPayment } from "./paid-actions";
 
@@ -40,10 +41,8 @@ export function PaidForm({
         id="paid"
         className="mt-6 scroll-mt-6 rounded-2xl border border-[#BFE3CF] bg-[#ECF7F0] p-5 text-center"
       >
-        <p className="font-serif text-2xl text-[#064E3B]">Thank you!</p>
-        <p className="mt-1 text-[15px] text-[#3F574C]">
-          {displayName} will see your note and confirm once the payment arrives.
-        </p>
+        <AppleCelebration />
+        <p className="font-serif text-2xl text-[#064E3B]">Thank you for your support!</p>
       </section>
     );
   }
