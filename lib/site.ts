@@ -40,7 +40,7 @@ export const SIGNUPS_OPEN =
 export const GOOGLE_SIGNIN = process.env.NEXT_PUBLIC_GOOGLE_SIGNIN === "true";
 
 /** Free trial length for new accounts. */
-export const TRIAL_DAYS = 14;
+export const TRIAL_DAYS = 7;
 
 /** Membership prices in US dollars. */
 export const PRICES = {

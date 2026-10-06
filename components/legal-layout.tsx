@@ -55,12 +55,14 @@ export function LegalLayout({ doc, active }: { doc: LegalDocument; active: Activ
       </header>
 
       <main className="mx-auto w-full max-w-[1100px] flex-1 px-5 py-10">
-        <p
-          role="note"
-          className="mb-10 rounded-2xl border border-[#D9B873] bg-[#D9B873]/15 px-5 py-4 text-sm font-medium"
-        >
-          {LEGAL_TEMPLATE_NOTICE}
-        </p>
+        {LEGAL_TEMPLATE_NOTICE ? (
+          <p
+            role="note"
+            className="mb-10 rounded-2xl border border-[#D9B873] bg-[#D9B873]/15 px-5 py-4 text-sm font-medium"
+          >
+            {LEGAL_TEMPLATE_NOTICE}
+          </p>
+        ) : null}
 
         <div className="flex flex-wrap gap-12">
           <nav aria-label="On this page" className="min-w-0 flex-[1_1_240px] lg:max-w-[260px]">

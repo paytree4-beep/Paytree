@@ -7,7 +7,7 @@
 import { useState } from "react";
 
 import { Cta } from "@/components/marketing/cta";
-import { PRICES, PRICING } from "@/lib/site";
+import { PRICES, PRICING, TRIAL_DAYS } from "@/lib/site";
 
 const money = (value: number) => `$${value.toFixed(2)}`;
 
@@ -19,7 +19,7 @@ const PLAN_FEATURES = [
   "Your own dashboard to manage your page anytime",
   "Payment log: confirm payments, see daily and monthly totals, export to Excel",
   "Private visitor statistics",
-  "14 days free, no card needed",
+  `${TRIAL_DAYS} days free, no card needed`,
   "Cancel any time",
 ]
 

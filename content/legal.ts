@@ -33,15 +33,14 @@ export interface LegalDocument {
   sections: LegalSection[];
 }
 
-export const LEGAL_TEMPLATE_NOTICE =
-  "Template, not legal advice. Replace every [BRACKETED] item and have a licensed attorney review this document before you launch.";
+export const LEGAL_TEMPLATE_NOTICE = "";
 
 export const TERMS: LegalDocument = {
   title: "Terms of Service",
   summary: "The rules for using PayTree.",
   lastUpdated: "October 6, 2026",
   intro:
-    "These Terms of Service (the “Terms”) govern your use of PayTree (the “Service”), operated by [COMPANY LEGAL NAME] (“PayTree,” “we,” “us”). By creating an account or using the Service, you agree to these Terms.",
+    "These Terms of Service (the “Terms”) govern your use of PayTree (the “Service”), operated by ABUHIDAR LLC (“PayTree,” “we,” “us”). By creating an account or using the Service, you agree to these Terms.",
   sections: [
     {
       id: "eligibility",
@@ -92,9 +91,9 @@ export const TERMS: LegalDocument = {
       id: "billing",
       title: "Subscriptions and billing",
       intro: [
-        "New accounts get a 14-day free trial with every feature; no card is needed to start. After the trial, PayTree is a paid membership: $4.99 per month or $39.99 per year, plus any applicable taxes. If you do not subscribe, your page is paused (not deleted) until you do. Payments are processed by Stripe; we never see or store your full card number.",
+        "New accounts get a 7-day free trial with every feature; no card is needed to start. After the trial, PayTree is a paid membership: $4.99 per month or $39.99 per year, plus any applicable taxes. If you do not subscribe, your page is paused (not deleted) until you do. Payments are processed by Stripe; we never see or store your full card number.",
         "Your subscription renews automatically at the end of each billing period until you cancel. You can cancel at any time from your dashboard (Manage billing). Cancellation takes effect at the end of the current period, and you keep access until then.",
-        "We will tell you before a price change takes effect. Refunds: [REFUND POLICY].",
+        "We will tell you before a price change takes effect. Refunds: payments are non-refundable. You can cancel any time, and your page stays live until the end of the period you paid for.",
       ],
     },
     {
@@ -109,7 +108,7 @@ export const TERMS: LegalDocument = {
         "probe, scrape, overload or bypass the limits of the Service.",
       ],
       closing: [
-        "We may remove content or suspend pages that violate this section. Report abuse to [ABUSE REPORT EMAIL].",
+        "We may remove content or suspend pages that violate this section. Report abuse to paytree4@gmail.com.",
       ],
     },
     {
@@ -168,9 +167,8 @@ export const TERMS: LegalDocument = {
       id: "disputes",
       title: "Disputes and governing law",
       intro: [
-        "These Terms are governed by the laws of [GOVERNING STATE], without regard to conflict-of-law rules.",
-        "Before filing a claim, you agree to contact us at [CONTACT EMAIL] and try to resolve the issue informally for 30 days. A claim that is not resolved will be brought in the state or federal courts located in [VENUE COUNTY, STATE].",
-        "[OPTIONAL, ATTORNEY TO DECIDE: binding individual arbitration and a class-action waiver.]",
+        "These Terms are governed by the laws of Wyoming, without regard to conflict-of-law rules.",
+        "Before filing a claim, you agree to contact us at paytree4@gmail.com and try to resolve the issue informally for 30 days. A claim that is not resolved will be brought in the state or federal courts located in Sheridan County, Wyoming.",
       ],
     },
     {
@@ -183,7 +181,7 @@ export const TERMS: LegalDocument = {
     {
       id: "contact",
       title: "Contact us",
-      intro: ["[COMPANY LEGAL NAME], [MAILING ADDRESS]. Email: [CONTACT EMAIL]."],
+      intro: ["ABUHIDAR LLC, Sheridan, WY 82801, USA. Email: paytree4@gmail.com."],
     },
   ],
 };
@@ -193,7 +191,7 @@ export const PRIVACY: LegalDocument = {
   summary: "What we collect, why, and the choices you have.",
   lastUpdated: "October 6, 2026",
   intro:
-    "This Privacy Policy explains what [COMPANY LEGAL NAME] (“PayTree,” “we,” “us”) collects when you use PayTree, and how we use and protect it. It covers two groups of people: account holders who build pages, and visitors who view those pages.",
+    "This Privacy Policy explains what ABUHIDAR LLC (“PayTree,” “we,” “us”) collects when you use PayTree, and how we use and protect it. It covers two groups of people: account holders who build pages, and visitors who view those pages.",
   sections: [
     {
       id: "collect-account",
@@ -276,9 +274,9 @@ export const PRIVACY: LegalDocument = {
       id: "rights",
       title: "Your choices and rights",
       intro: [
-        "You can update or delete your page details, and export or delete your data, from your account settings or by emailing [CONTACT EMAIL].",
+        "You can update or delete your page details, and export or delete your data, from your account settings or by emailing paytree4@gmail.com.",
         "Residents of California and other states with privacy laws may have the right to know, access, correct, delete and obtain a copy of their personal information, and to opt out of the sale of personal information or targeted advertising, neither of which we do.",
-        "To make a request, email [CONTACT EMAIL]. We respond within 45 days, and we will not treat you differently for exercising your rights. If we decline a request, you may appeal by replying to our response.",
+        "To make a request, email paytree4@gmail.com. We respond within 45 days, and we will not treat you differently for exercising your rights. If we decline a request, you may appeal by replying to our response.",
       ],
     },
     {
@@ -312,7 +310,7 @@ export const PRIVACY: LegalDocument = {
     {
       id: "contact-privacy",
       title: "Contact us",
-      intro: ["[COMPANY LEGAL NAME], [MAILING ADDRESS]. Privacy requests: [CONTACT EMAIL]."],
+      intro: ["ABUHIDAR LLC, Sheridan, WY 82801, USA. Privacy requests: paytree4@gmail.com."],
     },
   ],
 };

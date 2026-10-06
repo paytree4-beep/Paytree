@@ -22,22 +22,22 @@ export default async function CheckEmailPage({ searchParams }: { searchParams: S
   return (
     <AuthShell
       title="Check your inbox"
-      subtitle={
-        <>
-          We sent a confirmation link to{" "}
-          <strong className="text-[#0B1F18]">{email ?? "your email address"}</strong>. Open it to
-          activate your account.
-        </>
-      }
+      subtitle="We sent a confirmation link to this address. Open it to activate your account."
     >
       <div className="flex flex-col gap-5">
+        {email ? (
+          <div className="rounded-2xl border-2 border-[#D9B873] bg-[#FBF6EA] p-4 text-center">
+            <p className="text-[13px] font-semibold uppercase tracking-[0.1em] text-[#7A5A12]">Your email</p>
+            <p className="mt-1 break-all text-[20px] font-bold text-[#064E3B]">{email}</p>
+            <p className="mt-2 text-[14px] text-[#5C4513]">Please check it is spelled correctly.</p>
+          </div>
+        ) : null}
         {sent ? <Notice tone="success">A new link is on its way.</Notice> : null}
         {error === "rate" ? (
           <Notice tone="error">Too many emails were sent. Please wait a few minutes and try again.</Notice>
         ) : null}
         <p className="text-[15px] text-[#4B6358]">
-          Can&rsquo;t find it? Look in your spam or promotions folder. Open the link on this
-          device if you can.
+          Can&rsquo;t find it? Wait a minute, then look in your spam or junk folder.
         </p>
         {email ? (
           <form action={resendConfirmation}>
@@ -49,9 +49,9 @@ export default async function CheckEmailPage({ searchParams }: { searchParams: S
         ) : null}
         <Link
           href="/signup"
-          className="inline-flex min-h-11 items-center justify-center text-sm font-semibold text-[#064E3B] underline-offset-2 hover:underline"
+          className="inline-flex min-h-[52px] items-center justify-center rounded-full bg-[#064E3B] px-7 font-bold text-[#FBFBFB]"
         >
-          Use a different email
+          Wrong email? Sign up again
         </Link>
       </div>
     </AuthShell>
