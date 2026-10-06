@@ -50,3 +50,25 @@ export async function deleteSplit(formData: FormData): Promise<void> {
   revalidatePath("/dashboard/split");
   redirect("/dashboard/split");
 }
+
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/** The owner checked their app: this person's money arrived. */
+export async function confirmSplitPayment(formData: FormData): Promise<void> {
+  const { supabase } = await requireUser();
+  const id = String(formData.get("id") ?? "");
+  if (UUID.test(id)) {
+    await supabase.from("bill_split_payments").update({ confirmed_at: new Date().toISOString() }).eq("id", id);
+  }
+  revalidatePath("/dashboard/split");
+  redirect("/dashboard/split");
+}
+
+/** The money never arrived (or a prank): remove the name. */
+export async function removeSplitPayment(formData: FormData): Promise<void> {
+  const { supabase } = await requireUser();
+  const id = String(formData.get("id") ?? "");
+  if (UUID.test(id)) await supabase.from("bill_split_payments").delete().eq("id", id);
+  revalidatePath("/dashboard/split");
+  redirect("/dashboard/split");
+}

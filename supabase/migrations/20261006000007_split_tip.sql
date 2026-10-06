@@ -46,3 +46,14 @@ grant all on public.bill_splits, public.bill_split_payments to service_role;
 -- Keep these words free for site pages.
 insert into public.reserved_usernames (username) values ('bill'), ('split'), ('icons'), ('tip')
 on conflict do nothing;
+
+-- Owner confirms each "I've paid" before it counts.
+alter table public.bill_split_payments add column if not exists confirmed_at timestamptz;
+create policy "Owners confirm payments on their splits"
+  on public.bill_split_payments for update to authenticated
+  using (exists (select 1 from public.bill_splits s where s.id = split_id and s.owner_id = (select auth.uid())))
+  with check (exists (select 1 from public.bill_splits s where s.id = split_id and s.owner_id = (select auth.uid())));
+create policy "Owners remove payments on their splits"
+  on public.bill_split_payments for delete to authenticated
+  using (exists (select 1 from public.bill_splits s where s.id = split_id and s.owner_id = (select auth.uid())));
+grant update (confirmed_at), delete on public.bill_split_payments to authenticated;

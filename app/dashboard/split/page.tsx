@@ -16,7 +16,7 @@ import { formatMoney } from "@/lib/payment-log";
 import { SITE_URL } from "@/lib/site";
 import { shareCents } from "@/lib/splits";
 import { createClient } from "@/lib/supabase/server";
-import { createSplit, deleteSplit } from "./actions";
+import { confirmSplitPayment, createSplit, deleteSplit, removeSplitPayment } from "./actions";
 
 export const metadata: Metadata = { title: "Split the bill", robots: { index: false } };
 export const dynamic = "force-dynamic";
@@ -54,9 +54,16 @@ export default async function SplitPage({ searchParams }: { searchParams: Search
 
   const ids = splits.map((s) => s.id);
   const { data: paidRows } =
-    ids.length > 0 ? await supabase.from("bill_split_payments").select("split_id").in("split_id", ids) : { data: [] };
-  const paidCount = new Map<string, number>();
-  for (const r of (paidRows ?? []) as { split_id: string }[]) paidCount.set(r.split_id, (paidCount.get(r.split_id) ?? 0) + 1);
+    ids.length > 0
+      ? await supabase
+          .from("bill_split_payments")
+          .select("id, split_id, name, confirmed_at")
+          .in("split_id", ids)
+          .order("created_at", { ascending: true })
+      : { data: [] };
+  type PayRow = { id: string; split_id: string; name: string; confirmed_at: string | null };
+  const bySplit = new Map<string, PayRow[]>();
+  for (const r of (paidRows ?? []) as PayRow[]) bySplit.set(r.split_id, [...(bySplit.get(r.split_id) ?? []), r]);
 
   const params = await searchParams;
   const error = param(params, "error");
@@ -134,32 +141,64 @@ export default async function SplitPage({ searchParams }: { searchParams: Search
           ) : (
             <ul className="mt-3 divide-y divide-[#EEF3F0]">
               {splits.map((s) => {
-                const paid = Math.min(paidCount.get(s.id) ?? 0, s.people);
+                const rows = bySplit.get(s.id) ?? [];
+                const paid = Math.min(rows.filter((r) => r.confirmed_at).length, s.people);
+                const waiting = rows.filter((r) => !r.confirmed_at);
                 return (
-                  <li key={s.id} className="flex flex-col gap-2 py-3 sm:flex-row sm:items-center sm:justify-between">
-                    <div>
-                      <p className="font-bold">{s.title}</p>
-                      <p className="text-[13px] text-[#4B6358]">
-                        {formatMoney(s.total_cents)} · {formatMoney(shareCents(s.total_cents, s.people))} each ·{" "}
-                        <strong className={paid >= s.people ? "text-[#16A34A]" : ""}>
-                          {paid} of {s.people} paid{paid >= s.people ? " 🎉" : ""}
-                        </strong>
-                      </p>
+                  <li key={s.id} className="flex flex-col gap-2 py-3">
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                      <div>
+                        <p className="font-bold">{s.title}</p>
+                        <p className="text-[13px] text-[#4B6358]">
+                          {formatMoney(s.total_cents)} · {formatMoney(shareCents(s.total_cents, s.people))} each ·{" "}
+                          <strong className={paid >= s.people ? "text-[#16A34A]" : ""}>
+                            {paid} of {s.people} paid{paid >= s.people ? " 🎉" : ""}
+                          </strong>
+                        </p>
+                      </div>
+                      <div className="flex gap-2">
+                        <Link
+                          href={`/bill/${s.id}`}
+                          className="inline-flex min-h-10 items-center rounded-full border border-[#064E3B]/40 px-4 text-[14px] font-bold text-[#064E3B]"
+                        >
+                          Open
+                        </Link>
+                        <form action={deleteSplit}>
+                          <input type="hidden" name="id" value={s.id} />
+                          <button type="submit" className="inline-flex min-h-10 items-center px-2 text-[14px] text-[#B42318] underline underline-offset-2">
+                            Delete
+                          </button>
+                        </form>
+                      </div>
                     </div>
-                    <div className="flex gap-2">
-                      <Link
-                        href={`/bill/${s.id}`}
-                        className="inline-flex min-h-10 items-center rounded-full border border-[#064E3B]/40 px-4 text-[14px] font-bold text-[#064E3B]"
-                      >
-                        Open
-                      </Link>
-                      <form action={deleteSplit}>
-                        <input type="hidden" name="id" value={s.id} />
-                        <button type="submit" className="inline-flex min-h-10 items-center px-2 text-[14px] text-[#B42318] underline underline-offset-2">
-                          Delete
-                        </button>
-                      </form>
-                    </div>
+                    {waiting.length > 0 ? (
+                      <div className="rounded-xl border border-[#E2C27A] bg-[#FBF6EA] p-3">
+                        <p className="text-[13px] font-semibold text-[#7A5A12]">
+                          Said they paid. Check your app, then confirm:
+                        </p>
+                        <ul className="mt-2 flex flex-col gap-2">
+                          {waiting.map((r) => (
+                            <li key={r.id} className="flex items-center justify-between gap-2">
+                              <span className="font-semibold">⏳ {r.name}</span>
+                              <span className="flex gap-1">
+                                <form action={confirmSplitPayment}>
+                                  <input type="hidden" name="id" value={r.id} />
+                                  <button type="submit" className="inline-flex min-h-10 items-center rounded-full bg-[#064E3B] px-4 text-[13px] font-bold text-[#FBFBFB]">
+                                    Confirm ✓
+                                  </button>
+                                </form>
+                                <form action={removeSplitPayment}>
+                                  <input type="hidden" name="id" value={r.id} />
+                                  <button type="submit" className="inline-flex min-h-10 items-center px-2 text-[13px] text-[#B42318] underline underline-offset-2">
+                                    Remove
+                                  </button>
+                                </form>
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ) : null}
                   </li>
                 );
               })}

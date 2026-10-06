@@ -2,8 +2,7 @@
 // app/bill/[id]/actions.ts
 //
 // "I've paid" on a split bill. Anyone with the link can mark themselves as
-// paid, so names are cleaned and the list can never grow past the number of
-// people on the bill.
+// paid. It shows as "waiting" until the owner confirms the money arrived.
 
 import { redirect } from "next/navigation";
 
@@ -23,11 +22,13 @@ export async function markSplitPaid(formData: FormData): Promise<void> {
 
   const { data: split } = await admin.from("bill_splits").select("people").eq("id", id).maybeSingle();
   if (!split) redirect("/");
-  const { count } = await admin
-    .from("bill_split_payments")
-    .select("id", { count: "exact", head: true })
-    .eq("split_id", id);
-  if (typeof count === "number" && count >= (split as { people: number }).people) redirect(`/bill/${id}?error=full#paid`);
+  const people = (split as { people: number }).people;
+  const { data: rows } = await admin.from("bill_split_payments").select("confirmed_at").eq("split_id", id).limit(200);
+  const all = (rows ?? []) as { confirmed_at: string | null }[];
+  const confirmed = all.filter((r) => r.confirmed_at).length;
+  if (confirmed >= people) redirect(`/bill/${id}?error=full#paid`);
+  // Room for everyone, plus a little slack, so a prank cannot fill the list.
+  if (all.length >= people * 2 + 5) redirect(`/bill/${id}?error=busy#paid`);
 
   const { error } = await admin.from("bill_split_payments").insert({ split_id: id, name });
   if (error) redirect(`/bill/${id}?error=save#paid`);

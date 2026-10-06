@@ -40,11 +40,11 @@ async function load(id: string) {
   if (!profile || profile.paused) return null;
   const { data: paid } = await admin
     .from("bill_split_payments")
-    .select("name, created_at")
+    .select("name, created_at, confirmed_at")
     .eq("split_id", id)
     .order("created_at", { ascending: true })
     .limit(50);
-  return { split: s, profile, paid: (paid ?? []) as { name: string }[] };
+  return { split: s, profile, paid: (paid ?? []) as { name: string; confirmed_at: string | null }[] };
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -62,6 +62,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 const ERRORS: Record<string, string> = {
   name: "Please enter your name.",
   full: "Everyone on this bill has already paid.",
+  busy: "This bill has too many notes. Please ask the organizer.",
   save: "We could not save that. Please try again.",
 };
 
@@ -74,7 +75,8 @@ export default async function BillPage({ params, searchParams }: Props) {
   const justPaid = param(query, "paid") === "1";
   const error = param(query, "error");
   const each = shareCents(split.total_cents, split.people);
-  const done = paid.length >= split.people;
+  const confirmedCount = paid.filter((p) => p.confirmed_at).length;
+  const done = confirmedCount >= split.people;
   const methods = applyOrder(resolveMethods(profile.payments), profile.order);
 
   return (
@@ -95,19 +97,27 @@ export default async function BillPage({ params, searchParams }: Props) {
         <section className="rounded-2xl border border-white/90 bg-white/85 p-4">
           <div className="flex items-center justify-between">
             <p className="font-bold text-[#064E3B]">
-              {done ? "Everyone paid 🎉" : `${paid.length} of ${split.people} paid`}
+              {done ? "Everyone paid 🎉" : `${confirmedCount} of ${split.people} paid`}
             </p>
             <div className="flex gap-1" aria-hidden="true">
               {Array.from({ length: Math.min(split.people, 12) }, (_, i) => (
-                <span key={i} className={`h-2.5 w-2.5 rounded-full ${i < paid.length ? "bg-[#16A34A]" : "bg-[#DCE5DF]"}`} />
+                <span key={i} className={`h-2.5 w-2.5 rounded-full ${i < confirmedCount ? "bg-[#16A34A]" : "bg-[#DCE5DF]"}`} />
               ))}
             </div>
           </div>
+          {paid.some((p) => !p.confirmed_at) ? (
+            <p className="mt-1 text-[12px] text-[#6B7F75]">⏳ waiting = said they paid, not confirmed yet.</p>
+          ) : null}
           {paid.length > 0 ? (
             <ul className="mt-2 flex flex-wrap gap-1.5">
               {paid.map((p, i) => (
-                <li key={i} className="rounded-full bg-[#E3F0EA] px-3 py-1 text-[13px] font-semibold text-[#064E3B]">
-                  {p.name} ✓
+                <li
+                  key={i}
+                  className={`rounded-full px-3 py-1 text-[13px] font-semibold ${
+                    p.confirmed_at ? "bg-[#E3F0EA] text-[#064E3B]" : "bg-[#F3F4F2] text-[#6B7F75]"
+                  }`}
+                >
+                  {p.confirmed_at ? `${p.name} ✓` : `${p.name} · ⏳ waiting`}
                 </li>
               ))}
             </ul>
@@ -121,7 +131,9 @@ export default async function BillPage({ params, searchParams }: Props) {
         {!done ? (
           <section id="paid" className="mt-6 scroll-mt-6 rounded-2xl border border-white/80 bg-white/80 p-4">
             {justPaid ? (
-              <p className="text-center font-bold text-[#064E3B]">Thank you! You&rsquo;re marked as paid ✓</p>
+              <p className="text-center font-bold text-[#064E3B]">
+                Thank you! {profile.displayName} will confirm once your payment arrives.
+              </p>
             ) : (
               <form action={markSplitPaid} className="flex flex-col gap-3" noValidate>
                 <p className="font-bold text-[#064E3B]">Paid your {formatMoney(each)}? Let everyone know.</p>
