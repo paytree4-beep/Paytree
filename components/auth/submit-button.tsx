@@ -28,7 +28,14 @@ export function SubmitButton({
       aria-disabled={pending}
       className={`flex min-h-[52px] w-full items-center justify-center rounded-full px-7 font-bold transition-opacity disabled:opacity-70 ${style}`}
     >
-      {pending ? pendingText : children}
+      {pending ? (
+        <span className="inline-flex items-center gap-2">
+          <span className="pt-spin inline-block h-4 w-4 rounded-full border-[3px] border-current border-t-transparent opacity-80" aria-hidden="true" />
+          {pendingText}
+        </span>
+      ) : (
+        children
+      )}
     </button>
   );
 }

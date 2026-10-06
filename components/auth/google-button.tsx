@@ -7,6 +7,7 @@ import Link from "next/link";
 
 import { continueWithGoogle } from "@/app/auth-actions";
 import { GOOGLE_SIGNIN } from "@/lib/site";
+import { GoogleSubmit } from "./google-submit";
 
 function GoogleMark() {
   return (
@@ -30,15 +31,10 @@ export function GoogleButtonInForm() {
         or
         <span className="h-px flex-1 bg-[#DCE5DF]" aria-hidden="true" />
       </div>
-      <button
-        type="submit"
-        formAction={continueWithGoogle}
-        formNoValidate
-        className="flex min-h-[52px] w-full items-center justify-center gap-3 rounded-full border border-[#C9D6CE] bg-white px-7 font-bold text-[#0B1F18] hover:border-[#064E3B]"
-      >
+      <GoogleSubmit formAction={continueWithGoogle}>
         <GoogleMark />
         Continue with Google
-      </button>
+      </GoogleSubmit>
     </div>
   );
 }
@@ -48,13 +44,10 @@ export function GoogleSignIn() {
   return (
     <div className="mb-6 flex flex-col gap-6">
       <form action={continueWithGoogle} className="flex flex-col gap-2">
-        <button
-          type="submit"
-          className="flex min-h-[52px] w-full items-center justify-center gap-3 rounded-full border border-[#C9D6CE] bg-white px-7 font-bold text-[#0B1F18] hover:border-[#064E3B]"
-        >
+        <GoogleSubmit>
           <GoogleMark />
           Continue with Google
-        </button>
+        </GoogleSubmit>
         <p className="text-center text-[12px] text-[#4B6358]">
           New here? By continuing with Google you agree to our{" "}
           <Link href="/terms" className="underline underline-offset-2">Terms</Link> and{" "}

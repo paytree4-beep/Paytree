@@ -74,3 +74,15 @@
 @media (prefers-reduced-motion: reduce) {
   .pt-reveal[data-hidden="true"] { opacity: 1; transform: none; }
 }
+
+/* Loading screen: apples hop one after another */
+@keyframes pt-hop {
+  0%, 60%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-14px); }
+}
+.pt-hop { animation: pt-hop 0.9s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .pt-hop { animation: none; } }
+
+/* Small spinner for buttons that are working */
+@keyframes pt-spin { to { transform: rotate(360deg); } }
+.pt-spin { animation: pt-spin 0.8s linear infinite; }
