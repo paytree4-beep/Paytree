@@ -19,7 +19,6 @@ const PLAN_FEATURES = [
   "Your own dashboard to manage your page anytime",
   "Payment log: confirm payments, see daily and monthly totals, export to Excel",
   "Private visitor statistics",
-  "Your own referral link: earn apples 🍎",
   `${TRIAL_DAYS} days free, no card needed`,
   "Cancel any time",
 ]
@@ -102,7 +101,11 @@ export function Pricing() {
               <div className="h-px bg-[#064E3B]/10" />
 
               <ul className="flex flex-1 flex-col gap-3">
-                {PLAN_FEATURES.map((text) => (
+                {[
+                  ...PLAN_FEATURES.slice(0, 5),
+                  key === "annual" ? "Your own referral link: earn apples 🍎" : "Your own referral link: earn apples 🍏",
+                  ...PLAN_FEATURES.slice(5),
+                ].map((text) => (
                   <li key={text} className="flex items-start gap-3 text-[#0B1F18]">
                     <span className="mt-[2px] flex h-5 w-5 flex-none items-center justify-center rounded-full bg-[#E3F0EA]">
                       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#064E3B" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
