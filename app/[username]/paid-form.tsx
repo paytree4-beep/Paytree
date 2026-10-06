@@ -39,7 +39,7 @@ export function PaidForm({
     return (
       <section
         id="paid"
-        className="mt-6 scroll-mt-6 rounded-2xl border border-[#BFE3CF] bg-[#ECF7F0] p-5 text-center"
+        className="scroll-mt-6 rounded-2xl border border-[#BFE3CF] bg-[#ECF7F0] p-5 text-center"
       >
         <AppleCelebration />
         <p className="font-serif text-2xl text-[#064E3B]">Thank you for your support!</p>
@@ -50,11 +50,14 @@ export function PaidForm({
   return (
     <section
       id="paid"
-      className="mt-6 scroll-mt-6 rounded-2xl border border-white/80 bg-white/70 p-5 shadow-[0_10px_30px_-18px_rgba(6,78,59,0.35)] backdrop-blur-xl"
+      className="scroll-mt-6 rounded-2xl border border-white/80 bg-white/70 p-5 shadow-[0_10px_30px_-18px_rgba(6,78,59,0.35)] backdrop-blur-xl"
     >
       <details open={Boolean(message)} className="group">
         <summary className="flex min-h-[52px] cursor-pointer list-none items-center justify-between gap-3 [&::-webkit-details-marker]:hidden">
           <span>
+            <span className="mb-1 inline-block rounded-full bg-[#F1E6CC] px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-[0.12em] text-[#7A5A12]">
+              Optional
+            </span>
             <span className="block font-bold text-[#064E3B]">Already paid?</span>
             <span className="block text-[14px] text-[#4B6358]">Let {displayName} know.</span>
           </span>

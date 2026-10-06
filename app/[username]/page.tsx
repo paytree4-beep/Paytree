@@ -115,17 +115,19 @@ export default async function PublicPaymentPage({ params, searchParams }: PagePr
           username={profile.username}
           displayName={profile.displayName}
           methods={methods}
+          extraIndex={profile.paidPosition}
+          extra={
+            profile.paymentLog ? (
+              <PaidForm
+                username={profile.username}
+                displayName={profile.displayName}
+                methods={methods.map((m) => m.id)}
+                sent={param(query, "paid") === "1"}
+                error={param(query, "paid_error")}
+              />
+            ) : null
+          }
         />
-
-        {profile.paymentLog ? (
-          <PaidForm
-            username={profile.username}
-            displayName={profile.displayName}
-            methods={methods.map((m) => m.id)}
-            sent={param(query, "paid") === "1"}
-            error={param(query, "paid_error")}
-          />
-        ) : null}
 
         <QrCard
           url={`${SITE_URL}/${profile.username}`}

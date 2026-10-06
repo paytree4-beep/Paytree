@@ -125,6 +125,8 @@ export interface Profile {
   paused?: boolean;
   /** True when the owner turned on the payment log ("I've paid" button). */
   paymentLog?: boolean;
+  /** How many payment methods come before the "I've paid" box. null = after all. */
+  paidPosition?: number | null;
   payments: PaymentSettings;
 }
 
@@ -816,10 +818,19 @@ export async function getProfileByUsername(rawUsername: string): Promise<Profile
   const paymentLog =
     !logError && (logRow as { payment_log_enabled?: boolean } | null)?.payment_log_enabled === true;
 
+  const { data: posRow, error: posError } = await supabase
+    .from("profiles")
+    .select("paid_box_position")
+    .eq("id", profile.id)
+    .maybeSingle();
+  const rawPos = (posRow as { paid_box_position?: number | null } | null)?.paid_box_position;
+  const paidPosition = !posError && typeof rawPos === "number" ? rawPos : null;
+
   return {
     id: profile.id,
     paused: !access.active,
     paymentLog,
+    paidPosition,
     order: methodRows
       .map((row) => METHOD_IDS.find((m) => m === row.method_id))
       .filter((m): m is MethodId => Boolean(m)),

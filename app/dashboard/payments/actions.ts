@@ -8,6 +8,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { configFromForm, findMethodForm, METHOD_FORMS } from "@/lib/payment-forms";
+import { PAID_BOX_ID } from "@/lib/payment-log";
 import { createClient } from "@/lib/supabase/server";
 
 async function signedIn() {
@@ -98,9 +99,13 @@ export async function removePaymentMethod(formData: FormData): Promise<void> {
 
 /** Saves the owner's order of payment methods (first id = top of the page). */
 export async function savePaymentOrder(ids: unknown): Promise<{ ok: boolean }> {
-  if (!Array.isArray(ids) || ids.length > METHOD_FORMS.length) return { ok: false };
-  const clean = ids.filter((id): id is string => typeof id === "string" && Boolean(findMethodForm(id)));
-  if (clean.length !== ids.length || new Set(clean).size !== clean.length) return { ok: false };
+  if (!Array.isArray(ids) || ids.length > METHOD_FORMS.length + 1) return { ok: false };
+  // The list may also hold the "I've paid" box, saved as a position on the profile.
+  const paidIndex = ids.indexOf(PAID_BOX_ID);
+  const methodIds = ids.filter((id) => id !== PAID_BOX_ID);
+  const clean = methodIds.filter((id): id is string => typeof id === "string" && Boolean(findMethodForm(id)));
+  if (clean.length !== methodIds.length || new Set(clean).size !== clean.length) return { ok: false };
+  if (paidIndex !== -1 && ids.lastIndexOf(PAID_BOX_ID) !== paidIndex) return { ok: false };
 
   const { supabase, userId, username } = await signedIn();
   for (let i = 0; i < clean.length; i++) {
@@ -109,6 +114,12 @@ export async function savePaymentOrder(ids: unknown): Promise<{ ok: boolean }> {
       .update({ position: i })
       .eq("profile_id", userId)
       .eq("method_id", clean[i]);
+    if (error) return { ok: false };
+  }
+  if (paidIndex !== -1) {
+    // Number of methods above the box. At the very end it follows the list.
+    const position = paidIndex >= clean.length ? null : paidIndex;
+    const { error } = await supabase.from("profiles").update({ paid_box_position: position }).eq("id", userId);
     if (error) return { ok: false };
   }
   revalidatePath(`/${username}`);

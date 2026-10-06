@@ -8,7 +8,7 @@
 // Requires: npm install lucide-react
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { MouseEvent } from "react";
+import type { MouseEvent, ReactNode } from "react";
 import {
   ArrowUpRight,
   Banknote,
@@ -121,9 +121,13 @@ interface PaymentMethodsProps {
   username: string;
   displayName: string;
   methods: ResolvedMethod[];
+  /** Optional box (the "I've paid" form) shown among the methods. */
+  extra?: ReactNode;
+  /** How many methods come before `extra`, in display order. Missing = after all of them. */
+  extraIndex?: number | null;
 }
 
-export function PaymentMethods({ username, displayName, methods }: PaymentMethodsProps) {
+export function PaymentMethods({ username, displayName, methods, extra, extraIndex }: PaymentMethodsProps) {
   const [toast, setToast] = useState<ToastState | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -208,24 +212,9 @@ export function PaymentMethods({ username, displayName, methods }: PaymentMethod
     [showToast, username],
   );
 
-  return (
-    <>
-      {methods.length === 0 ? (
-        <div className="rounded-[18px] border border-dashed border-[#B9CBC0] p-7 text-center text-[#4B6358]">
-          {displayName} has not added any payment methods yet.
-        </div>
-      ) : (
-        <div className="flex flex-col gap-8">
-          {GROUPS.map((group) => {
-            const items = methods.filter((m) => m.group === group.id);
-            if (items.length === 0) return null;
+  const renderGroup = (group: (typeof GROUPS)[number], items: ResolvedMethod[]) => (
+    <section key={group.id} aria-labelledby={`heading-${group.id}`} className="flex flex-col gap-3">
 
-            return (
-              <section
-                key={group.id}
-                aria-labelledby={`heading-${group.id}`}
-                className="flex flex-col gap-3"
-              >
                 <div>
                   <h2
                     id={`heading-${group.id}`}
@@ -252,9 +241,41 @@ export function PaymentMethods({ username, displayName, methods }: PaymentMethod
                     />
                   ),
                 )}
-              </section>
+    </section>
+  );
+
+  return (
+    <>
+      {methods.length === 0 ? (
+        <div className="flex flex-col gap-6">
+          <div className="rounded-[18px] border border-dashed border-[#B9CBC0] p-7 text-center text-[#4B6358]">
+            {displayName} has not added any payment methods yet.
+          </div>
+          {extra}
+        </div>
+      ) : (
+        <div className="flex flex-col gap-8">
+          {(() => {
+            // Place the optional box after `extraIndex` methods, between groups.
+            const visible = GROUPS.map((group) => ({ group, items: methods.filter((m) => m.group === group.id) })).filter(
+              (g) => g.items.length > 0,
             );
-          })}
+            const target =
+              extraIndex === null || extraIndex === undefined ? methods.length : Math.max(0, Math.min(extraIndex, methods.length));
+            let before = 0;
+            let placed = !extra;
+            const out: ReactNode[] = [];
+            for (const { group, items } of visible) {
+              if (!placed && target <= before) {
+                out.push(<div key="extra">{extra}</div>);
+                placed = true;
+              }
+              before += items.length;
+              out.push(renderGroup(group, items));
+            }
+            if (!placed) out.push(<div key="extra">{extra}</div>);
+            return out;
+          })()}
         </div>
       )}
 

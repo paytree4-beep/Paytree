@@ -13,6 +13,9 @@
 
 import { METHOD_IDS, type MethodId } from "./profiles";
 
+/** Id of the "I've paid" box in the owner's reorder list. */
+export const PAID_BOX_ID = "paid";
+
 export type ClaimMethod = MethodId | "cash" | "other";
 export type ClaimStatus = "pending" | "received" | "dismissed";
 
