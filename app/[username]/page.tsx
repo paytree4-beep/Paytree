@@ -77,7 +77,7 @@ export default async function PublicPaymentPage({ params, searchParams }: PagePr
   return (
     <div className="flex min-h-screen flex-col bg-[#FAF5EA] font-sans text-[#0B1F18]">
       {/* Profile header */}
-      <header className="relative overflow-hidden bg-gradient-to-b from-[#E6F2EA] via-[#F1F6EE] to-[#FAF5EA] px-5 pb-7 pt-8 text-[#064E3B]">
+      <header className="relative overflow-hidden bg-gradient-to-b from-[#E6F2EA] via-[#F1F6EE] to-[#FAF5EA] px-5 pb-8 pt-10 text-[#064E3B]">
         <AppleHalo />
         <div className="relative mx-auto flex max-w-[560px] flex-col items-center gap-1.5 text-center">
           {profile.avatarUrl ? (
@@ -85,14 +85,14 @@ export default async function PublicPaymentPage({ params, searchParams }: PagePr
             <img
               src={profile.avatarUrl}
               alt=""
-              width={68}
-              height={68}
-              className="mb-1.5 h-[76px] w-[76px] rounded-full bg-white object-cover shadow-[0_12px_30px_-12px_rgba(6,78,59,0.5)] ring-4 ring-white"
+              width={120}
+              height={120}
+              className="mb-2 h-[120px] w-[120px] rounded-full bg-white object-cover shadow-[0_12px_30px_-12px_rgba(6,78,59,0.5)] ring-4 ring-white"
             />
           ) : (
             <span
               aria-hidden="true"
-              className="mb-1.5 flex h-[76px] w-[76px] items-center justify-center rounded-full bg-[#064E3B] font-serif text-4xl leading-none text-[#FBFBFB] shadow-[0_12px_30px_-12px_rgba(6,78,59,0.5)] ring-4 ring-white"
+              className="mb-2 flex h-[120px] w-[120px] items-center justify-center rounded-full bg-[#064E3B] font-serif text-6xl leading-none text-[#FBFBFB] shadow-[0_12px_30px_-12px_rgba(6,78,59,0.5)] ring-4 ring-white"
             >
               {initial}
             </span>

@@ -84,10 +84,10 @@ export function Pricing() {
                   </span>
                 ) : null}
                 <span className="font-serif text-[64px] leading-none text-[#064E3B]">{info.price}</span>
-                <span className="text-[#4B6358]">{info.period}</span>
+                <span className="text-[#2F4A3E]">{info.period}</span>
               </div>
 
-              <p className="min-h-6 text-[15px] text-[#4B6358]">
+              <p className="min-h-6 text-[16px] text-[#2F4A3E]">
                 {fullPrice ? (
                   <>
                     <strong className="text-[#9A6E1A]">You save {money(PRICES.monthly * 12 - PRICES.annual)} a year.</strong>{" "}

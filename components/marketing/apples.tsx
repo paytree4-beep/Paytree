@@ -85,7 +85,8 @@ export function AppleBackdrop() {
 
 /** A few apples arranged around a profile photo. Decorative only. */
 export function AppleHalo({ compact = false }: { compact?: boolean }) {
-  const k = compact ? 0.7 : 1;
+  // Full size around a real profile photo; compact for the small phone example.
+  const k = compact ? 0.5 : 1.4;
   const items: { color: AppleColor; size: number; style: CSSProperties; delay: number }[] = [
     { color: "red", size: 34 * k, style: { top: "8%", left: "12%", "--pt-rot": "-14deg" } as CSSProperties, delay: 0 },
     { color: "green", size: 28 * k, style: { top: "4%", right: "14%", "--pt-rot": "12deg" } as CSSProperties, delay: 1.2 },
