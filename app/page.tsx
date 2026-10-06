@@ -151,9 +151,9 @@ const PHONE =
 /** Two small phones side by side: a payment page and its statistics. */
 function PhoneExample() {
   return (
-    <div className="mx-auto flex w-full max-w-[420px] items-start justify-center gap-3">
+    <div className="mx-auto flex w-full max-w-[460px] items-start justify-center gap-3">
       {/* Phone 1: the public payment page */}
-      <div className="w-1/2 max-w-[200px]">
+      <div className="w-1/2 max-w-[220px]">
         <div
           role="img"
           aria-label="Example PayTree page for Cedar Coffee Co. with Cash App, Venmo, Zelle, Apple Cash and a QR code"
@@ -163,34 +163,34 @@ function PhoneExample() {
           <div className="relative flex flex-col items-center gap-0.5 overflow-hidden bg-gradient-to-b from-[#E6F2EA] to-[#FAF5EA] px-2 pb-2.5 pt-4 text-center text-[#064E3B]">
             <AppleHalo compact />
             <span className="relative mb-0.5">
-              <ExampleAvatar size={34} />
+              <ExampleAvatar size={40} />
             </span>
-            <span className="relative font-serif text-[14px] leading-tight">Cedar Coffee Co.</span>
-            <span className="relative text-[8px] text-[#4B6358]">{SITE_HOST}/cedarcoffee</span>
+            <span className="relative font-serif text-[17px] leading-tight">Cedar Coffee Co.</span>
+            <span className="relative text-[10.5px] text-[#4B6358]">{SITE_HOST}/cedarcoffee</span>
           </div>
           <div className="flex flex-col gap-1.5 p-2">
             {EXAMPLE.map(({ id, name, detail, Icon, copy }) => {
               const c = badgeColor(id);
               const Action = copy ? Copy : ArrowUpRight;
               return (
-                <div key={id} className="flex items-center gap-1.5 rounded-[10px] border border-[#DCE5DF] bg-white px-2 py-1.5">
+                <div key={id} className="flex items-center gap-1.5 rounded-[10px] border border-[#DCE5DF] bg-white px-2 py-2">
                   <span
-                    className="flex h-5 w-5 flex-none items-center justify-center rounded-full"
+                    className="flex h-6 w-6 flex-none items-center justify-center rounded-full"
                     style={{ backgroundColor: c.bg, color: c.fg }}
                   >
-                    <Icon className="h-2.5 w-2.5" strokeWidth={2.4} />
+                    <Icon className="h-3 w-3" strokeWidth={2.4} />
                   </span>
                   <span className="min-w-0 flex-1">
-                    <span className="block text-[9px] font-bold leading-tight">{name}</span>
-                    <span className="block truncate text-[7.5px] text-[#4B6358]">{detail}</span>
+                    <span className="block text-[12px] font-bold leading-tight">{name}</span>
+                    <span className="block truncate text-[10px] text-[#4B6358]">{detail}</span>
                   </span>
-                  <Action className="h-2.5 w-2.5 flex-none text-[#064E3B]" />
+                  <Action className="h-3 w-3 flex-none text-[#064E3B]" />
                 </div>
               );
             })}
             <div className="flex items-center gap-1.5 rounded-[10px] border border-[#CFE3D6] bg-[#E6F2EA] px-2 py-1.5 text-[#064E3B]">
-              <ExampleQr url={SITE_URL} size={26} />
-              <span className="text-[9px] font-semibold">Scan to pay</span>
+              <ExampleQr url={SITE_URL} size={30} />
+              <span className="text-[12px] font-semibold">Scan to pay</span>
             </div>
           </div>
         </div>
@@ -198,7 +198,7 @@ function PhoneExample() {
       </div>
 
       {/* Next to the phone: the three standout features, stacked */}
-      <div className="flex w-1/2 max-w-[200px] flex-col gap-2.5 self-center">
+      <div className="flex w-1/2 max-w-[220px] flex-col gap-2.5 self-center">
         {FEATURES.filter((f) => f.apple).map(({ title, body, Icon, tint }) => (
           <div key={title} className={`flex flex-col gap-1 p-3 ring-2 ring-[#E2C27A]/70 ${glass}`}>
             <span className="flex items-center gap-2">
@@ -209,11 +209,11 @@ function PhoneExample() {
               >
                 <Icon className="h-4 w-4" strokeWidth={2.2} />
               </span>
-              <span className="text-[15px] font-extrabold leading-tight">
+              <span className="text-[17px] font-extrabold leading-tight">
                 <AppleTitle text={title} />
               </span>
             </span>
-            <span className="text-[11.5px] leading-snug text-[#1F362B]">{body}</span>
+            <span className="text-[14px] leading-snug text-[#1F362B]">{body}</span>
           </div>
         ))}
       </div>
