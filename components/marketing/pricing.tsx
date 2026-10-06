@@ -12,11 +12,12 @@ import { PRICING } from "@/lib/site";
 type PlanKey = "monthly" | "annual";
 
 const PLAN_FEATURES = [
-  "Unlimited payment methods",
-  "Your own PayTree link",
-  "Your own QR code",
-  "Edit any time",
-];
+  "Every payment method, neatly organized",
+  "Your own PayTree link and QR code",
+  "Private visitor statistics",
+  "14 days free, no card needed",
+  "Cancel any time",
+]
 
 export function Pricing() {
   const [plan, setPlan] = useState<PlanKey>("annual");
@@ -28,7 +29,7 @@ export function Pricing() {
       <div
         role="group"
         aria-label="Billing cycle"
-        className="inline-flex gap-1 rounded-full bg-[#E3EBE6] p-[5px]"
+        className="inline-flex gap-1 rounded-full border border-white/70 bg-white/60 p-[5px] backdrop-blur-xl"
       >
         {keys.map((key) => {
           const selected = plan === key;
@@ -59,7 +60,7 @@ export function Pricing() {
               className={`flex min-w-0 flex-[1_1_340px] flex-col gap-[22px] rounded-[28px] border-[1.5px] p-[38px] ${
                 selected
                   ? "border-[#064E3B] bg-[#064E3B] text-[#FBFBFB] shadow-[0_30px_60px_-30px_rgba(6,78,59,0.6)]"
-                  : "border-[#DCE5DF] bg-white text-[#0B1F18]"
+                  : "border-white/70 bg-white/60 text-[#0B1F18] backdrop-blur-xl"
               }`}
             >
               <div className="flex items-center justify-between gap-3">

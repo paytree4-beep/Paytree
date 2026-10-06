@@ -39,3 +39,38 @@
     }
   }
 }
+
+/* Landing page motion. The reduced-motion rule above switches these off. */
+@keyframes pt-float {
+  0%, 100% { transform: translateY(0) rotate(var(--pt-rot, 0deg)); }
+  50% { transform: translateY(-18px) rotate(calc(var(--pt-rot, 0deg) + 6deg)); }
+}
+@keyframes pt-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+@keyframes pt-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@keyframes pt-shine {
+  from { background-position: 0% 50%; }
+  to { background-position: 200% 50%; }
+}
+.pt-float { animation: pt-float 9s ease-in-out infinite; }
+.pt-bob { animation: pt-bob 5s ease-in-out infinite; }
+.pt-marquee { animation: pt-marquee 38s linear infinite; }
+.pt-shine {
+  background-size: 200% auto;
+  animation: pt-shine 6s linear infinite;
+}
+.pt-reveal {
+  transition: opacity 700ms ease, transform 700ms ease;
+}
+.pt-reveal[data-hidden="true"] {
+  opacity: 0;
+  transform: translateY(28px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .pt-reveal[data-hidden="true"] { opacity: 1; transform: none; }
+}

@@ -26,11 +26,20 @@ export function LogoMark({ size = 36 }: { size?: number }) {
   );
 }
 
-export function Logo({ size = 36, className = "" }: { size?: number; className?: string }) {
+export function Logo({
+  size = 36,
+  className = "",
+  tone = "light",
+}: {
+  size?: number;
+  className?: string;
+  /** "light" for dark green backgrounds, "dark" for cream or white ones. */
+  tone?: "light" | "dark";
+}) {
   return (
     <Link
       href="/"
-      className={`inline-flex min-h-11 items-center gap-2.5 font-bold text-[#FBFBFB] ${className}`}
+      className={`inline-flex min-h-11 items-center gap-2.5 font-bold ${tone === "dark" ? "text-[#064E3B]" : "text-[#FBFBFB]"} ${className}`}
       aria-label="PayTree home"
     >
       <LogoMark size={size} />

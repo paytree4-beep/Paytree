@@ -45,6 +45,9 @@ export const GOOGLE_SIGNIN = process.env.NEXT_PUBLIC_GOOGLE_SIGNIN === "true";
  */
 export const FREE_METHOD_LIMIT = 2;
 
+/** Free trial length for new accounts. */
+export const TRIAL_DAYS = 14;
+
 /** Membership prices in US dollars. */
 export const PRICES = {
   monthly: 4.99,
@@ -59,7 +62,7 @@ export const PRICING = {
     price: money(PRICES.monthly),
     period: "per month",
     note: "Billed monthly.",
-    cta: "Start monthly",
+    cta: "Start free trial",
   },
   annual: {
     name: "Annual membership",
@@ -67,7 +70,7 @@ export const PRICING = {
     period: "per year",
     note: `Equivalent to ${money(PRICES.annual / 12)} per month.`,
     perMonth: money(PRICES.annual / 12),
-    cta: "Start annual",
+    cta: "Start free trial",
     badge: `Save ${Math.round((1 - PRICES.annual / (PRICES.monthly * 12)) * 100)}%`,
   },
 } as const;
