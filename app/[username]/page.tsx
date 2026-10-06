@@ -15,6 +15,8 @@ import { SITE_HOST, SITE_URL } from "@/lib/site";
 import { PaymentMethods } from "./payment-methods";
 import { QrCard } from "./qr-card";
 import { AppleHalo } from "@/components/marketing/apples";
+import { PaidForm } from "./paid-form";
+import { param, type SearchParams } from "@/lib/auth";
 
 
 // Always read fresh data, so a change saved in the dashboard shows up on the
@@ -24,6 +26,7 @@ export const dynamic = "force-dynamic";
 type PageProps = {
   // In Next.js 15 and later, route params arrive as a Promise.
   params: Promise<{ username: string }>;
+  searchParams: SearchParams;
 };
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -40,8 +43,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-export default async function PublicPaymentPage({ params }: PageProps) {
+export default async function PublicPaymentPage({ params, searchParams }: PageProps) {
   const { username } = await params;
+  const query = await searchParams;
   const profile = await getProfileByUsername(username);
 
   if (!profile) {
@@ -112,6 +116,16 @@ export default async function PublicPaymentPage({ params }: PageProps) {
           displayName={profile.displayName}
           methods={methods}
         />
+
+        {profile.paymentLog ? (
+          <PaidForm
+            username={profile.username}
+            displayName={profile.displayName}
+            methods={methods.map((m) => m.id)}
+            sent={param(query, "paid") === "1"}
+            error={param(query, "paid_error")}
+          />
+        ) : null}
 
         <QrCard
           url={`${SITE_URL}/${profile.username}`}

@@ -123,6 +123,8 @@ export interface Profile {
   order?: MethodId[];
   /** True when the free trial has ended without a subscription. */
   paused?: boolean;
+  /** True when the owner turned on the payment log ("I've paid" button). */
+  paymentLog?: boolean;
   payments: PaymentSettings;
 }
 
@@ -804,9 +806,20 @@ export async function getProfileByUsername(rawUsername: string): Promise<Profile
     .order("position", { ascending: true });
 
   const methodRows = (rows ?? []) as MethodRow[];
+
+  // Read on its own so a missing column (migration not run yet) never breaks the page.
+  const { data: logRow, error: logError } = await supabase
+    .from("profiles")
+    .select("payment_log_enabled")
+    .eq("id", profile.id)
+    .maybeSingle();
+  const paymentLog =
+    !logError && (logRow as { payment_log_enabled?: boolean } | null)?.payment_log_enabled === true;
+
   return {
     id: profile.id,
     paused: !access.active,
+    paymentLog,
     order: methodRows
       .map((row) => METHOD_IDS.find((m) => m === row.method_id))
       .filter((m): m is MethodId => Boolean(m)),
