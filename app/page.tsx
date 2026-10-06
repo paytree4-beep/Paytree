@@ -22,7 +22,7 @@ import {
 import type { LucideIcon } from "lucide-react";
 
 import { Logo } from "@/components/brand/logo";
-import { Apple, AppleBackdrop, AppleHalo } from "@/components/marketing/apples";
+import { Apple, AppleBackdrop, AppleHalo, LabeledApple } from "@/components/marketing/apples";
 import { Cta } from "@/components/marketing/cta";
 import { ExampleAvatar } from "@/components/marketing/example-avatar";
 import { ExampleQr } from "@/components/marketing/example-qr";
@@ -318,6 +318,28 @@ export default function HomePage() {
           <div id="example" className="scroll-mt-24">
             <PhoneExample />
           </div>
+        </section>
+
+        {/* Every feature on an apple */}
+        <section aria-label="What you get" className="px-5 pb-10 sm:px-6">
+          <ul className="mx-auto grid max-w-[720px] grid-cols-4 gap-x-2 gap-y-1 sm:gap-x-6">
+            {(
+              [
+                ["red", "One\nlink"],
+                ["green", "QR\ncode"],
+                ["yellow", "Split\nthe bill"],
+                ["red", "Tip\nme"],
+                ["green", "Pay me\ncard"],
+                ["yellow", "Payment\nlog"],
+                ["red", "Your\nstats"],
+                ["green", "Earn\napples"],
+              ] as const
+            ).map(([color, label]) => (
+              <li key={label} className="pt-bob" style={{ animationDuration: `${6 + label.length % 3}s` }}>
+                <LabeledApple color={color} label={label} />
+              </li>
+            ))}
+          </ul>
         </section>
 
         {/* Moving strip of payment methods */}

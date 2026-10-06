@@ -105,3 +105,29 @@ export function AppleHalo({ compact = false }: { compact?: boolean }) {
     </div>
   );
 }
+
+/** An apple with a short label written on it. Scales to its container. */
+export function LabeledApple({ color, label }: { color: "red" | "green" | "yellow"; label: string }) {
+  const c = PALETTE[color];
+  const text = color === "yellow" ? "#064E3B" : "#FFFFFF";
+  return (
+    <div className="relative aspect-square w-full">
+      <svg viewBox="0 0 64 64" className="absolute inset-0 h-full w-full drop-shadow-[0_8px_10px_rgba(6,78,59,0.18)]" aria-hidden="true">
+        <path
+          d="M32 19c-4-4-12-5-17 0-6 6-5 18 0 26 4 7 9 11 13 10 2-.4 3-1.4 4-1.4s2 1 4 1.4c4 1 9-3 13-10 5-8 6-20 0-26-5-5-13-4-17 0z"
+          fill={c.body}
+        />
+        <path d="M47 21c4 6 3 16-1 23-3 5-6 8-9 9 5-4 9-12 9-20 0-5-1-9 1-12z" fill={c.shade} opacity="0.45" />
+        <ellipse cx="21" cy="27" rx="3" ry="5.5" fill="#FFFFFF" opacity="0.3" transform="rotate(-20 21 27)" />
+        <path d="M32 19c0-5 1-8 3-11" stroke="#6B4A2B" strokeWidth="2.6" fill="none" strokeLinecap="round" />
+        <path d="M34 13c4-6 11-6 14-4-3 5-9 7-14 4z" fill="#3E8E3A" />
+      </svg>
+      <span
+        className="absolute inset-x-[18%] top-[38%] flex h-[38%] items-center justify-center whitespace-pre-line text-center text-[10.5px] font-extrabold leading-[1.1] tracking-[-0.02em] sm:text-[15px]"
+        style={{ color: text }}
+      >
+        {label}
+      </span>
+    </div>
+  );
+}

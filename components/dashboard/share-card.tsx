@@ -37,15 +37,16 @@ function loadImage(src: string, cors = false): Promise<HTMLImageElement | null> 
 type Drop = { x: number; size: number; color: number; delay: number; floor: number; spin: number };
 
 function makeDrops(): Drop[] {
-  // Fixed layout so the image always looks the same.
-  const xs = [60, 190, 320, 450, 590, 720, 850, 980, 120, 260, 400, 660, 800, 940];
-  return xs.map((x, i) => ({
-    x,
-    size: 110 + ((i * 37) % 60),
+  // One neat row of apples across the bottom, with space between them.
+  const count = 7;
+  const gap = W / count;
+  return Array.from({ length: count }, (_, i) => ({
+    x: gap / 2 + i * gap,
+    size: 126,
     color: i % COLORS.length,
-    delay: 0.15 + (i % 7) * 0.22,
-    floor: 1785 - ((i * 53) % 90),
-    spin: ((i % 2 ? 1 : -1) * (20 + ((i * 29) % 40)) * Math.PI) / 180,
+    delay: 0.15 + i * 0.18,
+    floor: 1790 - (i % 2) * 26,
+    spin: ((i % 2 ? 1 : -1) * 14 * Math.PI) / 180,
   }));
 }
 
@@ -103,6 +104,8 @@ export function ShareCardMaker({
   const [busy, setBusy] = useState<"" | "image" | "video" | "preview">("");
   const [status, setStatus] = useState("");
   const [canVideo, setCanVideo] = useState(false);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [videoFile, setVideoFile] = useState<File | null>(null);
   const link = pageUrl ?? `https://paytree.to/${username}`;
   const shortLink = link.replace(/^https?:\/\//, "");
 
@@ -304,41 +307,46 @@ export function ShareCardMaker({
     if (ready) draw(DURATION, true);
   }, [ready, draw]);
 
-  const deliver = async (blob: Blob, fileName: string) => {
-    const file = new File([blob], fileName, { type: blob.type });
+  /** Opens the phone's share sheet (Instagram, TikTok, Save Video…). Must run right after a tap. */
+  const shareFile = async (file: File) => {
     const nav = navigator as Navigator & { canShare?: (d: { files: File[] }) => boolean };
     if (typeof nav.share === "function" && nav.canShare?.({ files: [file] })) {
       try {
         await nav.share({ files: [file] });
-        setStatus("Done! Choose Save to keep it, or share it straight to Instagram or TikTok.");
+        setStatus("Shared! 🎉");
         return;
       } catch (e) {
-        if (e instanceof DOMException && e.name === "AbortError") {
-          setStatus("");
-          return;
-        }
+        if (e instanceof DOMException && e.name === "AbortError") return;
       }
     }
-    const href = URL.createObjectURL(blob);
+    const href = URL.createObjectURL(file);
     const a = document.createElement("a");
     a.href = href;
-    a.download = fileName;
+    a.download = file.name;
     document.body.appendChild(a);
     a.click();
     a.remove();
     window.setTimeout(() => URL.revokeObjectURL(href), 60_000);
-    setStatus("Downloaded.");
+    setStatus("Downloaded. Open Instagram or TikTok and pick it from your files.");
   };
 
   const saveImage = async () => {
     const canvas = canvasRef.current;
     if (!canvas || !ready) return;
-    setBusy("image");
     draw(DURATION, true);
-    canvas.toBlob(async (blob) => {
-      if (blob) await deliver(blob, `paytree-${username}.png`);
-      else setStatus("Could not create the image. Please try again.");
+    if (imageFile) {
+      await shareFile(imageFile);
+      return;
+    }
+    setBusy("image");
+    canvas.toBlob((blob) => {
       setBusy("");
+      if (!blob) {
+        setStatus("Could not create the image. Please try again.");
+        return;
+      }
+      setImageFile(new File([blob], `paytree-${username}.png`, { type: "image/png" }));
+      setStatus("Your image is ready. Tap Share image.");
     }, "image/png");
   };
 
@@ -406,7 +414,8 @@ export function ShareCardMaker({
       recorder.stop();
       await finished;
       const blob = new Blob(chunks, { type: type.split(";")[0] });
-      await deliver(blob, `paytree-${username}.${type.startsWith("video/mp4") ? "mp4" : "webm"}`);
+      setVideoFile(new File([blob], `paytree-${username}.${type.startsWith("video/mp4") ? "mp4" : "webm"}`, { type: blob.type }));
+      setStatus("Your video is ready! Tap Share video and choose Instagram, TikTok or Save Video.");
     }
     await audio.close().catch(() => null);
     draw(DURATION, true);
@@ -432,7 +441,12 @@ export function ShareCardMaker({
             type="button"
             role="radio"
             aria-checked={mode === m}
-            onClick={() => setMode(m)}
+            onClick={() => {
+              setMode(m);
+              setImageFile(null);
+              setVideoFile(null);
+              setStatus("");
+            }}
             className={`inline-flex min-h-10 items-center rounded-full px-4 text-[14px] font-bold ${
               mode === m ? "bg-[#064E3B] text-[#FBFBFB]" : "border border-[#DCE5DF] bg-white text-[#064E3B]"
             }`}
@@ -457,19 +471,37 @@ export function ShareCardMaker({
           disabled={!ready || busy !== ""}
           className="inline-flex min-h-[52px] items-center justify-center rounded-full bg-[#064E3B] px-4 font-bold text-[#FBFBFB] disabled:opacity-60"
         >
-          {busy === "image" ? "Saving…" : "Save image"}
+          {busy === "image" ? "Preparing…" : imageFile ? "Share image 📤" : "Make image"}
         </button>
         {canVideo ? (
-          <button
-            type="button"
-            onClick={() => play(true)}
-            disabled={!ready || busy !== ""}
-            className="inline-flex min-h-[52px] items-center justify-center rounded-full border-2 border-[#064E3B] bg-white px-4 font-bold text-[#064E3B] disabled:opacity-60"
-          >
-            {busy === "video" ? "Recording…" : "Save video 🎬"}
-          </button>
+          videoFile ? (
+            <button
+              type="button"
+              onClick={() => shareFile(videoFile)}
+              disabled={busy !== ""}
+              className="inline-flex min-h-[52px] items-center justify-center rounded-full bg-[#E5484D] px-4 font-bold text-white disabled:opacity-60"
+            >
+              Share video 📤
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => play(true)}
+              disabled={!ready || busy !== ""}
+              className="inline-flex min-h-[52px] items-center justify-center rounded-full border-2 border-[#064E3B] bg-white px-4 font-bold text-[#064E3B] disabled:opacity-60"
+            >
+              {busy === "video" ? "Recording…" : "Make video 🎬"}
+            </button>
+          )
         ) : null}
       </div>
+      {imageFile || videoFile ? (
+        <p className="rounded-xl bg-[#ECF7F0] px-4 py-3 text-[14px] leading-snug text-[#064E3B]">
+          In the share menu, tap <strong>Instagram</strong> or <strong>TikTok</strong> to post it, or{" "}
+          <strong>Save</strong> to keep it in your Photos. Don&rsquo;t see them? Tap <strong>More</strong> at the end of the
+          app row.
+        </p>
+      ) : null}
       <button
         type="button"
         onClick={() => play(false)}
