@@ -222,8 +222,11 @@ export default async function PaymentLogPage({ searchParams }: { searchParams: S
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 className="text-sm font-bold uppercase tracking-[0.1em] text-[#4B6358]">History</h2>
             {rows.length > 0 ? (
+              // A file download, not a page: a plain link is right here.
+              // eslint-disable-next-line @next/next/no-html-link-for-pages
               <a
                 href="/dashboard/log/export"
+                download
                 className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[#064E3B]/40 px-5 text-[14px] font-bold text-[#064E3B]"
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
