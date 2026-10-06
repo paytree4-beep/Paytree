@@ -19,6 +19,7 @@ const PLAN_FEATURES = [
   "Your own dashboard to manage your page anytime",
   "Payment log: confirm payments, see daily and monthly totals, export to Excel",
   "Private visitor statistics",
+  "Your own referral link: earn apples 🍎",
   `${TRIAL_DAYS} days free, no card needed`,
   "Cancel any time",
 ]

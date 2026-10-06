@@ -22,7 +22,7 @@ import {
 import type { LucideIcon } from "lucide-react";
 
 import { Logo } from "@/components/brand/logo";
-import { AppleBackdrop, AppleHalo } from "@/components/marketing/apples";
+import { Apple, AppleBackdrop, AppleHalo } from "@/components/marketing/apples";
 import { Cta } from "@/components/marketing/cta";
 import { ExampleAvatar } from "@/components/marketing/example-avatar";
 import { ExampleQr } from "@/components/marketing/example-qr";
@@ -91,6 +91,10 @@ const FAQ = [
     a: "Yes. Cancel in one tap from your dashboard. You keep access until the end of the period you paid for.",
   },
   {
+    q: "What is the apple basket?",
+    a: "Every PayTree page has its own referral link. When someone joins through it and subscribes, you earn an apple: $3 for a yearly member, $0.50 for a monthly member. On January 1, PayTree buys your apples and pays you.",
+  },
+  {
     q: "Is my information safe?",
     a: "We store only what your page needs, every account is protected, and visitor statistics never include IP addresses or cookies.",
   },
@@ -113,81 +117,122 @@ function MethodDot({ id, size = 10 }: { id: string; size?: number }) {
   );
 }
 
+const PHONE =
+  "pt-bob w-full overflow-hidden rounded-[30px] border-[7px] border-[#0B1F18] bg-[#FAF5EA] shadow-[0_30px_60px_-28px_rgba(6,78,59,0.6)]";
+
+/** Two small phones side by side: a payment page and its statistics. */
 function PhoneExample() {
   return (
-    <div className="relative mx-auto w-full max-w-[300px]">
-      <div
-        role="img"
-        aria-label="Example PayTree page for Cedar Coffee Co. on a phone, with Cash App, Venmo, Zelle, Apple Cash and a QR code"
-        className="pt-bob overflow-hidden rounded-[44px] border-[10px] border-[#0B1F18] bg-[#FAF5EA] shadow-[0_40px_80px_-30px_rgba(6,78,59,0.6)]"
-        style={{ animationDuration: "7s" }}
-      >
-        <div className="relative flex flex-col items-center gap-1 overflow-hidden bg-gradient-to-b from-[#E6F2EA] to-[#FAF5EA] px-4 pb-4 pt-6 text-center text-[#064E3B]">
-          <AppleHalo compact />
-          <span className="relative mb-1">
-            <ExampleAvatar size={52} />
-          </span>
-          <span className="relative font-serif text-[21px] leading-tight">Cedar Coffee Co.</span>
-          <span className="relative text-[11px] text-[#4B6358]">{SITE_HOST}/cedarcoffee</span>
-        </div>
-        <div className="flex flex-col gap-2 p-3.5">
-          {EXAMPLE.map(({ id, name, detail, Icon, copy }) => {
-            const c = badgeColor(id);
-            const Action = copy ? Copy : ArrowUpRight;
-            return (
-              <div key={id} className="flex items-center gap-2.5 rounded-[14px] border border-[#DCE5DF] bg-white px-3 py-2.5">
-                <span
-                  className="flex h-8 w-8 flex-none items-center justify-center rounded-full"
-                  style={{ backgroundColor: c.bg, color: c.fg }}
-                >
-                  <Icon className="h-4 w-4" strokeWidth={2} />
-                </span>
-                <span className="min-w-0 flex-1">
-                  <span className="block text-[13px] font-bold leading-tight">{name}</span>
-                  <span className="block truncate text-[11px] text-[#4B6358]">{detail}</span>
-                </span>
-                <Action className="h-4 w-4 flex-none text-[#064E3B]" />
-              </div>
-            );
-          })}
-          <div className="mt-1 flex items-center gap-3 rounded-[14px] border border-[#CFE3D6] bg-[#E6F2EA] px-3 py-2.5 text-[#064E3B]">
-            <ExampleQr url={SITE_URL} />
-            <span className="min-w-0">
-              <span className="block text-[13px] font-semibold">Scan to pay</span>
-              <span className="block text-[11px] text-[#4B6358]">Point your camera here</span>
+    <div className="mx-auto flex w-full max-w-[420px] items-start justify-center gap-3">
+      {/* Phone 1: the public payment page */}
+      <div className="w-1/2 max-w-[200px]">
+        <div
+          role="img"
+          aria-label="Example PayTree page for Cedar Coffee Co. with Cash App, Venmo, Zelle, Apple Cash and a QR code"
+          className={PHONE}
+          style={{ animationDuration: "7s" }}
+        >
+          <div className="relative flex flex-col items-center gap-0.5 overflow-hidden bg-gradient-to-b from-[#E6F2EA] to-[#FAF5EA] px-2 pb-2.5 pt-4 text-center text-[#064E3B]">
+            <AppleHalo compact />
+            <span className="relative mb-0.5">
+              <ExampleAvatar size={34} />
             </span>
+            <span className="relative font-serif text-[14px] leading-tight">Cedar Coffee Co.</span>
+            <span className="relative text-[8px] text-[#4B6358]">{SITE_HOST}/cedarcoffee</span>
+          </div>
+          <div className="flex flex-col gap-1.5 p-2">
+            {EXAMPLE.map(({ id, name, detail, Icon, copy }) => {
+              const c = badgeColor(id);
+              const Action = copy ? Copy : ArrowUpRight;
+              return (
+                <div key={id} className="flex items-center gap-1.5 rounded-[10px] border border-[#DCE5DF] bg-white px-2 py-1.5">
+                  <span
+                    className="flex h-5 w-5 flex-none items-center justify-center rounded-full"
+                    style={{ backgroundColor: c.bg, color: c.fg }}
+                  >
+                    <Icon className="h-2.5 w-2.5" strokeWidth={2.4} />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-[9px] font-bold leading-tight">{name}</span>
+                    <span className="block truncate text-[7.5px] text-[#4B6358]">{detail}</span>
+                  </span>
+                  <Action className="h-2.5 w-2.5 flex-none text-[#064E3B]" />
+                </div>
+              );
+            })}
+            <div className="flex items-center gap-1.5 rounded-[10px] border border-[#CFE3D6] bg-[#E6F2EA] px-2 py-1.5 text-[#064E3B]">
+              <ExampleQr url={SITE_URL} size={26} />
+              <span className="text-[9px] font-semibold">Scan to pay</span>
+            </div>
           </div>
         </div>
+        <p className="mt-2 text-center text-[12px] font-semibold text-[#2F4A3E]">Your page</p>
       </div>
 
-      {/* Example dashboard card: shows owners what they get. Sample numbers. */}
-      <div
-        aria-label="Example dashboard: $3,480 received and 1,240 page views this month"
-        role="img"
-        className="pt-float absolute -bottom-8 -left-6 z-10 w-[190px] rounded-[22px] border border-white/90 bg-white/85 p-3.5 text-left shadow-[0_24px_50px_-20px_rgba(6,78,59,0.5)] backdrop-blur-xl sm:-left-20"
-        style={{ animationDuration: "9s" }}
-      >
-        <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#9A6E1A]">Your dashboard</p>
-        <div className="mt-2 grid grid-cols-2 gap-2">
-          <div>
-            <p className="font-serif text-[22px] leading-none text-[#064E3B]">$3,480</p>
-            <p className="mt-0.5 text-[10px] text-[#4B6358]">received</p>
-          </div>
-          <div>
-            <p className="font-serif text-[22px] leading-none text-[#064E3B]">1,240</p>
-            <p className="mt-0.5 text-[10px] text-[#4B6358]">page views</p>
+      {/* Phone 2: the owner's statistics, same look as the real Statistics page */}
+      <div className="mt-8 w-1/2 max-w-[200px]">
+        <div
+          role="img"
+          aria-label="Example statistics: 1,240 page views, 312 taps and a 25% tap rate in 30 days"
+          className={PHONE}
+          style={{ animationDuration: "8s", animationDelay: "1.2s" }}
+        >
+          <div className="flex flex-col gap-2 p-2.5 pt-4">
+            <span className="font-serif text-[17px] leading-none text-[#064E3B]">Statistics</span>
+            <div className="flex gap-1">
+              {["7 days", "30 days", "90 days"].map((r, i) => (
+                <span
+                  key={r}
+                  className={`rounded-full px-1.5 py-0.5 text-[7px] font-semibold ${
+                    i === 1 ? "bg-[#064E3B] text-[#FBFBFB]" : "border border-[#DCE5DF] bg-white"
+                  }`}
+                >
+                  {r}
+                </span>
+              ))}
+            </div>
+            <div className="grid grid-cols-3 gap-1">
+              {[
+                ["Page views", "1,240"],
+                ["Taps", "312"],
+                ["Tap rate", "25%"],
+              ].map(([label, value]) => (
+                <div key={label} className="rounded-[8px] border border-[#DCE5DF] bg-white p-1.5">
+                  <span className="block text-[6.5px] font-semibold text-[#4B6358]">{label}</span>
+                  <span className="mt-0.5 block font-serif text-[13px] leading-none text-[#064E3B]">{value}</span>
+                </div>
+              ))}
+            </div>
+            <div className="rounded-[10px] border border-[#DCE5DF] bg-white p-2">
+              <span className="block text-[7px] font-bold uppercase tracking-[0.08em] text-[#4B6358]">Visits per day</span>
+              <div className="mt-1.5 flex h-10 items-end gap-[3px]" aria-hidden="true">
+                {[30, 45, 38, 60, 52, 74, 66, 88, 70, 100].map((h, i) => (
+                  <span key={i} className="flex-1 rounded-t-[2px] bg-[#7BC86C]" style={{ height: `${h}%` }} />
+                ))}
+              </div>
+            </div>
+            <div className="rounded-[10px] border border-[#DCE5DF] bg-white p-2">
+              <span className="block text-[7px] font-bold uppercase tracking-[0.08em] text-[#4B6358]">Taps by method</span>
+              {[
+                ["cashapp", "Cash App", 128, 100],
+                ["zelle", "Zelle", 96, 75],
+                ["venmo", "Venmo", 64, 50],
+                ["applecash", "Apple Cash", 24, 19],
+              ].map(([id, name, n, w]) => (
+                <div key={id as string} className="mt-1">
+                  <div className="flex justify-between text-[7.5px] font-semibold">
+                    <span>{name}</span>
+                    <span className="text-[#4B6358]">{n}</span>
+                  </div>
+                  <div className="mt-0.5 h-1 rounded-full bg-[#EEF3F0]">
+                    <div className="h-1 rounded-full" style={{ width: `${w}%`, backgroundColor: badgeColor(id as string).bg }} />
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-        <div className="mt-3 flex h-10 items-end gap-1" aria-hidden="true">
-          {[38, 52, 44, 70, 58, 84, 100].map((h, i) => (
-            <span
-              key={i}
-              className="flex-1 rounded-t-[4px]"
-              style={{ height: `${h}%`, backgroundColor: i === 6 ? "#C9A048" : "#7BC86C" }}
-            />
-          ))}
-        </div>
-        <p className="mt-1.5 text-[10px] font-semibold text-[#064E3B]">This month · +18%</p>
+        <p className="mt-2 text-center text-[12px] font-semibold text-[#2F4A3E]">Your statistics</p>
       </div>
     </div>
   );
@@ -336,6 +381,34 @@ export default function HomePage() {
                   </li>
                 ))}
               </ol>
+            </Reveal>
+          </section>
+
+          {/* Apple basket (referral offer) */}
+          <section id="apples" className="scroll-mt-24 px-5 pb-20 sm:px-6">
+            <Reveal className="mx-auto flex max-w-[1180px] flex-col gap-6 rounded-[32px] border-2 border-[#E2C27A] bg-gradient-to-br from-white/85 via-[#FBF3DF]/85 to-[#F4E3B8]/85 p-6 backdrop-blur-xl sm:flex-row sm:items-center sm:gap-10 sm:p-10">
+              <div className="flex flex-col gap-3 sm:flex-1">
+                <span className="text-sm font-bold tracking-[0.14em] text-[#9A6E1A]">EARN APPLES 🧺</span>
+                <h2 className={headingClass}>Every PayTree page comes with a referral link.</h2>
+                <p className="text-[19px] leading-[1.65] text-[#1F362B]">
+                  Share your link, or let your page do it for you: every page has a &ldquo;Get your own payment page&rdquo;
+                  link that counts as yours. When someone joins PayTree through it, an apple drops in your basket.
+                  On January 1, PayTree buys your apples.
+                </p>
+                <p className="text-[14px] text-[#2F4A3E]">Launch offer for new members who join by December 31, 2026.</p>
+              </div>
+              <div className="grid grid-cols-2 gap-3 sm:w-[340px]">
+                <div className="flex flex-col items-center gap-1 rounded-[22px] bg-white/85 p-4 text-center">
+                  <Apple color="red" size={52} />
+                  <span className="font-serif text-[30px] leading-none text-[#064E3B]">$3.00</span>
+                  <span className="text-[13px] font-semibold text-[#2F4A3E]">for each yearly member</span>
+                </div>
+                <div className="flex flex-col items-center gap-1 rounded-[22px] bg-white/85 p-4 text-center">
+                  <Apple color="green" size={44} />
+                  <span className="font-serif text-[30px] leading-none text-[#064E3B]">$0.50</span>
+                  <span className="text-[13px] font-semibold text-[#2F4A3E]">for each monthly member</span>
+                </div>
+              </div>
             </Reveal>
           </section>
 

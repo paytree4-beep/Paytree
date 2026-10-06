@@ -97,6 +97,15 @@ export const TERMS: LegalDocument = {
       ],
     },
     {
+      id: "referrals",
+      title: "Apple basket (referral offer)",
+      intro: [
+        "Each account has a personal referral link. When a new member who arrived through your link pays for their first PayTree subscription between launch and December 31, 2026, you earn one apple: a red apple worth $3.00 for a yearly membership, or a green apple worth $0.50 for a monthly membership. Each new member earns an apple only once.",
+        "On or soon after January 1, 2027, PayTree buys the apples in your basket and pays you through one of the payment methods on your PayTree page, so please keep one there. Apples have no cash value before then and cannot be transferred.",
+        "Referring yourself, using fake or duplicate accounts, or any other abuse cancels the apples involved. We may change or end this offer at any time, but apples already earned will still be honored. You are responsible for any taxes on what you receive.",
+      ],
+    },
+    {
       id: "acceptable-use",
       title: "Acceptable use",
       intro: ["You agree not to use the Service to:"],

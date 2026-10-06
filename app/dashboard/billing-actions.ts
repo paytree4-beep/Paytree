@@ -38,21 +38,21 @@ export async function startCheckout(formData: FormData): Promise<void> {
   try {
     url = await createCheckoutSession({ plan, userId, email, customerId, origin });
   } catch {
-    redirect("/dashboard?error=billing#billing");
+    redirect("/dashboard?view=billing&error=billing");
   }
   redirect(url);
 }
 
 export async function openBillingPortal(): Promise<void> {
   const { customerId } = await currentUser();
-  if (!customerId) redirect("/dashboard#billing");
+  if (!customerId) redirect("/dashboard?view=billing");
   const origin = await requestOrigin();
 
   let url: string;
   try {
     url = await createPortalSession(customerId, origin);
   } catch {
-    redirect("/dashboard?error=portal#billing");
+    redirect("/dashboard?view=billing&error=portal");
   }
   redirect(url);
 }

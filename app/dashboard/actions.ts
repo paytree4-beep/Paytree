@@ -97,7 +97,7 @@ export async function updateProfile(formData: FormData): Promise<void> {
 
   if (error || !data) redirect("/dashboard?error=save");
   revalidatePath(`/${(data as { username: string }).username}`);
-  redirect("/dashboard?notice=saved");
+  redirect("/dashboard?view=profile&notice=saved");
 }
 
 export async function setPublished(formData: FormData): Promise<void> {
@@ -112,7 +112,7 @@ export async function setPublished(formData: FormData): Promise<void> {
 
   if (error || !data) redirect("/dashboard?error=save");
   revalidatePath(`/${(data as { username: string }).username}`);
-  redirect(`/dashboard?notice=${publish ? "published" : "hidden"}`);
+  redirect(`/dashboard?view=settings&notice=${publish ? "published" : "hidden"}`);
 }
 
 /**
@@ -129,11 +129,11 @@ export async function deleteAccount(formData: FormData): Promise<void> {
   const typed = formData.get("confirm");
   const expected = username ?? "delete";
   if (typeof typed !== "string" || typed.trim().toLowerCase() !== expected) {
-    redirect("/dashboard?error=confirm#delete");
+    redirect("/dashboard?view=settings&error=confirm");
   }
 
   const admin = createAdminClient();
-  if (!admin) redirect("/dashboard?error=delete#delete");
+  if (!admin) redirect("/dashboard?view=settings&error=delete");
 
   // Stop billing first, so a deleted account is never charged again.
   const { data: sub } = await supabase
@@ -146,12 +146,12 @@ export async function deleteAccount(formData: FormData): Promise<void> {
     try {
       await cancelSubscription(row.provider_subscription_id);
     } catch {
-      redirect("/dashboard?error=delete-billing#delete");
+      redirect("/dashboard?view=settings&error=delete-billing");
     }
   }
 
   const { error } = await admin.auth.admin.deleteUser(user.id);
-  if (error) redirect("/dashboard?error=delete#delete");
+  if (error) redirect("/dashboard?view=settings&error=delete");
 
   await supabase.auth.signOut();
   if (username) revalidatePath(`/${username}`);

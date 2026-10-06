@@ -32,7 +32,7 @@ export async function setPaymentLog(formData: FormData): Promise<void> {
   if (error) redirect(`${from}?error=log`);
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/log");
-  redirect(`${from}?notice=${enable ? "log-on" : "log-off"}${from === "/dashboard" ? "#log" : ""}`);
+  redirect(`${from}?${from === "/dashboard" ? "view=log&" : ""}notice=${enable ? "log-on" : "log-off"}`);
 }
 
 /** Received / Not received / back to waiting. */

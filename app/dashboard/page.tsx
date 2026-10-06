@@ -169,6 +169,42 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
   const notice = param(params, "notice");
   const error = param(params, "error");
   const pagePath = `/${profile.username}`;
+  const VIEWS = ["home", "link", "apples", "log", "profile", "settings", "billing"] as const;
+  const requestedView = param(params, "view");
+  const view = VIEWS.find((v) => v === requestedView) ?? "home";
+
+  const money = (cents: number) => `$${(cents / 100).toFixed(2)}`;
+  const tiles: { icon: string; title: string; detail: string; href: string; badge?: string }[] = [
+    { icon: "🔗", title: "Your link & QR", detail: `${SITE_HOST}/${profile.username}`, href: "/dashboard?view=link" },
+    {
+      icon: "💳",
+      title: "Payment methods",
+      detail: methodCount === 0 ? "Add your first one" : `${methodCount} on your page`,
+      href: "/dashboard/payments",
+      badge: methodCount === 0 ? "!" : undefined,
+    },
+    { icon: "📊", title: "Statistics", detail: `${views7} views · ${taps7} taps this week`, href: "/dashboard/stats" },
+    ...(logReady
+      ? [
+          {
+            icon: "🧾",
+            title: "Payment log",
+            detail: logEnabled ? (waiting > 0 ? `${waiting} waiting` : "On") : "Off · optional",
+            href: "/dashboard?view=log",
+            badge: waiting > 0 ? String(waiting) : undefined,
+          },
+        ]
+      : []),
+    ...(basket
+      ? [{ icon: "🧺", title: "Apple basket", detail: `${basket.red + basket.green} apples · ${money(basket.owedCents)}`, href: "/dashboard?view=apples" }]
+      : []),
+    { icon: "👤", title: "Profile", detail: "Photo, name and bio", href: "/dashboard?view=profile" },
+    ...(billingOn
+      ? [{ icon: "⭐", title: "Membership", detail: isMember ? "Active" : access.reason === "trial" ? `${access.trialDaysLeft} days left` : "Paused", href: "/dashboard?view=billing" }]
+      : []),
+    { icon: "⚙️", title: "Settings", detail: profile.is_published ? "Page is public" : "Page is hidden", href: "/dashboard?view=settings" },
+    ...(isAdmin ? [{ icon: "🍎", title: "Harvest", detail: "Admin", href: "/dashboard/harvest" }] : []),
+  ];
 
   return (
     <div className="min-h-screen bg-[#FAF5EA] text-[#0B1F18]">
@@ -191,17 +227,21 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
         </div>
       </header>
 
-      <main className="mx-auto flex max-w-[880px] flex-col gap-6 px-5 pb-20 pt-8">
-        <div>
-          <h1 className="font-serif text-[40px] font-normal leading-[1.05] tracking-[-0.01em] text-[#064E3B]">
-            Hello, {profile.display_name}
-          </h1>
-          <p className="mt-1 text-[#4B6358]">{user.email}</p>
-        </div>
+      <main className="mx-auto flex max-w-[880px] flex-col gap-5 px-5 pb-20 pt-6">
+        {view === "home" ? (
+          <div>
+            <h1 className="font-serif text-[36px] font-normal leading-[1.05] tracking-[-0.01em] text-[#064E3B]">
+              Hello, {profile.display_name}
+            </h1>
+            <p className="mt-1 text-[14px] text-[#4B6358]">{user.email}</p>
+          </div>
+        ) : null}
 
         {notice && NOTICES[notice] ? <Notice tone="success">{NOTICES[notice]}</Notice> : null}
         {error && ERRORS[error] ? <Notice tone="error">{ERRORS[error]}</Notice> : null}
 
+        {view === "home" ? (
+          <>
         {access.reason === "trial" ? (
           <div className="flex flex-col gap-3 rounded-2xl border border-[#D9B873] bg-[#FBF6EA] p-5 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-[15px] text-[#5C4513]">
@@ -211,7 +251,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
               Subscribe before {trialEndDate} to keep your page live.
             </p>
             <a
-              href="#billing"
+              href="/dashboard?view=billing"
               className="inline-flex min-h-11 flex-none items-center justify-center rounded-full bg-[#064E3B] px-6 font-bold text-[#FBFBFB]"
             >
               Subscribe
@@ -225,14 +265,40 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
               and it comes back right away.
             </p>
             <a
-              href="#billing"
+              href="/dashboard?view=billing"
               className="inline-flex min-h-11 flex-none items-center justify-center rounded-full bg-[#064E3B] px-6 font-bold text-[#FBFBFB]"
             >
               Subscribe
             </a>
           </div>
         ) : null}
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+              {tiles.map((t) => (
+                <Link
+                  key={t.title}
+                  href={t.href}
+                  className="relative flex min-h-[118px] flex-col justify-between rounded-[22px] border border-white/90 bg-white/85 p-4 shadow-[0_14px_30px_-22px_rgba(6,78,59,0.55)] backdrop-blur-xl active:scale-[0.98]"
+                >
+                  <span className="text-[26px] leading-none" aria-hidden="true">{t.icon}</span>
+                  <span>
+                    <span className="block text-[15px] font-bold leading-tight text-[#064E3B]">{t.title}</span>
+                    <span className="mt-0.5 block text-[12.5px] leading-snug text-[#4B6358]">{t.detail}</span>
+                  </span>
+                  {t.badge ? (
+                    <span className="absolute right-3 top-3 rounded-full bg-[#E5484D] px-2 py-0.5 text-[11px] font-bold text-white">{t.badge}</span>
+                  ) : null}
+                </Link>
+              ))}
+            </div>
+          </>
+        ) : (
+          <Link href="/dashboard" className="inline-flex min-h-11 w-fit items-center gap-1 text-[15px] font-bold text-[#064E3B]">
+            ‹ Dashboard
+          </Link>
+        )}
 
+        {view === "billing" ? (
+          <>
         {billingOn ? (
           <section
             id="billing"
@@ -302,7 +368,11 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
             )}
           </section>
         ) : null}
+          </>
+        ) : null}
 
+        {view === "link" ? (
+          <>
         <section className="rounded-2xl border border-[#DCE5DF] bg-white p-5 sm:p-6">
           <h2 className="text-sm font-bold uppercase tracking-[0.1em] text-[#4B6358]">Your link</h2>
           <p className="mt-2 break-all font-serif text-[28px] leading-tight text-[#064E3B]">
@@ -328,7 +398,11 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
           </div>
           <QrCard url={`${SITE_URL}/${profile.username}`} label={`${SITE_HOST}/${profile.username}`} />
         </section>
+          </>
+        ) : null}
 
+        {view === "apples" ? (
+          <>
         {basket ? (
           <AppleBasket
             link={`${SITE_URL}/?ref=${profile.username}`}
@@ -337,35 +411,11 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
             now={Date.now()}
           />
         ) : null}
-        {isAdmin ? (
-          <Link
-            href="/dashboard/harvest"
-            className="inline-flex min-h-11 items-center justify-center rounded-full border-2 border-[#C9A048] bg-white px-6 font-bold text-[#7A5A12]"
-          >
-            🧺 Harvest (admin)
-          </Link>
+          </>
         ) : null}
 
-        <section className="rounded-2xl border border-[#DCE5DF] bg-white p-5 sm:p-6">
-          <h2 className="text-sm font-bold uppercase tracking-[0.1em] text-[#4B6358]">Last 7 days</h2>
-          <div className="mt-3 flex gap-8">
-            <p>
-              <span className="block font-serif text-[34px] leading-none tabular-nums text-[#064E3B]">{views7}</span>
-              <span className="text-[13px] text-[#4B6358]">page views</span>
-            </p>
-            <p>
-              <span className="block font-serif text-[34px] leading-none tabular-nums text-[#064E3B]">{taps7}</span>
-              <span className="text-[13px] text-[#4B6358]">taps on payment methods</span>
-            </p>
-          </div>
-          <Link
-            href="/dashboard/stats"
-            className="mt-4 inline-flex min-h-11 items-center rounded-full border border-[#064E3B]/40 px-6 font-bold text-[#064E3B]"
-          >
-            See statistics
-          </Link>
-        </section>
-
+        {view === "log" ? (
+          <>
         {logReady ? (
           <section id="log" className="scroll-mt-4 rounded-2xl border border-[#DCE5DF] bg-white p-5 sm:p-6">
             <div className="flex items-center justify-between gap-3">
@@ -408,24 +458,11 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
             </div>
           </section>
         ) : null}
+          </>
+        ) : null}
 
-        <section className="rounded-2xl border border-[#DCE5DF] bg-white p-5 sm:p-6">
-          <h2 className="text-sm font-bold uppercase tracking-[0.1em] text-[#4B6358]">
-            Payment methods
-          </h2>
-          <p className="mt-2 text-[15px] text-[#4B6358]">
-            {methodCount === 0
-              ? "You have not added any payment methods yet. Add Cash App, Venmo, Zelle, PayPal and more."
-              : `${methodCount} payment ${methodCount === 1 ? "method is" : "methods are"} on your page.`}
-          </p>
-          <Link
-            href="/dashboard/payments"
-            className="mt-4 inline-flex min-h-11 items-center rounded-full bg-[#064E3B] px-6 font-bold text-[#FBFBFB]"
-          >
-            {methodCount === 0 ? "Add payment methods" : "Manage payment methods"}
-          </Link>
-        </section>
-
+        {view === "profile" ? (
+          <>
         <section className="rounded-2xl border border-[#DCE5DF] bg-white p-5 sm:p-6">
           <h2 className="mb-5 text-sm font-bold uppercase tracking-[0.1em] text-[#4B6358]">Profile</h2>
           <div className="mb-6">
@@ -456,7 +493,11 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
             </div>
           </form>
         </section>
+          </>
+        ) : null}
 
+        {view === "settings" ? (
+          <>
         <section className="rounded-2xl border border-[#DCE5DF] bg-white p-5 sm:p-6">
           <h2 className="text-sm font-bold uppercase tracking-[0.1em] text-[#4B6358]">Visibility</h2>
           <p className="mt-2 text-[15px] text-[#4B6358]">
@@ -502,6 +543,8 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
             </form>
           </details>
         </section>
+          </>
+        ) : null}
       </main>
     </div>
   );
