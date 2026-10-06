@@ -89,8 +89,9 @@ export function parseClaim(get: (name: string) => unknown): ClaimInput | { error
   const payerName = cleanText(get("payer_name"), 60);
   if (payerName.length < 2) return { error: "name" };
 
+  // The amount is required: it is what the owner checks against their app.
   const amount = parseAmount(get("amount"));
-  if (amount === "invalid") return { error: "amount" };
+  if (amount === "invalid" || amount === null) return { error: "amount" };
 
   const rawMethod = get("method");
   let method: ClaimMethod | null = null;

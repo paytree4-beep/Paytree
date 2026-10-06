@@ -10,7 +10,7 @@ import { notifyPayment } from "./paid-actions";
 
 const ERRORS: Record<string, string> = {
   name: "Please enter your name (at least 2 letters).",
-  amount: "Please enter the amount as a number, for example 25 or 25.50.",
+  amount: "Please enter the amount you paid, for example 25 or 25.50.",
   method: "Please choose how you paid.",
   busy: "This page received many notes in the last hour. Please try again later.",
   save: "We could not send that. Please try again.",
@@ -87,11 +87,12 @@ export function PaidForm({
           </label>
 
           <label className="flex flex-col gap-1.5">
-            <span className="text-sm font-semibold">Amount (optional)</span>
+            <span className="text-sm font-semibold">Amount</span>
             <span className="flex min-h-[52px] items-center rounded-xl border border-[#C9D6CE] bg-white px-4 focus-within:border-[#064E3B]">
               <span className="text-[#4B6358]">$</span>
               <input
                 name="amount"
+                required
                 inputMode="decimal"
                 maxLength={12}
                 placeholder="0.00"

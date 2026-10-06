@@ -20,6 +20,8 @@ import { PRICING, SITE_HOST, SITE_URL } from "@/lib/site";
 import { createClient } from "@/lib/supabase/server";
 import { deleteAccount, setPublished, updateProfile } from "./actions";
 import { setPaymentLog } from "./log/actions";
+import { SaleCelebration } from "@/components/dashboard/sale-celebration";
+import { cookies } from "next/headers";
 import { openBillingPortal, startCheckout } from "./billing-actions";
 import { computeAccess, grantsAccess, type SubscriptionRow } from "@/lib/billing";
 import { billingConfigured } from "@/lib/stripe";
@@ -114,6 +116,23 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
     : { count: 0 };
   const waiting = typeof pendingCount === "number" ? pendingCount : 0;
 
+  // Celebrate new "I've paid" notes once: compare the newest one with the
+  // newest the owner has already seen (cookie set by SaleCelebration).
+  const { data: newestRow } = logReady
+    ? await supabase
+        .from("payment_claims")
+        .select("created_at")
+        .eq("profile_id", user.id)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle()
+    : { data: null };
+  const newestSale = (newestRow as { created_at?: string } | null)?.created_at ?? null;
+  const seenRaw = (await cookies()).get("pt_seen_sale")?.value;
+  const seenSale = seenRaw ? decodeURIComponent(seenRaw) : null;
+  const celebrate =
+    newestSale !== null && (seenSale === null || new Date(newestSale).getTime() > new Date(seenSale).getTime());
+
   const { data: subData } = await supabase
     .from("subscriptions")
     .select("provider, provider_customer_id, provider_subscription_id, plan, status, current_period_end, cancel_at_period_end")
@@ -141,6 +160,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
 
   return (
     <div className="min-h-screen bg-[#FAF5EA] text-[#0B1F18]">
+      {celebrate && newestSale ? <SaleCelebration latest={newestSale} /> : null}
       <header className="sticky top-0 z-40 border-b border-white/80 bg-[#FAF5EA]/85 px-4 py-2.5 backdrop-blur-xl">
         <div className="mx-auto flex max-w-[880px] items-center justify-between gap-4">
           <Logo size={30} tone="dark" />
@@ -331,7 +351,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
             <p className="mt-2 text-[15px] text-[#4B6358]">
               {logEnabled
                 ? waiting > 0
-                  ? `${waiting} ${waiting === 1 ? "payment is" : "payments are"} waiting for you to confirm.`
+                  ? `${celebrate ? "New payment! " : ""}${waiting} ${waiting === 1 ? "payment is" : "payments are"} waiting for you to confirm.`
                   : "Customers can tap \u201cI\u2019ve paid\u201d on your page. You confirm, and PayTree adds up your day and month."
                 : "Optional. Add an \u201cI\u2019ve paid\u201d button to your page, confirm payments with one tap, see today\u2019s and this month\u2019s totals, and download them for Excel."}
             </p>
