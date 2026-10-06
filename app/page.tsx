@@ -16,6 +16,7 @@ import {
   QrCode,
   ShieldCheck,
   Smartphone,
+  ClipboardCheck,
   Wallet,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
@@ -59,7 +60,7 @@ const FEATURES: { title: string; body: string; Icon: LucideIcon; tint: string }[
   { title: "Neatly organized", body: "Payment apps, cards, bank and crypto, each in its own tidy list.", Icon: LayoutList, tint: "#C9A048" },
   { title: "Private statistics", body: "See visits and which methods get tapped. No cookies, no tracking people.", Icon: BarChart3, tint: "#7BC86C" },
   { title: "Paid straight to you", body: "Money goes directly to your own accounts. PayTree never touches it.", Icon: ShieldCheck, tint: "#008CFF" },
-  { title: "Beautiful on every phone", body: "Fast, clean and easy to use, so paying you takes seconds.", Icon: Smartphone, tint: "#6D1ED4" },
+  { title: "Payment log", body: "Customers tap \u201cI\u2019ve paid\u201d, you confirm with one tap and see your daily and monthly totals.", Icon: ClipboardCheck, tint: "#6D1ED4" },
 ];
 
 const STEPS = [

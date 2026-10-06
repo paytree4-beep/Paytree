@@ -16,6 +16,8 @@ type PlanKey = "monthly" | "annual";
 const PLAN_FEATURES = [
   "Every payment method, neatly organized",
   "Your own PayTree link and QR code",
+  "Your own dashboard to manage your page anytime",
+  "Payment log: confirm payments, see daily and monthly totals, export to Excel",
   "Private visitor statistics",
   "14 days free, no card needed",
   "Cancel any time",
