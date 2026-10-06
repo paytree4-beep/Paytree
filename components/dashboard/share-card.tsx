@@ -191,24 +191,17 @@ export function ShareCardMaker({
       {
         // Each letter in the colors of the falling apples (a touch deeper, for contrast on white).
         const headline = mode === "tip" ? "Tip me 💸" : "Pay me here";
-        // First letter of every word is red; the others take the other apple colors.
-        const letterColors = ["#3FA34D", "#E8AE1C", "#B8893A"];
+        const letterColors = ["#E5484D", "#3FA34D", "#E8AE1C", "#C9A048"];
         const chars = Array.from(headline);
         const widths = chars.map((ch) => ctx.measureText(ch).width);
         let x = -widths.reduce((a, w) => a + w, 0) / 2;
         let colorIndex = 0;
-        let wordStart = true;
         ctx.textAlign = "left";
         ctx.shadowColor = "rgba(6,78,59,0.18)";
         ctx.shadowBlur = 6;
         ctx.shadowOffsetY = 3;
         chars.forEach((ch, i) => {
-          if (!ch.trim()) {
-            wordStart = true;
-          } else if (wordStart) {
-            ctx.fillStyle = "#E5484D";
-            wordStart = false;
-          } else {
+          if (ch.trim()) {
             ctx.fillStyle = letterColors[colorIndex % letterColors.length];
             colorIndex += 1;
           }
