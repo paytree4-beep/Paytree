@@ -20,8 +20,10 @@ export function reminderDue(createdAt: string, now: number): ReminderKind | null
   return null;
 }
 
+const HTML_ESCAPES: Record<string, string> = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
+
 function escapeHtml(text: string): string {
-  return text.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c] ?? c);
+  return text.replace(/[&<>"']/g, (c) => HTML_ESCAPES[c] ?? c);
 }
 
 export interface ReminderEmail {
@@ -67,4 +69,34 @@ export function reminderEmail(kind: ReminderKind, name: string, trialEnd: Date):
 
   const text = `${copy.title}\n\n${copy.body.replace(/&rsquo;/g, "'").replace(/&amp;/g, "&")}\n\nKeep my page live: ${link}\n\n${prices}`;
   return { subject: copy.subject, html, text };
+}
+
+/** Email to the page owner when a customer taps "I've paid". */
+export function paymentNoteEmail(ownerName: string, payer: string, amount: string, method: string, note: string | null): ReminderEmail {
+  const owner = escapeHtml(ownerName.trim() || "there");
+  const p = escapeHtml(payer);
+  const m = escapeHtml(method);
+  const n = note ? escapeHtml(note) : null;
+  const link = `${SITE_URL}/dashboard/log`;
+  const subject = `${payer} says they paid you ${amount}`;
+  const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="light"><title>New payment note</title></head>
+<body style="margin:0;padding:0;background-color:#FAF5EA;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#FAF5EA;"><tr><td align="center" style="padding:32px 16px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:520px;">
+<tr><td align="center" style="padding:0 0 20px 0;"><a href="${SITE_URL}" style="text-decoration:none;"><img src="${SITE_URL}/email-logo.png" width="170" height="43" alt="PayTree" style="display:block;border:0;width:170px;height:auto;font-family:Helvetica,Arial,sans-serif;font-size:24px;font-weight:bold;color:#064E3B;"></a></td></tr>
+<tr><td style="background-color:#FFFFFF;border:1px solid #E7DCC2;border-radius:24px;padding:36px 32px;font-family:Helvetica,Arial,sans-serif;color:#0B1F18;">
+<h1 style="margin:0 0 14px 0;font-family:Georgia,'Times New Roman',serif;font-weight:normal;font-size:30px;line-height:1.15;color:#064E3B;">New payment note &#127822;</h1>
+<p style="margin:0 0 18px 0;font-size:16px;line-height:1.6;color:#3F574C;">Hi ${owner}, a customer tapped &ldquo;I&rsquo;ve paid&rdquo; on your page.</p>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 24px 0;background-color:#FBF6EA;border-radius:16px;"><tr><td style="padding:16px 18px;font-size:16px;line-height:1.7;color:#0B1F18;">
+<strong>${p}</strong><br>Amount: <strong>${escapeHtml(amount)}</strong><br>Paid with: ${m}${n ? `<br>Note: &ldquo;${n}&rdquo;` : ""}
+</td></tr></table>
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%"><tr><td align="center" bgcolor="#064E3B" style="border-radius:999px;">
+<a href="${link}" style="display:block;padding:16px 24px;font-family:Helvetica,Arial,sans-serif;font-size:16px;font-weight:bold;color:#FFFFFF;text-decoration:none;border-radius:999px;">Open my payment log</a>
+</td></tr></table>
+<p style="margin:24px 0 0 0;font-size:14px;line-height:1.6;color:#4B6358;">A note is not proof of payment. Check your app first, then mark it Received.</p>
+</td></tr>
+<tr><td align="center" style="padding:22px 8px 0 8px;font-family:Helvetica,Arial,sans-serif;font-size:12px;line-height:1.6;color:#6B7F75;">You received this because the payment log is on for your PayTree page. You can turn it off in your dashboard.<br>PayTree &middot; <a href="${SITE_URL}" style="color:#6B7F75;">paytree.to</a></td></tr>
+</table></td></tr></table></body></html>`;
+  const text = `New payment note\n\n${payer}\nAmount: ${amount}\nPaid with: ${method}${note ? `\nNote: "${note}"` : ""}\n\nA note is not proof of payment. Check your app first, then mark it Received.\n\nOpen my payment log: ${link}`;
+  return { subject, html, text };
 }

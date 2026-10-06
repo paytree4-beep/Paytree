@@ -48,6 +48,18 @@ export async function POST(request: Request): Promise<Response> {
   const payload = parseTrackPayload(json);
   if (!payload) return status(400);
 
+  // The owner looking at their own page is not a visitor.
+  const ownerCookie = /(?:^|;\s*)pt_owner=([^;]+)/.exec(request.headers.get("cookie") ?? "")?.[1];
+  if (ownerCookie) {
+    let owner = "";
+    try {
+      owner = decodeURIComponent(ownerCookie);
+    } catch {
+      owner = "";
+    }
+    if (owner === payload.username) return status(204);
+  }
+
   // Crawlers and link-preview bots are not visitors.
   const device = deviceFromUserAgent(request.headers.get("user-agent"));
   if (device === "bot") return status(204);

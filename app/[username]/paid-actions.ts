@@ -8,7 +8,9 @@
 
 import { redirect } from "next/navigation";
 
-import { parseClaim } from "@/lib/payment-log";
+import { sendEmail } from "@/lib/email";
+import { formatMoney, methodLabel, parseClaim } from "@/lib/payment-log";
+import { paymentNoteEmail } from "@/lib/trial-reminders";
 import { getProfileByUsername, normalizeUsername } from "@/lib/profiles";
 import { createAdminClient } from "@/lib/supabase/admin";
 
@@ -48,6 +50,24 @@ export async function notifyPayment(formData: FormData): Promise<void> {
     note: claim.note,
   });
   if (error) back("paid_error=save");
+
+  // Let the owner know by email. Never block the customer if this fails.
+  try {
+    const { data: owner } = await admin.auth.admin.getUserById(profile.id);
+    const to = owner?.user?.email;
+    if (to) {
+      const message = paymentNoteEmail(
+        profile.displayName,
+        claim.payerName,
+        claim.amountCents === null ? "an amount not given" : formatMoney(claim.amountCents),
+        methodLabel(claim.method),
+        claim.note,
+      );
+      await sendEmail(to, message.subject, message.html, message.text);
+    }
+  } catch {
+    // ignore
+  }
 
   back("paid=1");
 }
