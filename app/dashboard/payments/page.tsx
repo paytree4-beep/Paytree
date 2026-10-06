@@ -57,13 +57,13 @@ export default async function PaymentsPage({ searchParams }: { searchParams: Sea
     .map((m) => ({ id: m.id, title: m.title, color: badgeColor(m.id).bg }));
 
   return (
-    <div className="min-h-screen bg-[#FBFBFB] text-[#0B1F18]">
-      <header className="bg-[#064E3B] px-5 py-3">
+    <div className="min-h-screen bg-[#FAF5EA] text-[#0B1F18]">
+      <header className="sticky top-0 z-40 border-b border-white/80 bg-[#FAF5EA]/85 px-4 py-2.5 backdrop-blur-xl">
         <div className="mx-auto flex max-w-[880px] items-center justify-between gap-4">
-          <Logo size={30} />
+          <Logo size={30} tone="dark" />
           <Link
             href="/dashboard"
-            className="inline-flex min-h-11 items-center rounded-full px-4 text-[15px] font-semibold text-[#FBFBFB]/90 hover:text-[#FBFBFB]"
+            className="inline-flex min-h-11 items-center gap-2 rounded-full border-2 border-[#064E3B] bg-white px-5 text-[15px] font-bold text-[#064E3B] shadow-sm active:bg-[#E6F2EA]"
           >
             Dashboard
           </Link>

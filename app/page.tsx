@@ -115,25 +115,6 @@ function MethodDot({ id, size = 10 }: { id: string; size?: number }) {
 function PhoneExample() {
   return (
     <div className="relative mx-auto w-full max-w-[300px]">
-      {/* Floating app badges around the phone */}
-      {[
-        { id: "cashapp", Icon: DollarSign, pos: "-left-4 top-16", delay: "0s" },
-        { id: "venmo", Icon: Wallet, pos: "-right-5 top-36", delay: "1.2s" },
-        { id: "zelle", Icon: Mail, pos: "-left-6 bottom-28", delay: "2.4s" },
-      ].map(({ id, Icon, pos, delay }) => {
-        const c = badgeColor(id);
-        return (
-          <span
-            key={id}
-            aria-hidden="true"
-            className={`pt-bob absolute z-10 flex h-14 w-14 items-center justify-center rounded-2xl shadow-[0_16px_30px_-12px_rgba(0,0,0,0.45)] ${pos}`}
-            style={{ backgroundColor: c.bg, color: c.fg, animationDelay: delay }}
-          >
-            <Icon className="h-6 w-6" strokeWidth={2.2} />
-          </span>
-        );
-      })}
-
       <div
         role="img"
         aria-label="Example PayTree page for Cedar Coffee Co. on a phone, with Cash App, Venmo, Zelle, Apple Cash and a QR code"
