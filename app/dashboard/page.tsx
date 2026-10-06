@@ -22,6 +22,7 @@ import { deleteAccount, setPublished, updateProfile } from "./actions";
 import { setPaymentLog } from "./log/actions";
 import { SaleCelebration } from "@/components/dashboard/sale-celebration";
 import { OwnerCookie } from "@/components/dashboard/owner-cookie";
+import { AppleCelebration } from "@/components/marketing/apple-celebration";
 import { cookies } from "next/headers";
 import { openBillingPortal, startCheckout } from "./billing-actions";
 import { computeAccess, grantsAccess, type SubscriptionRow } from "@/lib/billing";
@@ -161,7 +162,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
 
   return (
     <div className="min-h-screen bg-[#FAF5EA] text-[#0B1F18]">
-      {celebrate && newestSale ? <SaleCelebration latest={newestSale} /> : null}
+      {notice === "welcome" ? <AppleCelebration /> : celebrate && newestSale ? <SaleCelebration latest={newestSale} /> : null}
       <OwnerCookie username={profile.username} />
       <header className="sticky top-0 z-40 border-b border-white/80 bg-[#FAF5EA]/85 px-4 py-2.5 backdrop-blur-xl">
         <div className="mx-auto flex max-w-[880px] items-center justify-between gap-4">
