@@ -53,10 +53,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const data = await load(id);
   if (!data) return { title: "Bill not found · PayTree", robots: { index: false } };
   const each = formatMoney(shareCents(data.split.total_cents, data.split.people));
+  const when = data.split.event_date ? ` · ${formatEventDate(data.split.event_date)}` : "";
+  const title = `🍕 Split the bill: ${data.split.title}`;
+  const description = `${each} each${when} · Pay ${data.profile.displayName} with PayTree`;
   return {
-    title: `${data.split.title} · ${each} each`,
-    description: `Split with ${data.profile.displayName} on PayTree: ${each} each.`,
+    title,
+    description,
     robots: { index: false },
+    openGraph: { title, description, type: "website", siteName: "PayTree" },
+    twitter: { card: "summary_large_image", title, description },
   };
 }
 
