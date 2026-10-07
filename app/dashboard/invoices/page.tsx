@@ -197,18 +197,12 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Sea
                         </p>
                       </div>
                       <div className="flex flex-wrap gap-2">
-                        <Link
-                          href={`/invoice/${inv.id}`}
-                          className="inline-flex min-h-10 items-center rounded-full border border-[#064E3B]/40 px-4 text-[14px] font-bold text-[#064E3B]"
-                        >
-                          Open
-                        </Link>
                         <InstantDelete id={inv.id} action={deleteInvoiceQuick} />
                       </div>
                     </div>
-                    <details className="group rounded-xl bg-[#F7FAF8] px-3 py-1.5">
+                    <details className="group rounded-xl border border-[#DCE5DF] bg-[#F7FAF8] px-3 py-1.5">
                       <summary className="flex min-h-9 cursor-pointer list-none items-center gap-1 text-[13px] font-bold text-[#064E3B] [&::-webkit-details-marker]:hidden">
-                        <span className="transition-transform group-open:rotate-90">›</span> Details
+                        <span className="transition-transform group-open:rotate-90">›</span> Open details
                       </summary>
                       <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 pb-2 text-[13px]">
                         <dt className="text-[#4B6358]">Invoice for</dt>
