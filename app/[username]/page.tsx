@@ -111,7 +111,7 @@ export default async function PublicPaymentPage({ params }: PageProps) {
           <h1 className="font-serif text-[2rem] font-normal leading-[1.1] tracking-tight">
             {profile.displayName}
           </h1>
-          <p className="text-[13px] text-[#4B6358]">
+          <p className="text-[18px] font-semibold text-[#3F574C]">
             {SITE_HOST}/{profile.username}
           </p>
           {profile.pageMode === "tip" ? (

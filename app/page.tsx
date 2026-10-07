@@ -232,7 +232,7 @@ export default function HomePage() {
               <span className="h-2 w-2 rounded-full bg-[#7BC86C]" aria-hidden="true" />
               {TRIAL_DAYS} DAYS FREE · NO CARD NEEDED
             </span>
-            <h1 className="font-serif text-[clamp(38px,6vw,76px)] font-normal uppercase leading-[1.03] tracking-[-0.01em] text-[#064E3B] [text-wrap:balance]">
+            <h1 className="font-serif text-[clamp(46px,11vw,92px)] font-normal uppercase leading-[1.03] tracking-[-0.01em] text-[#064E3B] [text-wrap:balance]">
               All your payment methods.
               <br />
               <span className={goldText}>One simple link.</span>
