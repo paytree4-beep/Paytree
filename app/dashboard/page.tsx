@@ -146,7 +146,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
   const view = VIEWS.find((v) => v === requestedView) ?? "home";
 
   const tiles: { icon: string; title: string; detail: string; href: string; badge?: string }[] = [
-    { icon: "🔗", title: "Your link & QR", detail: `${SITE_HOST}/${profile.username}`, href: "/dashboard?view=link" },
+    { icon: "🔗", title: "Your link & QR", detail: `${SITE_HOST}/${profile.username}`, href: "/dashboard/link" },
     { icon: "💰", title: "Income & spending", detail: "What came in and what you spent", href: "/dashboard/budget" },
     { icon: "🌳", title: "Money tree", detail: "Your month as an apple tree", href: "/dashboard/tree" },
     {
@@ -164,13 +164,13 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
       href: "/dashboard/invoices",
       badge: invoicesWaiting > 0 ? String(invoicesWaiting) : undefined,
     },
-    { icon: "📸", title: "Pay me / Tip me card", detail: "Card and video for Instagram & TikTok", href: "/dashboard?view=share" },
+    { icon: "📸", title: "Pay me / Tip me card", detail: "Card and video for Instagram & TikTok", href: "/dashboard/share" },
     { icon: "📊", title: "Statistics", detail: `${views7} views · ${taps7} taps this week`, href: "/dashboard/stats" },
-    { icon: "👤", title: "Profile", detail: "Photo, name and bio", href: "/dashboard?view=profile" },
+    { icon: "👤", title: "Profile", detail: "Photo, name and bio", href: "/dashboard/profile" },
     ...(billingOn
-      ? [{ icon: "⭐", title: "Membership", detail: isMember ? "Active" : access.reason === "trial" ? `${access.trialDaysLeft} days left` : "Paused", href: "/dashboard?view=billing" }]
+      ? [{ icon: "⭐", title: "Membership", detail: isMember ? "Active" : access.reason === "trial" ? `${access.trialDaysLeft} days left` : "Paused", href: "/dashboard/billing" }]
       : []),
-    { icon: "⚙️", title: "Settings", detail: profile.is_published ? "Page is public" : "Page is hidden", href: "/dashboard?view=settings" },
+    { icon: "⚙️", title: "Settings", detail: profile.is_published ? "Page is public" : "Page is hidden", href: "/dashboard/settings" },
   ];
 
   return (
