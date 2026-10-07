@@ -16,7 +16,7 @@ import { ShareLink } from "@/components/dashboard/share-link";
 import { QrCard } from "@/app/[username]/qr-card";
 import { param, type SearchParams } from "@/lib/auth";
 import { avatarUrl } from "@/lib/avatar";
-import { PRICES, PRICING, SITE_HOST, SITE_URL } from "@/lib/site";
+import { PRICING, SITE_HOST, SITE_URL } from "@/lib/site";
 import { createClient } from "@/lib/supabase/server";
 import { deleteAccount, setPageMode, setPublished, updateProfile } from "./actions";
 import { ShareCardMaker } from "@/components/dashboard/share-card";
@@ -275,8 +275,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
               <strong className="text-[#064E3B]">
                 {access.trialDaysLeft === 1 ? "1 day" : `${access.trialDaysLeft} days`} left in your free trial.
               </strong>{" "}
-              Subscribe before {trialEndDate} and your first month is only{" "}
-              <strong className="text-[#064E3B]">${PRICES.earlyFirstMonth.toFixed(2)}</strong> (then {PRICING.monthly.price}/month).
+              Subscribe before {trialEndDate} to keep your page live.
             </p>
             <Link
               href="/dashboard?view=billing"
@@ -373,15 +372,10 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
                 <form action={startCheckout} className="mt-4">
                   <input type="hidden" name="plan" value="monthly" />
                   <SubmitButton pendingText="Opening checkout…">
-                    {access.reason === "trial"
-                      ? `Subscribe · first month $${PRICES.earlyFirstMonth.toFixed(2)}`
-                      : `Subscribe · ${PRICING.monthly.price} a month`}
+                    {`Subscribe · ${PRICING.monthly.price} a month`}
                   </SubmitButton>
                 </form>
                 <p className="mt-3 text-[13px] text-[#4B6358]">
-                  {access.reason === "trial"
-                    ? `Subscribe during your free trial and your first month is $${PRICES.earlyFirstMonth.toFixed(2)}, then ${PRICING.monthly.price} a month. `
-                    : ""}
                   Every feature included. Cancel any time. Secure checkout by Stripe. Pay with Apple Pay, Google Pay or card.
                 </p>
                 {subscription?.provider === "stripe" && subscription.provider_customer_id ? (
