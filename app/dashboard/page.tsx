@@ -574,7 +574,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
 
         {view === "settings" && modeReady ? (
           <section className="rounded-2xl border border-[#DCE5DF] bg-white p-5 sm:p-6">
-            <h2 className="text-sm font-bold uppercase tracking-[0.1em] text-[#4B6358]">Tip me 💸</h2>
+            <h2 className="text-sm font-bold uppercase tracking-[0.1em] text-[#4B6358]">Tip me</h2>
             <p className="mt-2 text-[15px] text-[#4B6358]">
               {tipMode
                 ? "On. Your page says \u201cSend me a tip\u201d. Great for creators, musicians and streamers."

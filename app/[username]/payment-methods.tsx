@@ -222,7 +222,7 @@ export function PaymentMethods({ username, displayName, methods, extra, extraInd
                     id={`heading-${group.id}`}
                     className="text-[13px] font-bold tracking-[0.12em] text-[#064E3B]"
                   >
-                    {mode === "tip" && group.id === "online" ? "SEND A TIP 💸" : group.title}
+                    {mode === "tip" && group.id === "online" ? "SEND A TIP" : group.title}
                   </h2>
                   <p className="mt-0.5 text-sm text-[#4B6358]">
                     {mode === "tip" && group.id === "online" ? "Tap the app you already use. Every tip helps!" : group.hint}

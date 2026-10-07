@@ -135,34 +135,34 @@ function PhoneExample() {
           <div className="relative flex flex-col items-center gap-0.5 overflow-hidden bg-gradient-to-b from-[#E6F2EA] to-[#FAF5EA] px-2 pb-2.5 pt-4 text-center text-[#064E3B]">
             <AppleHalo compact />
             <span className="relative mb-0.5">
-              <ExampleAvatar size={40} />
+              <ExampleAvatar size={50} />
             </span>
-            <span className="relative font-serif text-[17px] leading-tight">Cedar Coffee Co.</span>
-            <span className="relative text-[10.5px] text-[#4B6358]">{SITE_HOST}/cedarcoffee</span>
+            <span className="relative font-serif text-[21px] leading-tight text-[#053D2E]">Cedar Coffee Co.</span>
+            <span className="relative text-[11.5px] font-semibold text-[#1A3326]">{SITE_HOST}/cedarcoffee</span>
           </div>
           <div className="flex flex-col gap-1.5 p-2">
             {EXAMPLE.map(({ id, name, detail, Icon, copy }) => {
               const c = badgeColor(id);
               const Action = copy ? Copy : ArrowUpRight;
               return (
-                <div key={id} className="flex items-center gap-1.5 rounded-[10px] border border-[#DCE5DF] bg-white px-2 py-2">
+                <div key={id} className="flex items-center gap-1.5 rounded-[9px] border border-[#DCE5DF] bg-white px-2 py-1.5">
                   <span
-                    className="flex h-6 w-6 flex-none items-center justify-center rounded-full"
+                    className="flex h-5 w-5 flex-none items-center justify-center rounded-full"
                     style={{ backgroundColor: c.bg, color: c.fg }}
                   >
-                    <Icon className="h-3 w-3" strokeWidth={2.4} />
+                    <Icon className="h-2.5 w-2.5" strokeWidth={2.4} />
                   </span>
                   <span className="min-w-0 flex-1">
-                    <span className="block text-[12px] font-bold leading-tight">{name}</span>
-                    <span className="block truncate text-[10px] text-[#4B6358]">{detail}</span>
+                    <span className="block text-[10.5px] font-bold leading-tight">{name}</span>
+                    <span className="block truncate text-[9px] text-[#4B6358]">{detail}</span>
                   </span>
-                  <Action className="h-3 w-3 flex-none text-[#064E3B]" />
+                  <Action className="h-2.5 w-2.5 flex-none text-[#064E3B]" />
                 </div>
               );
             })}
             <div className="flex items-center gap-1.5 rounded-[10px] border border-[#CFE3D6] bg-[#E6F2EA] px-2 py-1.5 text-[#064E3B]">
-              <ExampleQr url={SITE_URL} size={30} />
-              <span className="text-[12px] font-semibold">Scan to pay</span>
+              <ExampleQr url={SITE_URL} size={26} />
+              <span className="text-[10.5px] font-semibold">Scan to pay</span>
             </div>
           </div>
         </div>

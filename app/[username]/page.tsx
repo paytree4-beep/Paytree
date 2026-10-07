@@ -118,7 +118,7 @@ export default async function PublicPaymentPage({ params, searchParams }: PagePr
           </p>
           {profile.pageMode === "tip" ? (
             <p className="mt-1 rounded-full bg-white/80 px-4 py-1.5 text-[14px] font-bold text-[#064E3B] shadow-sm">
-              Send me a tip 💸
+              Send me a tip
             </p>
           ) : null}
           {profile.bio ? (

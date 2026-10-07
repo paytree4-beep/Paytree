@@ -193,7 +193,7 @@ export function ShareCardMaker({
       ctx.font = "800 80px -apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif";
       {
         // Each letter in the colors of the falling apples (a touch deeper, for contrast on white).
-        const headline = mode === "tip" ? "Tip me 💸" : "Pay me here";
+        const headline = mode === "tip" ? "Tip me" : "Pay me here";
         // First letter of every word is red; the others take the other apple colors.
         const letterColors = ["#E5484D"]; // all red
         const chars = Array.from(headline);
@@ -426,7 +426,7 @@ export function ShareCardMaker({
     <section className="flex flex-col gap-4">
       <div>
         <h1 className="font-serif text-[34px] leading-[1.05] text-[#064E3B]">
-          {mode === "tip" ? "Tip me card 💸" : "Pay me here card 📸"}
+          {mode === "tip" ? "Tip me card" : "Pay me here card 📸"}
         </h1>
         <p className="mt-1 text-[15px] text-[#3F574C]">
           Made for Instagram Stories, Reels and TikTok. The video is 6 seconds with our own music. Tip: on TikTok you
@@ -451,7 +451,7 @@ export function ShareCardMaker({
               mode === m ? "bg-[#064E3B] text-[#FBFBFB]" : "border border-[#DCE5DF] bg-white text-[#064E3B]"
             }`}
           >
-            {m === "pay" ? "Pay me here" : "Tip me 💸"}
+            {m === "pay" ? "Pay me here" : "Tip me"}
           </button>
         ))}
       </div>
