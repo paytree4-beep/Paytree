@@ -18,6 +18,7 @@ const PLAN_FEATURES = [
   "Your own PayTree link and QR code",
   "Your own dashboard to manage your page anytime",
   "Payment log: confirm payments, see daily and monthly totals, export to Excel",
+  "Invoices and Split the bill links",
   "Private visitor statistics",
   `${TRIAL_DAYS} days free, no card needed`,
   "Cancel any time",
@@ -102,9 +103,9 @@ export function Pricing() {
 
               <ul className="flex flex-1 flex-col gap-3">
                 {[
-                  ...PLAN_FEATURES.slice(0, 5),
+                  ...PLAN_FEATURES.slice(0, 6),
                   "Your own invite link to share PayTree",
-                  ...PLAN_FEATURES.slice(5),
+                  ...PLAN_FEATURES.slice(6),
                 ].map((text) => (
                   <li key={text} className="flex items-start gap-3 text-[17px] font-medium text-[#0B1F18]">
                     <span className="mt-[2px] flex h-5 w-5 flex-none items-center justify-center rounded-full bg-[#E3F0EA]">

@@ -20,6 +20,7 @@ import {
   Pizza,
   Clapperboard,
   HandCoins,
+  ReceiptText,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -58,10 +59,10 @@ const METHODS = [
 
 const FEATURES: { title: string; body: string; Icon: LucideIcon; tint: string }[] = [
   { title: "Split the bill", body: "Dinner or a trip: everyone sees their share and pays you.", Icon: Pizza, tint: "#E5484D" },
+  { title: "Invoices", body: "Send a customer a bill. They pay with their app, you confirm.", Icon: ReceiptText, tint: "#C9A048" },
   { title: "Pay me here", body: "A ready card for Stories, plus a video with music for TikTok and Reels.", Icon: Clapperboard, tint: "#3FA34D" },
   { title: "Tip me", body: "Creators and musicians: turn your page into a tip jar.", Icon: HandCoins, tint: "#E8AE1C" },
-  { title: "One link", body: "Cash App, Venmo, Zelle, PayPal and more in one place.", Icon: Link2, tint: "#E5484D" },
-  { title: "Your QR code", body: "For your counter, booth or business card.", Icon: QrCode, tint: "#064E3B" },
+  { title: "One link + QR", body: "Cash App, Venmo, Zelle and more in one link, plus a QR for your counter.", Icon: QrCode, tint: "#064E3B" },
   { title: "Payment log", body: "Confirm payments, see daily and monthly totals, and download it all to Excel.", Icon: ClipboardCheck, tint: "#6D1ED4" },
   { title: "Private stats", body: "Visits and taps. No cookies, no tracking.", Icon: BarChart3, tint: "#7BC86C" },
   { title: "Paid to you", body: "We never hold your money. It goes straight to your own accounts.", Icon: ShieldCheck, tint: "#008CFF" },
