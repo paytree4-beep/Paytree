@@ -24,7 +24,7 @@ import {
 import type { LucideIcon } from "lucide-react";
 
 import { Logo } from "@/components/brand/logo";
-import { Apple, AppleBackdrop, AppleHalo } from "@/components/marketing/apples";
+import { AppleBackdrop, AppleHalo } from "@/components/marketing/apples";
 import { Cta } from "@/components/marketing/cta";
 import { ExampleAvatar } from "@/components/marketing/example-avatar";
 import { ExampleQr } from "@/components/marketing/example-qr";
@@ -117,10 +117,6 @@ const FAQ = [
   {
     q: "Can I cancel any time?",
     a: "Yes. Cancel in one tap from your dashboard. You keep access until the end of the period you paid for.",
-  },
-  {
-    q: "What is the apple basket?",
-    a: "Every PayTree page has its own referral link. When someone joins through it and subscribes, you earn an apple: $3 for a yearly member, $0.50 for a monthly member. On January 1, 2027, PayTree buys your apples and pays you.",
   },
   {
     q: "Is my information safe?",
@@ -370,34 +366,6 @@ export default function HomePage() {
                   </li>
                 ))}
               </ol>
-            </Reveal>
-          </section>
-
-          {/* Apple basket (referral offer) */}
-          <section id="apples" className="scroll-mt-24 px-5 pb-20 sm:px-6">
-            <Reveal className="mx-auto flex max-w-[1180px] flex-col gap-6 rounded-[32px] border-2 border-[#E2C27A] bg-gradient-to-br from-white/85 via-[#FBF3DF]/85 to-[#F4E3B8]/85 p-6 backdrop-blur-xl sm:flex-row sm:items-center sm:gap-10 sm:p-10">
-              <div className="flex flex-col gap-3 sm:flex-1">
-                <span className="text-sm font-bold tracking-[0.14em] text-[#9A6E1A]">EARN APPLES 🧺</span>
-                <h2 className={headingClass}>Every PayTree page comes with a referral link.</h2>
-                <p className="text-[20px] leading-[1.65] font-medium text-[#0F2419]">
-                  Share your link, or let your page do it for you: every page has a &ldquo;Get your own payment page&rdquo;
-                  link that counts as yours. When someone joins PayTree through it, an apple drops in your basket.
-                  On January 1, 2027, PayTree buys your apples.
-                </p>
-                <p className="text-[14px] font-medium text-[#1A3326]">Launch offer for new members who join by December 31, 2026.</p>
-              </div>
-              <div className="grid grid-cols-2 gap-3 sm:w-[340px]">
-                <div className="flex flex-col items-center gap-1 rounded-[22px] bg-white/85 p-4 text-center">
-                  <Apple color="red" size={52} />
-                  <span className="font-serif text-[30px] leading-none text-[#064E3B]">$3.00</span>
-                  <span className="text-[13px] font-semibold font-medium text-[#1A3326]">for each yearly member</span>
-                </div>
-                <div className="flex flex-col items-center gap-1 rounded-[22px] bg-white/85 p-4 text-center">
-                  <Apple color="green" size={44} />
-                  <span className="font-serif text-[30px] leading-none text-[#064E3B]">$0.50</span>
-                  <span className="text-[13px] font-semibold font-medium text-[#1A3326]">for each monthly member</span>
-                </div>
-              </div>
             </Reveal>
           </section>
 

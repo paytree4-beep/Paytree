@@ -24,8 +24,8 @@ import { setPaymentLog } from "./log/actions";
 import { SaleCelebration } from "@/components/dashboard/sale-celebration";
 import { OwnerCookie } from "@/components/dashboard/owner-cookie";
 import { InstallCard } from "@/components/dashboard/install-card";
-import { AppleBasket } from "@/components/dashboard/apple-basket";
-import { ADMIN_EMAIL, summarizeBasket, type AppleRow } from "@/lib/referrals";
+import { InviteCard } from "@/components/dashboard/invite-card";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { AppleCelebration } from "@/components/marketing/apple-celebration";
 import { cookies } from "next/headers";
 import { openBillingPortal, startCheckout } from "./billing-actions";
@@ -150,13 +150,20 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
   const modeReady = !modeError;
   const tipMode = (modeRow as { page_mode?: string } | null)?.page_mode === "tip";
 
-  // Apple basket (referral program). Read on its own so it never breaks the page.
-  const { data: appleData, error: appleError } = await supabase
-    .from("referral_apples")
-    .select("plan, amount_cents, paid_at")
-    .eq("referrer_id", user.id);
-  const basket = appleError ? null : summarizeBasket((appleData ?? []) as AppleRow[]);
-  const isAdmin = (user.email ?? "").toLowerCase() === ADMIN_EMAIL;
+  // Referral link: how many people joined through it.
+  let joined = 0;
+  try {
+    const admin = createAdminClient();
+    if (admin) {
+      const { count: joinedCount } = await admin
+        .from("profiles")
+        .select("id", { count: "exact", head: true })
+        .eq("referred_by", user.id);
+      joined = typeof joinedCount === "number" ? joinedCount : 0;
+    }
+  } catch {
+    joined = 0;
+  }
 
   const { data: subData } = await supabase
     .from("subscriptions")
@@ -182,11 +189,10 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
   const notice = param(params, "notice");
   const error = param(params, "error");
   const pagePath = `/${profile.username}`;
-  const VIEWS = ["home", "link", "apples", "log", "profile", "settings", "billing", "share"] as const;
+  const VIEWS = ["home", "link", "invite", "log", "profile", "settings", "billing", "share"] as const;
   const requestedView = param(params, "view");
   const view = VIEWS.find((v) => v === requestedView) ?? "home";
 
-  const money = (cents: number) => `$${(cents / 100).toFixed(2)}`;
   const tiles: { icon: string; title: string; detail: string; href: string; badge?: string }[] = [
     { icon: "🔗", title: "Your link & QR", detail: `${SITE_HOST}/${profile.username}`, href: "/dashboard?view=link" },
     {
@@ -210,15 +216,12 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
           },
         ]
       : []),
-    ...(basket
-      ? [{ icon: "🧺", title: "Apple basket", detail: `${basket.red + basket.green} apples · ${money(basket.owedCents)}`, href: "/dashboard?view=apples" }]
-      : []),
+    { icon: "🎁", title: "Invite friends", detail: joined > 0 ? `${joined} joined with your link` : "Your personal link", href: "/dashboard?view=invite" },
     { icon: "👤", title: "Profile", detail: "Photo, name and bio", href: "/dashboard?view=profile" },
     ...(billingOn
       ? [{ icon: "⭐", title: "Membership", detail: isMember ? "Active" : access.reason === "trial" ? `${access.trialDaysLeft} days left` : "Paused", href: "/dashboard?view=billing" }]
       : []),
     { icon: "⚙️", title: "Settings", detail: profile.is_published ? "Page is public" : "Page is hidden", href: "/dashboard?view=settings" },
-    ...(isAdmin ? [{ icon: "🍎", title: "Harvest", detail: "Admin", href: "/dashboard/harvest" }] : []),
   ];
 
   return (
@@ -424,17 +427,8 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
           </>
         ) : null}
 
-        {view === "apples" ? (
-          <>
-        {basket ? (
-          <AppleBasket
-            link={`${SITE_URL}/?ref=${profile.username}`}
-            name={profile.display_name}
-            basket={basket}
-            now={Date.now()}
-          />
-        ) : null}
-          </>
+        {view === "invite" ? (
+          <InviteCard link={`${SITE_URL}/?ref=${profile.username}`} name={profile.display_name} joined={joined} />
         ) : null}
 
         {view === "log" ? (

@@ -103,7 +103,7 @@ export function Pricing() {
               <ul className="flex flex-1 flex-col gap-3">
                 {[
                   ...PLAN_FEATURES.slice(0, 5),
-                  key === "annual" ? "Your own referral link: earn apples 🍎" : "Your own referral link: earn apples 🍏",
+                  "Your own invite link to share PayTree",
                   ...PLAN_FEATURES.slice(5),
                 ].map((text) => (
                   <li key={text} className="flex items-start gap-3 text-[17px] font-medium text-[#0B1F18]">
