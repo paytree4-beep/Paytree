@@ -94,8 +94,19 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Sea
 
         {invoices.length > 0 ? (
           <section className="grid grid-cols-3 gap-2 sm:gap-3">
+            <p className="col-span-3 text-[13px] font-bold uppercase tracking-[0.1em] text-[#4B6358]">Received</p>
             {[
-              { label: "Received this month", value: totals.receivedThisMonth, tone: "text-[#16A34A]" },
+              { label: "Today", value: totals.receivedToday, tone: "text-[#16A34A]" },
+              { label: "This month", value: totals.receivedThisMonth, tone: "text-[#16A34A]" },
+              { label: "This year", value: totals.receivedThisYear, tone: "text-[#16A34A]" },
+            ].map((t) => (
+              <div key={t.label} className="rounded-2xl border border-[#DCE5DF] bg-white p-3 sm:p-4">
+                <p className="text-[11px] font-bold uppercase leading-tight tracking-[0.06em] text-[#4B6358] sm:text-[12px]">{t.label}</p>
+                <p className={`mt-1 font-serif text-[22px] leading-none sm:text-[28px] ${t.tone}`}>{formatMoney(t.value)}</p>
+              </div>
+            ))}
+            <div className="col-span-3 grid grid-cols-2 gap-2 sm:gap-3">
+            {[
               { label: "Waiting to confirm", value: totals.waiting, tone: "text-[#7A5A12]" },
               { label: "Not paid yet", value: totals.unpaid, tone: "text-[#B42318]" },
             ].map((t) => (
@@ -104,6 +115,7 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Sea
                 <p className={`mt-1 font-serif text-[22px] leading-none sm:text-[28px] ${t.tone}`}>{formatMoney(t.value)}</p>
               </div>
             ))}
+            </div>
             <p className="col-span-3 text-[13px] text-[#4B6358]">
               All time: {formatMoney(totals.receivedAll)} received from {totals.paidCount} paid{" "}
               {totals.paidCount === 1 ? "invoice" : "invoices"}.

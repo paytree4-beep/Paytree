@@ -61,7 +61,9 @@ export interface InvoiceRow {
 }
 
 export interface InvoiceTotals {
+  receivedToday: number;
   receivedThisMonth: number;
+  receivedThisYear: number;
   receivedAll: number;
   waiting: number;
   unpaid: number;
@@ -70,16 +72,27 @@ export interface InvoiceTotals {
 
 /** Money from invoices: received (by the day the owner confirmed), waiting and unpaid. */
 export function summarizeInvoices(rows: InvoiceRow[], now: Date, timeZone: string): InvoiceTotals {
-  const month = dayKey(now, timeZone).slice(0, 7);
-  const totals: InvoiceTotals = { receivedThisMonth: 0, receivedAll: 0, waiting: 0, unpaid: 0, paidCount: 0 };
+  const today = dayKey(now, timeZone);
+  const month = today.slice(0, 7);
+  const year = today.slice(0, 4);
+  const totals: InvoiceTotals = {
+    receivedToday: 0,
+    receivedThisMonth: 0,
+    receivedThisYear: 0,
+    receivedAll: 0,
+    waiting: 0,
+    unpaid: 0,
+    paidCount: 0,
+  };
   for (const row of rows) {
     const status = invoiceStatus(row);
     if (status === "paid") {
       totals.receivedAll += row.amount_cents;
       totals.paidCount += 1;
-      if (row.confirmed_at && dayKey(new Date(row.confirmed_at), timeZone).slice(0, 7) === month) {
-        totals.receivedThisMonth += row.amount_cents;
-      }
+      const day = row.confirmed_at ? dayKey(new Date(row.confirmed_at), timeZone) : "";
+      if (day === today) totals.receivedToday += row.amount_cents;
+      if (day.slice(0, 7) === month) totals.receivedThisMonth += row.amount_cents;
+      if (day.slice(0, 4) === year) totals.receivedThisYear += row.amount_cents;
     } else if (status === "waiting") {
       totals.waiting += row.amount_cents;
     } else {

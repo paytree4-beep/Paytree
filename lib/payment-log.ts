@@ -143,6 +143,8 @@ export interface LogTotals {
   todayCount: number;
   monthCents: number;
   monthCount: number;
+  yearCents: number;
+  yearCount: number;
   pendingCount: number;
 }
 
@@ -153,7 +155,8 @@ export interface LogTotals {
 export function summarizeClaims(rows: ClaimRow[], now: Date, timeZone: string): LogTotals {
   const today = dayKey(now, timeZone);
   const month = today.slice(0, 7);
-  const totals: LogTotals = { todayCents: 0, todayCount: 0, monthCents: 0, monthCount: 0, pendingCount: 0 };
+  const year = today.slice(0, 4);
+  const totals: LogTotals = { todayCents: 0, todayCount: 0, monthCents: 0, monthCount: 0, yearCents: 0, yearCount: 0, pendingCount: 0 };
   for (const row of rows) {
     if (row.status === "pending") {
       totals.pendingCount += 1;
@@ -162,6 +165,10 @@ export function summarizeClaims(rows: ClaimRow[], now: Date, timeZone: string): 
     if (row.status !== "received") continue;
     const day = dayKey(new Date(row.created_at), timeZone);
     const cents = row.amount_cents ?? 0;
+    if (day.slice(0, 4) === year) {
+      totals.yearCents += cents;
+      totals.yearCount += 1;
+    }
     if (day.slice(0, 7) === month) {
       totals.monthCents += cents;
       totals.monthCount += 1;

@@ -102,7 +102,7 @@ export default async function PaymentLogPage({ searchParams }: { searchParams: S
         .select("id, payer_name, amount_cents, method, note, status, created_at, received_at")
         .eq("profile_id", user.id)
         .order("created_at", { ascending: false })
-        .limit(2000)
+        .limit(10000)
     : { data: [] };
   const rows = (data ?? []) as ClaimRow[];
   const totals = summarizeClaims(rows, new Date(), timeZone);
@@ -167,7 +167,7 @@ export default async function PaymentLogPage({ searchParams }: { searchParams: S
           </form>
         </section>
 
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           <div className="rounded-2xl border border-[#DCE5DF] bg-white p-4">
             <p className="text-[13px] font-semibold text-[#4B6358]">Received today</p>
             <p className="mt-1 font-serif text-[30px] leading-none tabular-nums text-[#064E3B]">
@@ -186,7 +186,16 @@ export default async function PaymentLogPage({ searchParams }: { searchParams: S
               {totals.monthCount} {totals.monthCount === 1 ? "payment" : "payments"}
             </p>
           </div>
-          <div className="col-span-2 rounded-2xl border border-[#D9B873] bg-[#FBF6EA] p-4 sm:col-span-1">
+          <div className="rounded-2xl border border-[#DCE5DF] bg-white p-4">
+            <p className="text-[13px] font-semibold text-[#4B6358]">This year</p>
+            <p className="mt-1 font-serif text-[30px] leading-none tabular-nums text-[#064E3B]">
+              {formatMoney(totals.yearCents)}
+            </p>
+            <p className="mt-1 text-[12px] text-[#4B6358]">
+              {totals.yearCount} {totals.yearCount === 1 ? "payment" : "payments"}
+            </p>
+          </div>
+          <div className="rounded-2xl border border-[#D9B873] bg-[#FBF6EA] p-4">
             <p className="text-[13px] font-semibold text-[#5C4513]">Waiting for you</p>
             <p className="mt-1 font-serif text-[30px] leading-none tabular-nums text-[#064E3B]">{totals.pendingCount}</p>
             <p className="mt-1 text-[12px] text-[#5C4513]">to check in your apps</p>
