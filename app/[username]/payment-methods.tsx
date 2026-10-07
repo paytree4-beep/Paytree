@@ -33,6 +33,7 @@ import type { LucideIcon } from "lucide-react";
 
 import { badgeColor } from "@/lib/payment-colors";
 import type { MethodGroup, MethodIcon, MethodId, ResolvedMethod } from "@/lib/profiles";
+import { rememberOpened } from "@/lib/pay-intent";
 import { track } from "./track";
 
 const TOAST_MS = 2400;
@@ -127,9 +128,12 @@ interface PaymentMethodsProps {
   extraIndex?: number | null;
   /** "tip" relabels the first group for a tip jar. */
   mode?: "pay" | "tip";
+  /** Where "I've paid" remembers the opened method. Defaults to the username. */
+  scope?: string;
 }
 
-export function PaymentMethods({ username, displayName, methods, extra, extraIndex, mode = "pay" }: PaymentMethodsProps) {
+export function PaymentMethods({ username, displayName, methods, extra, extraIndex, mode = "pay", scope }: PaymentMethodsProps) {
+  const openScope = scope ?? username;
   const [toast, setToast] = useState<ToastState | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -167,6 +171,7 @@ export function PaymentMethods({ username, displayName, methods, extra, extraInd
       const ok = await copyToClipboard(method.copyValue);
       if (ok) {
         setCopiedId(method.id);
+        rememberOpened(openScope, method.id);
         showToast(method.copyToast ?? `${method.label} copied to clipboard`);
         track({ username, action: "copy", method: method.id });
       } else {
@@ -176,7 +181,7 @@ export function PaymentMethods({ username, displayName, methods, extra, extraInd
         );
       }
     },
-    [showToast, username],
+    [showToast, username, openScope],
   );
 
   /**
@@ -188,6 +193,7 @@ export function PaymentMethods({ username, displayName, methods, extra, extraInd
   const handleLinkClick = useCallback(
     (_event: MouseEvent<HTMLAnchorElement>, method: ResolvedMethod) => {
       track({ username, action: "open", method: method.id });
+      rememberOpened(openScope, method.id);
 
       const fallback = method.fallbackHref;
       if (!fallback) return;
@@ -211,7 +217,7 @@ export function PaymentMethods({ username, displayName, methods, extra, extraInd
         }
       }, APP_OPEN_TIMEOUT_MS);
     },
-    [showToast, username],
+    [showToast, username, openScope],
   );
 
   const renderGroup = (group: (typeof GROUPS)[number], items: ResolvedMethod[]) => (

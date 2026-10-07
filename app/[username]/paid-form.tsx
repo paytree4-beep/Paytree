@@ -1,9 +1,11 @@
 // app/[username]/paid-form.tsx
 //
 // "I've paid" on the public page, shown only when the owner turned on the
-// payment log. A plain form inside <details>, so it works without JavaScript.
+// payment log. It unlocks only after the customer opened one of the payment
+// methods, and fills in which one they used.
 
 import { SubmitButton } from "@/components/auth/submit-button";
+import { OpenedMethodField, PaidGate, PayFirstNote } from "@/components/payments/paid-gate";
 import { AppleCelebration } from "@/components/marketing/apple-celebration";
 import { methodLabel, type ClaimMethod } from "@/lib/payment-log";
 import { notifyPayment } from "./paid-actions";
@@ -32,7 +34,7 @@ export function PaidForm({
   sent: boolean;
   error: string | undefined;
 }) {
-  const options: ClaimMethod[] = [...methods, "cash", "other"];
+  const labels: Record<string, string> = Object.fromEntries(methods.map((m) => [m, methodLabel(m)]));
   const message = error ? ERRORS[error] ?? ERRORS.save : null;
 
   if (sent) {
@@ -52,6 +54,11 @@ export function PaidForm({
       id="paid"
       className="scroll-mt-6 rounded-2xl border border-white/80 bg-white/70 px-4 py-2.5 shadow-[0_10px_30px_-18px_rgba(6,78,59,0.35)] backdrop-blur-xl"
     >
+      <PaidGate
+        scope={username}
+        allowed={methods}
+        locked={<PayFirstNote text={`Already paid? Pay first with one of the options above, then you can let ${displayName} know.`} />}
+      >
       <details open={Boolean(message)} className="group">
         <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 [&::-webkit-details-marker]:hidden">
           <span className="text-[14px] text-[#3F574C]">
@@ -100,17 +107,7 @@ export function PaidForm({
             </span>
           </label>
 
-          <label className="flex flex-col gap-1.5">
-            <span className="text-sm font-semibold">Paid with</span>
-            <select name="method" defaultValue="" className={inputClass}>
-              <option value="">Choose…</option>
-              {options.map((m) => (
-                <option key={m} value={m}>
-                  {methodLabel(m)}
-                </option>
-              ))}
-            </select>
-          </label>
+          <OpenedMethodField scope={username} labels={labels} />
 
           <label className="flex flex-col gap-1.5">
             <span className="text-sm font-semibold">Note (optional)</span>
@@ -123,6 +120,7 @@ export function PaidForm({
           </p>
         </form>
       </details>
+      </PaidGate>
     </section>
   );
 }

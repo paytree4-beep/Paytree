@@ -10,10 +10,11 @@ import { notFound } from "next/navigation";
 
 import { PaymentMethods } from "@/app/[username]/payment-methods";
 import { SubmitButton } from "@/components/auth/submit-button";
+import { OpenedMethodField, PaidGate, PayFirstNote } from "@/components/payments/paid-gate";
 import { AppleCelebration } from "@/components/marketing/apple-celebration";
 import { AppleHalo } from "@/components/marketing/apples";
 import { param, type SearchParams } from "@/lib/auth";
-import { formatMoney } from "@/lib/payment-log";
+import { formatMoney, methodLabel } from "@/lib/payment-log";
 import { applyOrder, getProfileByUsername, resolveMethods } from "@/lib/profiles";
 import { formatEventDate, isSplitId, shareCents } from "@/lib/splits";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -62,6 +63,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 const ERRORS: Record<string, string> = {
   name: "Please enter your name.",
   full: "Everyone on this bill has already paid.",
+  method: "Please pay with one of the options above first.",
   busy: "This bill has too many notes. Please ask the organizer.",
   save: "We could not save that. Please try again.",
 };
@@ -78,6 +80,8 @@ export default async function BillPage({ params, searchParams }: Props) {
   const confirmedCount = paid.filter((p) => p.confirmed_at).length;
   const done = confirmedCount >= split.people;
   const methods = applyOrder(resolveMethods(profile.payments), profile.order);
+  const scope = `bill:${split.id}`;
+  const labels: Record<string, string> = Object.fromEntries(methods.map((m) => [m.id, methodLabel(m.id)]));
 
   return (
     <div className="flex min-h-screen flex-col bg-[#FAF5EA] font-sans text-[#0B1F18]">
@@ -130,7 +134,7 @@ export default async function BillPage({ params, searchParams }: Props) {
         </section>
 
         <div className="mt-6">
-          <PaymentMethods username={profile.username} displayName={profile.displayName} methods={methods} />
+          <PaymentMethods username={profile.username} displayName={profile.displayName} methods={methods} scope={scope} />
         </div>
 
         {!done ? (
@@ -140,6 +144,11 @@ export default async function BillPage({ params, searchParams }: Props) {
                 Thank you! {profile.displayName} will confirm once your payment arrives.
               </p>
             ) : (
+              <PaidGate
+                scope={scope}
+                allowed={methods.map((m) => m.id)}
+                locked={<PayFirstNote text={`Pay your ${formatMoney(each)} with one of the options above first. Then tap "I've paid" here.`} />}
+              >
               <form action={markSplitPaid} className="flex flex-col gap-3" noValidate>
                 <p className="font-bold text-[#064E3B]">Paid your {formatMoney(each)}? Let everyone know.</p>
                 {error && ERRORS[error] ? (
@@ -156,8 +165,10 @@ export default async function BillPage({ params, searchParams }: Props) {
                   placeholder="Your name"
                   className="min-h-[52px] w-full rounded-xl border border-[#C9D6CE] bg-white px-4 text-base outline-none focus:border-[#064E3B]"
                 />
+                <OpenedMethodField scope={scope} labels={labels} />
                 <SubmitButton pendingText="Saving…">I&rsquo;ve paid ✓</SubmitButton>
               </form>
+              </PaidGate>
             )}
           </section>
         ) : null}

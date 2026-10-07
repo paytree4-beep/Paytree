@@ -11,7 +11,7 @@ import { redirect } from "next/navigation";
 import { sendEmail } from "@/lib/email";
 import { formatMoney, methodLabel, parseClaim } from "@/lib/payment-log";
 import { paymentNoteEmail } from "@/lib/trial-reminders";
-import { getProfileByUsername, normalizeUsername } from "@/lib/profiles";
+import { getProfileByUsername, normalizeUsername, resolveMethods } from "@/lib/profiles";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 const HOURLY_LIMIT = 30;
@@ -30,6 +30,11 @@ export async function notifyPayment(formData: FormData): Promise<void> {
   const parsed = parseClaim((name) => formData.get(name));
   if ("error" in parsed) back(`paid_error=${parsed.error}`);
   const claim = parsed;
+
+  // Only the payment methods shown on this page count (the box unlocks after
+  // the customer opened one of them).
+  const onPage = new Set<string>(resolveMethods(profile.payments).map((m) => m.id));
+  if (!claim.method || !onPage.has(claim.method)) back("paid_error=method");
 
   const admin = createAdminClient();
   if (!admin) back("paid_error=save");

@@ -60,3 +60,6 @@ grant update (confirmed_at), delete on public.bill_split_payments to authenticat
 
 -- Optional day of the occasion, shown on the bill.
 alter table public.bill_splits add column if not exists event_date date;
+
+-- Which payment app the payer opened before tapping "I've paid".
+alter table public.bill_split_payments add column if not exists method text;

@@ -12,7 +12,7 @@ import { SubmitButton } from "@/components/auth/submit-button";
 import { Logo } from "@/components/brand/logo";
 import { ShareLink } from "@/components/dashboard/share-link";
 import { param, type SearchParams } from "@/lib/auth";
-import { formatMoney } from "@/lib/payment-log";
+import { formatMoney, methodLabel } from "@/lib/payment-log";
 import { SITE_URL } from "@/lib/site";
 import { formatEventDate, shareCents } from "@/lib/splits";
 import { createClient } from "@/lib/supabase/server";
@@ -53,15 +53,15 @@ export default async function SplitPage({ searchParams }: { searchParams: Search
   const splits = (data ?? []) as SplitRow[];
 
   const ids = splits.map((s) => s.id);
-  const { data: paidRows } =
-    ids.length > 0
-      ? await supabase
-          .from("bill_split_payments")
-          .select("id, split_id, name, confirmed_at")
-          .in("split_id", ids)
-          .order("created_at", { ascending: true })
-      : { data: [] };
-  type PayRow = { id: string; split_id: string; name: string; confirmed_at: string | null };
+  // "method" is read with a fallback, so the page still works before that column exists.
+  const loadPaid = (cols: string) =>
+    supabase.from("bill_split_payments").select(cols).in("split_id", ids).order("created_at", { ascending: true });
+  let paidRows: unknown[] | null = [];
+  if (ids.length > 0) {
+    const withMethod = await loadPaid("id, split_id, name, confirmed_at, method");
+    paidRows = withMethod.error ? (await loadPaid("id, split_id, name, confirmed_at")).data : withMethod.data;
+  }
+  type PayRow = { id: string; split_id: string; name: string; confirmed_at: string | null; method?: string | null };
   const bySplit = new Map<string, PayRow[]>();
   for (const r of (paidRows ?? []) as PayRow[]) bySplit.set(r.split_id, [...(bySplit.get(r.split_id) ?? []), r]);
 
@@ -190,7 +190,10 @@ export default async function SplitPage({ searchParams }: { searchParams: Search
                         <ul className="mt-2 flex flex-col gap-2">
                           {waiting.map((r) => (
                             <li key={r.id} className="flex items-center justify-between gap-2">
-                              <span className="font-semibold">⏳ {r.name}</span>
+                              <span className="font-semibold">
+                                ⏳ {r.name}
+                                {r.method ? <span className="block text-[12px] font-medium text-[#7A5A12]">via {methodLabel(r.method)}</span> : null}
+                              </span>
                               <span className="flex gap-1">
                                 <form action={confirmSplitPayment}>
                                   <input type="hidden" name="id" value={r.id} />

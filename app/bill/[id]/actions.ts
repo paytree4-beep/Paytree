@@ -6,6 +6,7 @@
 
 import { redirect } from "next/navigation";
 
+import { METHOD_IDS } from "@/lib/profiles";
 import { cleanPayerName, isSplitId } from "@/lib/splits";
 import { createAdminClient } from "@/lib/supabase/admin";
 
@@ -16,6 +17,11 @@ export async function markSplitPaid(formData: FormData): Promise<void> {
 
   const name = cleanPayerName(formData.get("name"));
   if (!name) redirect(`/bill/${id}?error=name#paid`);
+
+  // The box unlocks after the payer opened one of the payment methods.
+  const rawMethod = String(formData.get("method") ?? "");
+  const method = METHOD_IDS.find((m) => m === rawMethod);
+  if (!method) redirect(`/bill/${id}?error=method#paid`);
 
   const admin = createAdminClient();
   if (!admin) redirect(`/bill/${id}?error=save#paid`);
@@ -30,7 +36,9 @@ export async function markSplitPaid(formData: FormData): Promise<void> {
   // Room for everyone, plus a little slack, so a prank cannot fill the list.
   if (all.length >= people * 2 + 5) redirect(`/bill/${id}?error=busy#paid`);
 
-  const { error } = await admin.from("bill_split_payments").insert({ split_id: id, name });
+  let { error } = await admin.from("bill_split_payments").insert({ split_id: id, name, method });
+  // Before the "method" column exists, save without it.
+  if (error) ({ error } = await admin.from("bill_split_payments").insert({ split_id: id, name }));
   if (error) redirect(`/bill/${id}?error=save#paid`);
   redirect(`/bill/${id}?paid=1`);
 }
