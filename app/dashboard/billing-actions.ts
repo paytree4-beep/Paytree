@@ -30,7 +30,9 @@ async function currentUser() {
 }
 
 export async function startCheckout(formData: FormData): Promise<void> {
-  const plan: Plan = formData.get("plan") === "annual" ? "annual" : "monthly";
+  // One plan only: monthly.
+  const plan: Plan = "monthly";
+  void formData;
   const { userId, email, customerId } = await currentUser();
   const origin = await requestOrigin();
 

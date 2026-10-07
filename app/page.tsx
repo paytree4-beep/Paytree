@@ -81,7 +81,7 @@ const FAQ = [
   },
   {
     q: "How does the free trial work?",
-    a: `You get ${TRIAL_DAYS} days with every feature, and no card is needed to start. If you choose to continue, it is ${PRICING.monthly.price} a month or ${PRICING.annual.price} a year.`,
+    a: `You get ${TRIAL_DAYS} days with every feature, and no card is needed to start. If you choose to continue, it is ${PRICING.monthly.price} a month, with every feature included. Cancel any time.`,
   },
   {
     q: "What happens when the trial ends?",
@@ -264,7 +264,7 @@ export default function HomePage() {
               </a>
             </div>
             <p className="text-[15px] font-medium font-medium text-[#1A3326]">
-              Then {PRICING.monthly.price}/month or {PRICING.annual.price}/year. Cancel any time.
+              Then {PRICING.monthly.price}/month. Cancel any time.
             </p>
           </div>
 

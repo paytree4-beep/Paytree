@@ -376,32 +376,20 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
                 <p className="mt-2 text-[15px] text-[#0B1F18]">
                   {access.reason === "trial" ? (
                     <>
-                      <strong>Free trial:</strong> {access.trialDaysLeft} days left, with every feature. Choose a
-                      plan to keep your page live after {trialEndDate}.
+                      <strong>Free trial:</strong> {access.trialDaysLeft} days left, with every feature. Subscribe
+                      to keep your page live after {trialEndDate}.
                     </>
                   ) : (
                     <>
-                      <strong>Your page is paused.</strong> Choose a plan to turn it back on. Cancel any time.
+                      <strong>Your page is paused.</strong> Subscribe to turn it back on. Cancel any time.
                     </>
                   )}
                 </p>
-                <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                  <form action={startCheckout}>
-                    <input type="hidden" name="plan" value="annual" />
-                    <SubmitButton pendingText="Opening checkout…">
-                      {`Yearly · ${PRICING.annual.price}`}
-                    </SubmitButton>
-                  </form>
-                  <form action={startCheckout}>
-                    <input type="hidden" name="plan" value="monthly" />
-                    <SubmitButton variant="outline" pendingText="Opening checkout…">
-                      {`Monthly · ${PRICING.monthly.price}`}
-                    </SubmitButton>
-                  </form>
-                </div>
-                <p className="mt-3 text-[13px] text-[#4B6358]">
-                  {`Yearly works out to ${PRICING.annual.perMonth} a month (${PRICING.annual.badge}). Secure checkout by Stripe.`}
-                </p>
+                <form action={startCheckout} className="mt-4">
+                  <input type="hidden" name="plan" value="monthly" />
+                  <SubmitButton pendingText="Opening checkout…">{`Subscribe · ${PRICING.monthly.price} a month`}</SubmitButton>
+                </form>
+                <p className="mt-3 text-[13px] text-[#4B6358]">Every feature included. Cancel any time. Secure checkout by Stripe.</p>
                 {subscription?.provider === "stripe" && subscription.provider_customer_id ? (
                   <form action={openBillingPortal} className="mt-3">
                     <button type="submit" className="inline-flex min-h-11 items-center text-sm font-semibold text-[#064E3B] underline underline-offset-2">

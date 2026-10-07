@@ -36,7 +36,7 @@ export function reminderEmail(kind: ReminderKind, name: string, trialEnd: Date):
   const who = escapeHtml(name.trim() || "there");
   const date = trialEnd.toLocaleDateString("en-US", { month: "long", day: "numeric", timeZone: "America/New_York" });
   const link = `${SITE_URL}/dashboard#billing`;
-  const prices = `${PRICING.monthly.price} a month or ${PRICING.annual.price} a year. Cancel any time.`;
+  const prices = `${PRICING.monthly.price} a month, every feature included. Cancel any time.`;
 
   const copy =
     kind === "two_days"

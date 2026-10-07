@@ -1,127 +1,65 @@
 // components/marketing/pricing.tsx
-"use client";
-
-// Monthly / yearly pricing cards. The selected plan is the emerald card.
+//
+// One simple plan: a monthly membership with every feature included.
 // Prices come from lib/site.ts so they can never drift from the rest of the site.
 
-import { useState } from "react";
-
 import { Cta } from "@/components/marketing/cta";
-import { PRICES, PRICING, TRIAL_DAYS } from "@/lib/site";
-
-const money = (value: number) => `$${value.toFixed(2)}`;
-
-type PlanKey = "monthly" | "annual";
+import { PRICING, TRIAL_DAYS } from "@/lib/site";
 
 const PLAN_FEATURES = [
-  "Every payment method, neatly organized",
-  "Your own PayTree link and QR code",
-  "Your own dashboard to manage your page anytime",
-  "Payment log: confirm payments, see daily and monthly totals, export to Excel",
-  "Invoices and Split the bill links",
+  "One payment page for Cash App, Venmo, Zelle, PayPal and more",
+  "Your own PayTree link and QR code, ready to share",
+  "Pay me here card and video for Stories, TikTok and Reels",
+  "Tip me mode for creators and musicians",
+  "Invoices for your customers",
+  "Split the bill with friends",
+  "Payment log: confirm payments, daily, monthly and yearly totals, export to Excel",
+  "Money: all your income in one place",
+  "My budget: your spending and monthly bills",
+  "Your money tree, to keep or share",
+  "Daily money email",
   "Private visitor statistics",
+  "Your own invite link to share PayTree",
   `${TRIAL_DAYS} days free, no card needed`,
   "Cancel any time",
-]
+];
 
 export function Pricing() {
-  const [plan, setPlan] = useState<PlanKey>("annual");
-
-  const keys: PlanKey[] = ["monthly", "annual"];
-
+  const info = PRICING.monthly;
   return (
-    <div className="flex w-full flex-col items-center gap-10">
-      <div
-        role="group"
-        aria-label="Billing cycle"
-        className="inline-flex gap-1 rounded-full border border-white/70 bg-white/60 p-[5px] backdrop-blur-xl"
-      >
-        {keys.map((key) => {
-          const selected = plan === key;
-          return (
-            <button
-              key={key}
-              type="button"
-              aria-pressed={selected}
-              onClick={() => setPlan(key)}
-              className={`min-h-11 min-w-[120px] rounded-full px-[22px] font-semibold transition-colors motion-reduce:transition-none ${
-                selected ? "bg-[#064E3B] text-[#FBFBFB]" : "bg-transparent text-[#064E3B]"
-              }`}
-            >
-              {key === "monthly" ? "Monthly" : "Yearly"}
-            </button>
-          );
-        })}
-      </div>
+    <div className="flex w-full justify-center">
+      <div className="relative flex w-full max-w-[640px] flex-col gap-5 rounded-[28px] border-2 border-[#C9A048] bg-white/80 p-8 shadow-[0_30px_70px_-30px_rgba(154,110,26,0.55)] backdrop-blur-xl">
+        <div className="flex items-center justify-between gap-3">
+          <span className="text-lg font-bold text-[#064E3B]">PayTree membership</span>
+          <span className="rounded-full bg-gradient-to-r from-[#C9A048] to-[#E2C27A] px-3.5 py-1.5 text-[13px] font-bold text-[#3D2A06] shadow-sm">
+            Everything included
+          </span>
+        </div>
 
-      <div className="flex w-full flex-wrap items-stretch gap-5">
-        {keys.map((key) => {
-          const info = PRICING[key];
-          const selected = plan === key;
-          const badge = "badge" in info ? info.badge : "";
-          const fullPrice = "fullPrice" in info ? info.fullPrice : "";
-          return (
-            <div
-              key={key}
-              className={`relative flex min-w-0 flex-[1_1_320px] flex-col gap-5 rounded-[28px] p-8 backdrop-blur-xl transition-shadow ${
-                selected
-                  ? "border-2 border-[#C9A048] bg-white/80 shadow-[0_30px_70px_-30px_rgba(154,110,26,0.55)]"
-                  : "border border-white/70 bg-white/50 shadow-[0_20px_50px_-36px_rgba(6,78,59,0.45)]"
-              }`}
-            >
-              <div className="flex items-center justify-between gap-3">
-                <span className="text-lg font-bold text-[#064E3B]">{info.name}</span>
-                {badge ? (
-                  <span className="rounded-full bg-gradient-to-r from-[#C9A048] to-[#E2C27A] px-3.5 py-1.5 text-[13px] font-bold text-[#3D2A06] shadow-sm">
-                    {badge}
-                  </span>
-                ) : null}
-              </div>
+        <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+          <span className="font-serif text-[64px] leading-none text-[#064E3B]">{info.price}</span>
+          <span className="font-medium text-[#1A3326]">{info.period}</span>
+        </div>
+        <p className="text-[17px] font-medium text-[#1A3326]">
+          Start with {TRIAL_DAYS} days free. One plan, every feature, no surprises.
+        </p>
 
-              <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                {fullPrice ? (
-                  <span className="font-serif text-[30px] leading-none text-[#4B6358]/70 line-through decoration-[#B42318]/60 decoration-2">
-                    {fullPrice}
-                  </span>
-                ) : null}
-                <span className="font-serif text-[64px] leading-none text-[#064E3B]">{info.price}</span>
-                <span className="font-medium text-[#1A3326]">{info.period}</span>
-              </div>
+        <div className="h-px bg-[#064E3B]/10" />
 
-              <p className="min-h-6 text-[17px] font-medium text-[#1A3326]">
-                {fullPrice ? (
-                  <>
-                    <strong className="text-[#9A6E1A]">You save {money(PRICES.monthly * 12 - PRICES.annual)} a year.</strong>{" "}
-                    {info.note}
-                  </>
-                ) : (
-                  info.note
-                )}
-              </p>
+        <ul className="grid gap-3 sm:grid-cols-2 sm:gap-x-6">
+          {PLAN_FEATURES.map((text) => (
+            <li key={text} className="flex items-start gap-3 text-[16px] font-medium text-[#0B1F18]">
+              <span className="mt-[2px] flex h-5 w-5 flex-none items-center justify-center rounded-full bg-[#E3F0EA]">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#064E3B" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M5 12.5l4.5 4.5L19 7.5" />
+                </svg>
+              </span>
+              <span>{text}</span>
+            </li>
+          ))}
+        </ul>
 
-              <div className="h-px bg-[#064E3B]/10" />
-
-              <ul className="flex flex-1 flex-col gap-3">
-                {[
-                  ...PLAN_FEATURES.slice(0, 6),
-                  "Your own invite link to share PayTree",
-                  ...PLAN_FEATURES.slice(6),
-                ].map((text) => (
-                  <li key={text} className="flex items-start gap-3 text-[17px] font-medium text-[#0B1F18]">
-                    <span className="mt-[2px] flex h-5 w-5 flex-none items-center justify-center rounded-full bg-[#E3F0EA]">
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#064E3B" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                        <path d="M5 12.5l4.5 4.5L19 7.5" />
-                      </svg>
-                    </span>
-                    <span>{text}</span>
-                  </li>
-                ))}
-              </ul>
-
-              <Cta variant={selected ? "emerald" : "outline"}>{info.cta}</Cta>
-            </div>
-          );
-        })}
+        <Cta variant="emerald">{info.cta}</Cta>
       </div>
     </div>
   );
