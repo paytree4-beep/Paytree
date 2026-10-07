@@ -68,8 +68,6 @@ export function MoneyBoard({
   const [entries, setEntries] = useState<BoardEntry[]>(initialEntries);
   // Entries being deleted right now: a refresh must not bring them back for a moment.
   const deleting = useRef<Set<string>>(new Set());
-  // Entries removed while their save was still running: deleted as soon as the save finishes.
-  const dropAfterSave = useRef<Set<string>>(new Set());
   // Whenever the page brings fresh numbers from the database, they win over our guesses.
   useEffect(() => {
     setEntries((prev) => [
@@ -144,10 +142,7 @@ export function MoneyBoard({
     } catch {
       result = { ok: false, error: "save" };
     }
-    if (result.ok && dropAfterSave.current.has(tempId)) {
-      dropAfterSave.current.delete(tempId);
-      await deleteMoveQuick(result.id).catch(() => false);
-    } else if (result.ok) {
+    if (result.ok) {
       setEntries((prev) => prev.filter((e) => e.id !== tempId));
       setEntries((prev) => [{ ...entry, id: result.id }, ...prev.filter((e) => e.id !== result.id)]);
     } else {
@@ -158,11 +153,7 @@ export function MoneyBoard({
   }
 
   async function onDelete(entry: BoardEntry) {
-    if (entry.id.startsWith("temp-")) {
-      dropAfterSave.current.add(entry.id);
-      setEntries((prev) => prev.filter((e) => e.id !== entry.id));
-      return;
-    }
+    if (entry.id.startsWith("temp-")) return;
     setEntries((prev) => prev.filter((e) => e.id !== entry.id));
     setUndo(entry);
     if (undoTimer.current) clearTimeout(undoTimer.current);

@@ -13,8 +13,15 @@ type Client = Awaited<ReturnType<typeof createClient>>;
 export async function loadMoneyEntries(supabase: Client, userId: string): Promise<MoneyEntry[]> {
   const entries: MoneyEntry[] = [];
 
-  // The two sources are independent, so they are read together.
-  const [{ data: invoices }, { data: splits }] = await Promise.all([
+  // The three sources are independent, so they are read together.
+  const [{ data: claims }, { data: invoices }, { data: splits }] = await Promise.all([
+    // 1. Old "I've paid" notes from the payment page that the owner marked Received.
+    supabase
+      .from("payment_claims")
+      .select("payer_name, amount_cents, method, note, received_at, created_at")
+      .eq("profile_id", userId)
+      .eq("status", "received")
+      .limit(5000),
     // 2. Invoices the owner confirmed.
     supabase
       .from("invoices")
@@ -25,6 +32,27 @@ export async function loadMoneyEntries(supabase: Client, userId: string): Promis
     // 3. Split bills (their confirmed shares are read next).
     supabase.from("bill_splits").select("id, title, total_cents, people").eq("owner_id", userId).limit(1000),
   ]);
+  for (const c of (claims ?? []) as {
+    payer_name: string;
+    amount_cents: number | null;
+    method: string | null;
+    note: string | null;
+    received_at: string | null;
+    created_at: string;
+  }[]) {
+    if (!c.amount_cents) continue;
+    entries.push({
+      source: "page",
+      at: c.received_at ?? c.created_at,
+      amountCents: c.amount_cents,
+      from: c.payer_name,
+      what: c.note ?? "Payment page",
+      method: c.method,
+      claimedAt: c.created_at,
+      href: "/dashboard/budget",
+    });
+  }
+
   for (const i of (invoices ?? []) as {
     id: string;
     claimed_at: string | null;
