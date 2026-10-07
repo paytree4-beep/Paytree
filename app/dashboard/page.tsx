@@ -16,7 +16,7 @@ import { ShareLink } from "@/components/dashboard/share-link";
 import { QrCard } from "@/app/[username]/qr-card";
 import { param, type SearchParams } from "@/lib/auth";
 import { avatarUrl } from "@/lib/avatar";
-import { PRICING, SITE_HOST, SITE_URL } from "@/lib/site";
+import { PRICES, PRICING, SITE_HOST, SITE_URL } from "@/lib/site";
 import { createClient } from "@/lib/supabase/server";
 import { deleteAccount, setPageMode, setPublished, updateProfile } from "./actions";
 import { ShareCardMaker } from "@/components/dashboard/share-card";
@@ -24,6 +24,7 @@ import { setPaymentLog } from "./log/actions";
 import { SaleCelebration } from "@/components/dashboard/sale-celebration";
 import { WelcomeCelebration } from "@/components/dashboard/welcome-celebration";
 import { OwnerCookie } from "@/components/dashboard/owner-cookie";
+import { GettingStarted } from "@/components/dashboard/getting-started";
 import { InstallCard } from "@/components/dashboard/install-card";
 import { InviteCard } from "@/components/dashboard/invite-card";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -292,7 +293,8 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
               <strong className="text-[#064E3B]">
                 {access.trialDaysLeft === 1 ? "1 day" : `${access.trialDaysLeft} days`} left in your free trial.
               </strong>{" "}
-              Subscribe before {trialEndDate} to keep your page live.
+              Subscribe before {trialEndDate} and your first month is only{" "}
+              <strong className="text-[#064E3B]">${PRICES.earlyFirstMonth.toFixed(2)}</strong> (then {PRICING.monthly.price}/month).
             </p>
             <Link
               href="/dashboard?view=billing"
@@ -316,6 +318,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
             </Link>
           </div>
         ) : null}
+            <GettingStarted methodCount={methodCount} />
             <InstallCard />
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
               {tiles.map((t) => (
@@ -387,9 +390,18 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
                 </p>
                 <form action={startCheckout} className="mt-4">
                   <input type="hidden" name="plan" value="monthly" />
-                  <SubmitButton pendingText="Opening checkout…">{`Subscribe · ${PRICING.monthly.price} a month`}</SubmitButton>
+                  <SubmitButton pendingText="Opening checkout…">
+                    {access.reason === "trial"
+                      ? `Subscribe · first month $${PRICES.earlyFirstMonth.toFixed(2)}`
+                      : `Subscribe · ${PRICING.monthly.price} a month`}
+                  </SubmitButton>
                 </form>
-                <p className="mt-3 text-[13px] text-[#4B6358]">Every feature included. Cancel any time. Secure checkout by Stripe.</p>
+                <p className="mt-3 text-[13px] text-[#4B6358]">
+                  {access.reason === "trial"
+                    ? `Subscribe during your free trial and your first month is $${PRICES.earlyFirstMonth.toFixed(2)}, then ${PRICING.monthly.price} a month. `
+                    : ""}
+                  Every feature included. Cancel any time. Secure checkout by Stripe. Pay with Apple Pay, Google Pay or card.
+                </p>
                 {subscription?.provider === "stripe" && subscription.provider_customer_id ? (
                   <form action={openBillingPortal} className="mt-3">
                     <button type="submit" className="inline-flex min-h-11 items-center text-sm font-semibold text-[#064E3B] underline underline-offset-2">

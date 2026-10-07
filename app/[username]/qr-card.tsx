@@ -11,6 +11,8 @@ import { useEffect, useRef, useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import { Check, Download, Share2 } from "lucide-react";
 
+import { markStep } from "@/lib/onboarding-steps";
+
 type QrCardProps = {
   /** Full public address, for example https://paytree.to/hartwell */
   url: string;
@@ -176,6 +178,7 @@ export function QrCard({ url, label, name }: QrCardProps) {
     try {
       if (typeof nav.share === "function" && nav.canShare?.({ files: [file] })) {
         await nav.share({ files: [file], title: name ? `Pay ${name}` : "PayTree", text });
+        markStep("qr");
         return;
       }
       if (typeof nav.share === "function") {
@@ -200,6 +203,7 @@ export function QrCard({ url, label, name }: QrCardProps) {
     if (typeof nav.share === "function" && nav.canShare?.({ files: [file] })) {
       try {
         await nav.share({ files: [file], title: name ? `Pay ${name}` : "PayTree" });
+        markStep("qr");
         flashSaved("Done! If you chose Save Image, it is in your Photos.");
         return;
       } catch (error) {
@@ -215,6 +219,7 @@ export function QrCard({ url, label, name }: QrCardProps) {
     document.body.appendChild(a);
     a.click();
     a.remove();
+    markStep("qr");
     flashSaved("Downloaded. If nothing appeared, press and hold the QR code and choose Save Image.");
     window.setTimeout(() => URL.revokeObjectURL(href), 60_000);
   }

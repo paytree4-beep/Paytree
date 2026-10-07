@@ -3,7 +3,7 @@
 // Friendly emails before the free trial ends: one 2 days before, one on the
 // last day. Pure helpers (timing and email content), so they can be tested.
 
-import { PRICING, SITE_URL, TRIAL_DAYS } from "./site";
+import { PRICES, PRICING, SITE_URL, TRIAL_DAYS } from "./site";
 
 export type ReminderKind = "two_days" | "last_day";
 
@@ -32,11 +32,33 @@ export interface ReminderEmail {
   text: string;
 }
 
-export function reminderEmail(kind: ReminderKind, name: string, trialEnd: Date): ReminderEmail {
+/** What the page did during the trial, to show in the reminder. */
+export interface TrialStats {
+  views: number;
+  taps: number;
+  confirmedCents: number;
+}
+
+const plural = (n: number, one: string, many: string) => `${n.toLocaleString("en-US")} ${n === 1 ? one : many}`;
+
+/** "Since you joined, your page got 26 visits and 9 taps…", or "" when nothing happened yet. */
+export function statsSentence(stats: TrialStats | null | undefined): string {
+  if (!stats) return "";
+  const parts: string[] = [];
+  if (stats.views > 0) parts.push(plural(stats.views, "visit", "visits"));
+  if (stats.taps > 0) parts.push(`${plural(stats.taps, "tap", "taps")} on your payment apps`);
+  const money = stats.confirmedCents > 0 ? ` and you confirmed $${(stats.confirmedCents / 100).toFixed(2)} in payments` : "";
+  if (parts.length === 0 && !money) return "";
+  return `Since you joined, ${parts.length ? `your page got ${parts.join(" and ")}` : "you used PayTree"}${money}.`;
+}
+
+export function reminderEmail(kind: ReminderKind, name: string, trialEnd: Date, stats?: TrialStats | null): ReminderEmail {
   const who = escapeHtml(name.trim() || "there");
   const date = trialEnd.toLocaleDateString("en-US", { month: "long", day: "numeric", timeZone: "America/New_York" });
-  const link = `${SITE_URL}/dashboard#billing`;
-  const prices = `${PRICING.monthly.price} a month, every feature included. Cancel any time.`;
+  const link = `${SITE_URL}/dashboard?view=billing`;
+  const early = `$${PRICES.earlyFirstMonth.toFixed(2)}`;
+  const prices = `Subscribe before your trial ends and your first month is ${early}, then ${PRICING.monthly.price} a month. Every feature included. Cancel any time.`;
+  const recap = statsSentence(stats);
 
   const copy =
     kind === "two_days"
@@ -58,16 +80,18 @@ export function reminderEmail(kind: ReminderKind, name: string, trialEnd: Date):
 <tr><td align="center" style="padding:0 0 20px 0;"><a href="${SITE_URL}" style="text-decoration:none;"><img src="${SITE_URL}/email-logo.png" width="170" height="43" alt="PayTree" style="display:block;border:0;width:170px;height:auto;font-family:Helvetica,Arial,sans-serif;font-size:24px;font-weight:bold;color:#064E3B;"></a></td></tr>
 <tr><td style="background-color:#FFFFFF;border:1px solid #E7DCC2;border-radius:24px;padding:36px 32px;font-family:Helvetica,Arial,sans-serif;color:#0B1F18;">
 <h1 style="margin:0 0 14px 0;font-family:Georgia,'Times New Roman',serif;font-weight:normal;font-size:30px;line-height:1.15;color:#064E3B;">${copy.title}</h1>
-<p style="margin:0 0 26px 0;font-size:16px;line-height:1.6;color:#3F574C;">${copy.body}</p>
+${recap ? `<p style="margin:0 0 14px 0;font-size:17px;line-height:1.6;color:#064E3B;font-weight:bold;">${escapeHtml(recap)}</p>` : ""}
+<p style="margin:0 0 14px 0;font-size:16px;line-height:1.6;color:#3F574C;">${copy.body}</p>
+<p style="margin:0 0 26px 0;font-size:15px;line-height:1.6;color:#3F574C;">If your page pauses, customers who open your link or scan your QR code will see a paused page.</p>
 <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%"><tr><td align="center" bgcolor="#064E3B" style="border-radius:999px;">
-<a href="${link}" style="display:block;padding:16px 24px;font-family:Helvetica,Arial,sans-serif;font-size:16px;font-weight:bold;color:#FFFFFF;text-decoration:none;border-radius:999px;">Keep my page live</a>
+<a href="${link}" style="display:block;padding:16px 24px;font-family:Helvetica,Arial,sans-serif;font-size:16px;font-weight:bold;color:#FFFFFF;text-decoration:none;border-radius:999px;">Keep my page live · ${early} first month</a>
 </td></tr></table>
 <p style="margin:24px 0 0 0;font-size:14px;line-height:1.6;color:#4B6358;">${prices}</p>
 </td></tr>
 <tr><td align="center" style="padding:22px 8px 0 8px;font-family:Helvetica,Arial,sans-serif;font-size:12px;line-height:1.6;color:#6B7F75;">You received this email because you started a PayTree free trial.<br>PayTree &middot; <a href="${SITE_URL}" style="color:#6B7F75;">paytree.to</a></td></tr>
 </table></td></tr></table></body></html>`;
 
-  const text = `${copy.title}\n\n${copy.body.replace(/&rsquo;/g, "'").replace(/&amp;/g, "&")}\n\nKeep my page live: ${link}\n\n${prices}`;
+  const text = `${copy.title}\n\n${recap ? `${recap}\n\n` : ""}${copy.body.replace(/&rsquo;/g, "'").replace(/&amp;/g, "&")}\n\nIf your page pauses, customers who open your link or scan your QR code will see a paused page.\n\nKeep my page live (${early} first month): ${link}\n\n${prices}`;
   return { subject: copy.subject, html, text };
 }
 

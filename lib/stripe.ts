@@ -10,18 +10,19 @@
 //   STRIPE_SECRET_KEY       sk_live_... (or sk_test_... while testing). SECRET.
 //   STRIPE_WEBHOOK_SECRET   whsec_... from the webhook endpoint. SECRET.
 //   STRIPE_PRICE_MONTHLY    price_... for $4.99 / month
-//   STRIPE_PRICE_ANNUAL     price_... for $39.99 / year
+//   STRIPE_PRICE_ANNUAL     optional, only for old yearly subscriptions
+//
+// The "first month $2.99" offer is a Stripe coupon PayTree creates by itself
+// the first time it is needed (no setup in Stripe).
 
 import { createHmac, timingSafeEqual } from "node:crypto";
+
+import { PRICES } from "./site";
 
 export type Plan = "monthly" | "annual";
 
 export function billingConfigured(): boolean {
-  return Boolean(
-    process.env.STRIPE_SECRET_KEY &&
-      process.env.STRIPE_PRICE_MONTHLY &&
-      process.env.STRIPE_PRICE_ANNUAL,
-  );
+  return Boolean(process.env.STRIPE_SECRET_KEY && process.env.STRIPE_PRICE_MONTHLY);
 }
 
 export function priceFor(plan: Plan): string | null {
@@ -74,15 +75,39 @@ export interface StripeSubscription {
   items?: { data?: { current_period_end?: number; price?: { id?: string } }[] };
 }
 
+const EARLY_COUPON_ID = "paytree_first_month_early";
+
+/** The "first month $2.99" coupon: created once, then reused. */
+async function earlyCoupon(): Promise<string> {
+  try {
+    await stripe("GET", `coupons/${EARLY_COUPON_ID}`);
+  } catch {
+    await stripe("POST", "coupons", {
+      id: EARLY_COUPON_ID,
+      amount_off: Math.round((PRICES.monthly - PRICES.earlyFirstMonth) * 100),
+      currency: "usd",
+      duration: "once",
+      name: `First month $${PRICES.earlyFirstMonth.toFixed(2)}`,
+    });
+  }
+  return EARLY_COUPON_ID;
+}
+
 export async function createCheckoutSession(opts: {
   plan: Plan;
   userId: string;
   email: string | undefined;
   customerId: string | null;
   origin: string;
+  /** Still in the free trial: the first month costs less. */
+  earlyOffer?: boolean;
 }): Promise<string> {
   const price = priceFor(opts.plan);
   if (!price) throw new Error("price_missing");
+  // Stripe allows either a fixed discount or promotion codes, not both.
+  const discount = opts.earlyOffer
+    ? { "discounts[0][coupon]": await earlyCoupon() }
+    : { allow_promotion_codes: true };
 
   const session = await stripe<{ url: string }>("POST", "checkout/sessions", {
     mode: "subscription",
@@ -91,7 +116,7 @@ export async function createCheckoutSession(opts: {
     client_reference_id: opts.userId,
     "metadata[user_id]": opts.userId,
     "subscription_data[metadata][user_id]": opts.userId,
-    allow_promotion_codes: true,
+    ...discount,
     ...(opts.customerId ? { customer: opts.customerId } : { customer_email: opts.email }),
     success_url: `${opts.origin}/dashboard?notice=subscribed`,
     cancel_url: `${opts.origin}/dashboard?notice=checkout-cancelled`,

@@ -7,6 +7,7 @@
 import { redirect } from "next/navigation";
 
 import { requestOrigin } from "@/lib/auth";
+import { accessFor } from "@/lib/billing";
 import { createCheckoutSession, createPortalSession, type Plan } from "@/lib/stripe";
 import { createClient } from "@/lib/supabase/server";
 
@@ -35,10 +36,12 @@ export async function startCheckout(formData: FormData): Promise<void> {
   void formData;
   const { userId, email, customerId } = await currentUser();
   const origin = await requestOrigin();
+  // Subscribing before the free trial ends: first month $2.99.
+  const earlyOffer = (await accessFor(userId)).reason === "trial";
 
   let url: string;
   try {
-    url = await createCheckoutSession({ plan, userId, email, customerId, origin });
+    url = await createCheckoutSession({ plan, userId, email, customerId, origin, earlyOffer });
   } catch {
     redirect("/dashboard?view=billing&error=billing");
   }

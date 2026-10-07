@@ -7,6 +7,8 @@
 
 import { useEffect, useRef, useState } from "react";
 
+import { markStep } from "@/lib/onboarding-steps";
+
 async function copyText(text: string): Promise<boolean> {
   try {
     if (navigator.clipboard && window.isSecureContext) {
@@ -57,6 +59,7 @@ export function ShareLink({ url, name }: { url: string; name: string }) {
   const onCopy = async () => {
     const ok = await copyText(url);
     if (ok) {
+      markStep("share");
       flash("copy");
       setStatus("Link copied. Paste it anywhere.");
     } else {
@@ -69,6 +72,7 @@ export function ShareLink({ url, name }: { url: string; name: string }) {
     if (typeof navigator.share === "function") {
       try {
         await navigator.share({ title: `Pay ${name}`, url });
+        markStep("share");
         flash("share");
         setStatus("");
         return;
