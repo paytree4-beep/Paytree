@@ -1,6 +1,8 @@
 // app/api/cron/daily-summary/route.ts
 //
-// Runs once a day at 12 noon New York time (Vercel Cron, see vercel.json).
+// Turned off for now: it is not in vercel.json, so it never runs. To turn it
+// back on, add { "path": "/api/cron/daily-summary", "schedule": "0 16 * * *" }
+// to the crons in vercel.json. When on, it runs once a day at 12 noon New York time.
 // Emails each owner what came in and went out yesterday, only on days with
 // activity, only if they kept the email on, and never twice for one day.
 

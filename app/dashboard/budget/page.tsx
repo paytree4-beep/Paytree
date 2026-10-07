@@ -17,7 +17,7 @@ import { param, type SearchParams } from "@/lib/auth";
 import { CATEGORIES, categoryOf, commitmentState, shiftMonth } from "@/lib/budget";
 import { formatMoney } from "@/lib/payment-log";
 import { createClient } from "@/lib/supabase/server";
-import { addCommitment, addMove, deleteCommitment, deleteMove, payCommitment, setDailySummary } from "./actions";
+import { addCommitment, addMove, deleteCommitment, deleteMove, payCommitment } from "./actions";
 import { loadBudget } from "./data";
 
 export const metadata: Metadata = { title: "Budget", robots: { index: false } };
@@ -351,30 +351,6 @@ export default async function BudgetPage({ searchParams }: { searchParams: Searc
             </form>
           </details>
         </section>
-
-        {/* Daily email */}
-        {b.dailySummary !== null ? (
-          <section id="daily" className="scroll-mt-20 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#DCE5DF] bg-white p-5">
-            <div className="min-w-0 flex-1">
-              <h2 className="font-bold text-[#064E3B]">📬 Daily money email</h2>
-              <p className="text-[14px] text-[#3F574C]">
-                Every day at 12 noon (New York time): what came in and what you spent the day before. Only on days with
-                money in or out.
-              </p>
-            </div>
-            <form action={setDailySummary}>
-              <input type="hidden" name="on" value={b.dailySummary ? "no" : "yes"} />
-              <button
-                type="submit"
-                className={`inline-flex min-h-11 items-center rounded-full px-5 text-[14px] font-bold ${
-                  b.dailySummary ? "bg-[#064E3B] text-white" : "border border-[#064E3B]/40 bg-white text-[#064E3B]"
-                }`}
-              >
-                {b.dailySummary ? "On ✓ · Turn off" : "Off · Turn on"}
-              </button>
-            </form>
-          </section>
-        ) : null}
 
         {/* This month's list */}
         {period !== "year" ? (

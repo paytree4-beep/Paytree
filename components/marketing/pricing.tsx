@@ -17,7 +17,6 @@ const PLAN_FEATURES = [
   "Money: all your income in one place",
   "My budget: your spending and monthly bills",
   "Your money tree, to keep or share",
-  "Daily money email",
   "Private visitor statistics",
   "Your own invite link to share PayTree",
   `${TRIAL_DAYS} days free, no card needed`,
