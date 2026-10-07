@@ -11,7 +11,8 @@ import { redirect } from "next/navigation";
 
 import { Logo } from "@/components/brand/logo";
 import { TimeZoneCookie } from "@/components/dashboard/time-zone-cookie";
-import { SOURCE_LABELS, sortEntries, summarizeMoney, type MoneySource } from "@/lib/money";
+import { param, type SearchParams } from "@/lib/auth";
+import { PERIOD_LABELS, SOURCE_LABELS, sortEntries, summarizeMoney, type MoneyPeriod, type MoneySource } from "@/lib/money";
 import { formatMoney, formatWhen, methodLabel, safeTimeZone } from "@/lib/payment-log";
 import { createClient } from "@/lib/supabase/server";
 import { loadMoneyEntries } from "./data";
@@ -25,7 +26,7 @@ const SOURCES: { id: MoneySource; icon: string; href: string }[] = [
   { id: "split", icon: "🍕", href: "/dashboard/split" },
 ];
 
-export default async function MoneyPage() {
+export default async function MoneyPage({ searchParams }: { searchParams: SearchParams }) {
   const supabase = await createClient();
   const {
     data: { user },
@@ -38,6 +39,15 @@ export default async function MoneyPage() {
   const summary = summarizeMoney(entries, new Date(), timeZone);
   const recent = sortEntries(entries).slice(0, 25);
   const best = Math.max(1, ...summary.months.map((m) => m.cents));
+  const PERIODS: MoneyPeriod[] = ["today", "month", "year", "all"];
+  const requested = param(await searchParams, "period");
+  const period: MoneyPeriod = PERIODS.find((p) => p === requested) ?? "month";
+  const periodTotal: Record<MoneyPeriod, number> = {
+    today: summary.today,
+    month: summary.thisMonth,
+    year: summary.thisYear,
+    all: summary.allTime,
+  };
 
   return (
     <div className="min-h-screen bg-[#FAF5EA] text-[#0B1F18]">
@@ -81,15 +91,33 @@ export default async function MoneyPage() {
         </section>
 
         <section className="rounded-2xl border border-[#DCE5DF] bg-white p-5">
-          <h2 className="text-sm font-bold uppercase tracking-[0.1em] text-[#4B6358]">This month, by source</h2>
-          <ul className="mt-3 flex flex-col gap-2">
+          <h2 className="text-sm font-bold uppercase tracking-[0.1em] text-[#4B6358]">By source</h2>
+          <nav className="mt-3 flex flex-wrap gap-2" aria-label="Period">
+            {PERIODS.map((p) => (
+              <Link
+                key={p}
+                href={`/dashboard/money?period=${p}`}
+                scroll={false}
+                aria-current={p === period ? "page" : undefined}
+                className={`inline-flex min-h-10 items-center rounded-full px-4 text-[14px] font-bold ${
+                  p === period ? "bg-[#064E3B] text-white" : "border border-[#DCE5DF] bg-white text-[#064E3B]"
+                }`}
+              >
+                {PERIOD_LABELS[p]}
+              </Link>
+            ))}
+          </nav>
+          <p className="mt-3 text-[14px] text-[#3F574C]">
+            {PERIOD_LABELS[period]}: <strong className="text-[#064E3B]">{formatMoney(periodTotal[period])}</strong>
+          </p>
+          <ul className="mt-2 flex flex-col gap-2">
             {SOURCES.map((s) => (
               <li key={s.id}>
                 <Link href={s.href} className="flex min-h-12 items-center justify-between rounded-xl border border-[#EEF3F0] px-4 hover:bg-[#F7FAF8]">
                   <span className="font-semibold">
                     {s.icon} {SOURCE_LABELS[s.id]}
                   </span>
-                  <span className="font-bold text-[#064E3B]">{formatMoney(summary.bySource[s.id])} ›</span>
+                  <span className="font-bold text-[#064E3B]">{formatMoney(summary.bySourceIn[period][s.id])} ›</span>
                 </Link>
               </li>
             ))}

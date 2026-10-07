@@ -26,6 +26,15 @@ export const SOURCE_LABELS: Record<MoneySource, string> = {
   split: "Split the bill",
 };
 
+export type MoneyPeriod = "today" | "month" | "year" | "all";
+
+export const PERIOD_LABELS: Record<MoneyPeriod, string> = {
+  today: "Today",
+  month: "This month",
+  year: "This year",
+  all: "All time",
+};
+
 export interface MoneySummary {
   today: number;
   thisMonth: number;
@@ -34,6 +43,8 @@ export interface MoneySummary {
   count: number;
   /** This month, per source. */
   bySource: Record<MoneySource, number>;
+  /** Per source, for each period. */
+  bySourceIn: Record<MoneyPeriod, Record<MoneySource, number>>;
   /** The last 6 months, oldest first: { month: "2026-10", label: "Oct", cents }. */
   months: { month: string; label: string; cents: number }[];
 }
@@ -65,17 +76,31 @@ export function summarizeMoney(entries: MoneyEntry[], now: Date, timeZone: strin
     allTime: 0,
     count: 0,
     bySource: { page: 0, invoice: 0, split: 0 },
+    bySourceIn: {
+      today: { page: 0, invoice: 0, split: 0 },
+      month: { page: 0, invoice: 0, split: 0 },
+      year: { page: 0, invoice: 0, split: 0 },
+      all: { page: 0, invoice: 0, split: 0 },
+    },
     months: [],
   };
   for (const e of entries) {
     const day = dayKey(new Date(e.at), timeZone);
     summary.allTime += e.amountCents;
     summary.count += 1;
-    if (day === today) summary.today += e.amountCents;
-    if (day.slice(0, 4) === year) summary.thisYear += e.amountCents;
+    summary.bySourceIn.all[e.source] += e.amountCents;
+    if (day === today) {
+      summary.today += e.amountCents;
+      summary.bySourceIn.today[e.source] += e.amountCents;
+    }
+    if (day.slice(0, 4) === year) {
+      summary.thisYear += e.amountCents;
+      summary.bySourceIn.year[e.source] += e.amountCents;
+    }
     if (day.slice(0, 7) === month) {
       summary.thisMonth += e.amountCents;
       summary.bySource[e.source] += e.amountCents;
+      summary.bySourceIn.month[e.source] += e.amountCents;
     }
     const key = day.slice(0, 7);
     if (perMonth.has(key)) perMonth.set(key, (perMonth.get(key) ?? 0) + e.amountCents);
