@@ -49,6 +49,19 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(login);
   }
 
+  // Already signed in: skip the log-in and sign-up pages and go straight to
+  // the dashboard here, before any page starts loading. Redirecting inside
+  // those pages instead caused a loading screen, a white flash and a reload.
+  if (user && (path === "/login" || path === "/signup")) {
+    const next = request.nextUrl.searchParams.get("next") ?? "";
+    const target = request.nextUrl.clone();
+    target.search = "";
+    target.pathname = path === "/login" && next.startsWith("/") && !next.startsWith("//") ? next : "/dashboard";
+    const redirect = NextResponse.redirect(target);
+    response.cookies.getAll().forEach((cookie) => redirect.cookies.set(cookie));
+    return redirect;
+  }
+
   return response;
 }
 
