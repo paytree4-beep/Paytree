@@ -60,8 +60,8 @@ const METHODS = [
 const FEATURES: { title: string; body: string; Icon: LucideIcon; tint: string }[] = [
   { title: "Split the bill", body: "Dinner or a trip: everyone sees their share and pays you.", Icon: Pizza, tint: "#E5484D" },
   { title: "Invoices", body: "Send a customer a bill. They pay with their app, you confirm it.", Icon: ReceiptText, tint: "#C9A048" },
-  { title: "Pay me here", body: "A ready card for Stories, plus a video with music for TikTok and Reels.", Icon: Clapperboard, tint: "#3FA34D" },
-  { title: "Tip me", body: "Creators and musicians: turn your page into a tip jar.", Icon: HandCoins, tint: "#E8AE1C" },
+  { title: "Pay me here card", body: "A ready card for Stories, plus a video with music for TikTok and Reels.", Icon: Clapperboard, tint: "#3FA34D" },
+  { title: "Tip me card", body: "Creators and musicians: turn your page into a tip jar and share a ready Tip me card.", Icon: HandCoins, tint: "#E8AE1C" },
   { title: "One link + QR", body: "Cash App, Venmo, Zelle and more in one link, plus a QR for your counter.", Icon: QrCode, tint: "#064E3B" },
   { title: "My money", body: "See what came in and what you spent, by day, month and year. Download it to Excel.", Icon: ClipboardCheck, tint: "#6D1ED4" },
   { title: "Private stats", body: "Visits and taps. No cookies, no tracking.", Icon: BarChart3, tint: "#7BC86C" },

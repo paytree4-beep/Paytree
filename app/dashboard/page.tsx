@@ -463,6 +463,22 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
         </section>
           </>
         ) : null}
+        {(view === "share" || view === "settings") && modeReady ? (
+          <section className="rounded-2xl border border-[#DCE5DF] bg-white p-5 sm:p-6">
+            <h2 className="text-sm font-bold uppercase tracking-[0.1em] text-[#4B6358]">Tip me</h2>
+            <p className="mt-2 text-[15px] text-[#4B6358]">
+              {tipMode
+                ? "On. Your page says \u201cSend me a tip\u201d. Great for creators, musicians and streamers."
+                : "Are you a creator, musician or streamer? Turn this on and your page says \u201cSend me a tip\u201d. Then share your page with the Tip me card below."}
+            </p>
+            <form action={setPageMode} className="mt-4 sm:max-w-[260px]">
+              <input type="hidden" name="mode" value={tipMode ? "pay" : "tip"} />
+              <SubmitButton variant={tipMode ? "outline" : "emerald"} pendingText="Saving…">
+                {tipMode ? "Turn off Tip me" : "Turn on Tip me"}
+              </SubmitButton>
+            </form>
+          </section>
+        ) : null}
         {view === "share" ? (
           <ShareCardMaker
             name={profile.display_name}
@@ -473,22 +489,6 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
           />
         ) : null}
 
-        {view === "settings" && modeReady ? (
-          <section className="rounded-2xl border border-[#DCE5DF] bg-white p-5 sm:p-6">
-            <h2 className="text-sm font-bold uppercase tracking-[0.1em] text-[#4B6358]">Tip me</h2>
-            <p className="mt-2 text-[15px] text-[#4B6358]">
-              {tipMode
-                ? "On. Your page says \u201cSend me a tip\u201d. Great for creators, musicians and streamers."
-                : "For creators, musicians and streamers: your page says \u201cSend me a tip\u201d instead of a payment page."}
-            </p>
-            <form action={setPageMode} className="mt-4 sm:max-w-[260px]">
-              <input type="hidden" name="mode" value={tipMode ? "pay" : "tip"} />
-              <SubmitButton variant={tipMode ? "outline" : "emerald"} pendingText="Saving…">
-                {tipMode ? "Turn off Tip me" : "Turn on Tip me"}
-              </SubmitButton>
-            </form>
-          </section>
-        ) : null}
       </main>
     </div>
   );

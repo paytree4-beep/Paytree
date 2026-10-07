@@ -156,5 +156,5 @@ export async function continueWithGoogle(formData?: FormData): Promise<void> {
 export async function logOut(): Promise<void> {
   const supabase = await createClient();
   await supabase.auth.signOut();
-  redirect("/login?notice=loggedout");
+  redirect("/");
 }
