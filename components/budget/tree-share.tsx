@@ -28,7 +28,7 @@ async function makePicture(svg: SVGSVGElement, month: string, label: string, onT
   const copy = svg.cloneNode(true) as SVGSVGElement;
   copy.querySelectorAll("style").forEach((s) => s.remove());
   copy.setAttribute("width", "700");
-  copy.setAttribute("height", "834");
+  copy.setAttribute("height", "846");
   const xml = new XMLSerializer().serializeToString(copy);
   const [tree, logo] = await Promise.all([
     loadImage(`data:image/svg+xml;charset=utf-8,${encodeURIComponent(xml)}`),
@@ -61,7 +61,7 @@ async function makePicture(svg: SVGSVGElement, month: string, label: string, onT
   ctx.font = `800 76px ${font}`;
   ctx.fillText(label, W / 2, 186);
 
-  ctx.drawImage(tree, (W - 700) / 2, 214, 700, 834);
+  ctx.drawImage(tree, (W - 700) / 2, 212, 700, 846);
 
   ctx.fillStyle = "#1A3326";
   ctx.font = `700 40px ${font}`;

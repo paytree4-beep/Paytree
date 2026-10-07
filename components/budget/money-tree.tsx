@@ -116,7 +116,7 @@ export function MoneyTree({
   return (
     <svg
       id={id}
-      viewBox="-30 -24 460 548"
+      viewBox="-44 -66 488 590"
       width="100%"
       role="img"
       aria-label={`Money tree: ${apples.length} apples on the tree, ${fallen.length} on the grass`}

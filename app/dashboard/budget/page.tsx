@@ -58,7 +58,6 @@ export default async function BudgetPage({ searchParams }: { searchParams: Searc
   const error = param(params, "error");
   const notice = param(params, "notice");
   const s = b.summary;
-  const biggest = Math.max(1, ...s.byCategory.map((c) => c.cents));
   const commitmentsTotal = b.commitments.reduce((sum, c) => sum + c.amount_cents, 0);
   const commitmentsLeft = b.commitments.filter((c) => !b.paidIds.has(c.id)).reduce((sum, c) => sum + c.amount_cents, 0);
 
@@ -185,9 +184,9 @@ export default async function BudgetPage({ searchParams }: { searchParams: Searc
         {s.byCategory.length > 0 ? (
           <section className="rounded-2xl border border-[#DCE5DF] bg-white p-5">
             <h2 className="text-sm font-bold uppercase tracking-[0.1em] text-[#4B6358]">Where it went this month</h2>
-            <ul className="mt-3 flex flex-col gap-2.5">
+            <ul className="mt-3 divide-y divide-[#EEF3F0]">
               {s.byCategory.map((c) => (
-                <li key={c.id}>
+                <li key={c.id} className="py-2.5">
                   <div className="flex justify-between text-[14px] font-semibold">
                     <span>
                       {c.icon} {c.label}
@@ -196,9 +195,6 @@ export default async function BudgetPage({ searchParams }: { searchParams: Searc
                       {formatMoney(c.cents)}{" "}
                       <span className="font-medium text-[#6B7F75]">· {Math.round((c.cents / Math.max(1, s.spent)) * 100)}%</span>
                     </span>
-                  </div>
-                  <div className="mt-1 h-2.5 rounded-full bg-[#EEF3F0]">
-                    <div className="h-2.5 rounded-full bg-[#E5484D]" style={{ width: `${Math.max(3, Math.round((c.cents / biggest) * 100))}%` }} />
                   </div>
                 </li>
               ))}
