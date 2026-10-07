@@ -3,7 +3,7 @@
 // Invoices: a bill for one customer ("Haircut for Sara, $60, due Friday").
 // Helpers that need no database, so they can be tested.
 
-import { parseAmount } from "./payment-log";
+import { csvCell, dayKey, methodLabel, parseAmount } from "./payment-log";
 import { parseEventDate } from "./splits";
 
 export interface InvoiceInput {
@@ -46,3 +46,74 @@ export function invoiceStatus(row: { claimed_at: string | null; confirmed_at: st
 export function isOverdue(dueDate: string | null, status: InvoiceStatus, today: string): boolean {
   return !!dueDate && status !== "paid" && dueDate < today;
 }
+
+export interface InvoiceRow {
+  id: string;
+  customer: string;
+  title: string;
+  amount_cents: number;
+  due_date: string | null;
+  note?: string | null;
+  claimed_at: string | null;
+  claimed_method: string | null;
+  confirmed_at: string | null;
+  created_at: string;
+}
+
+export interface InvoiceTotals {
+  receivedThisMonth: number;
+  receivedAll: number;
+  waiting: number;
+  unpaid: number;
+  paidCount: number;
+}
+
+/** Money from invoices: received (by the day the owner confirmed), waiting and unpaid. */
+export function summarizeInvoices(rows: InvoiceRow[], now: Date, timeZone: string): InvoiceTotals {
+  const month = dayKey(now, timeZone).slice(0, 7);
+  const totals: InvoiceTotals = { receivedThisMonth: 0, receivedAll: 0, waiting: 0, unpaid: 0, paidCount: 0 };
+  for (const row of rows) {
+    const status = invoiceStatus(row);
+    if (status === "paid") {
+      totals.receivedAll += row.amount_cents;
+      totals.paidCount += 1;
+      if (row.confirmed_at && dayKey(new Date(row.confirmed_at), timeZone).slice(0, 7) === month) {
+        totals.receivedThisMonth += row.amount_cents;
+      }
+    } else if (status === "waiting") {
+      totals.waiting += row.amount_cents;
+    } else {
+      totals.unpaid += row.amount_cents;
+    }
+  }
+  return totals;
+}
+
+const STATUS_TEXT: Record<InvoiceStatus, string> = { unpaid: "Not paid", waiting: "Says paid", paid: "Paid" };
+
+/** A CSV of invoices that opens cleanly in Excel and Google Sheets. */
+export function invoicesToCsv(rows: InvoiceRow[], timeZone: string): string {
+  const day = (iso: string | null) => (iso ? dayKey(new Date(iso), timeZone) : "");
+  const header = ["Created", "Customer", "For", "Amount (USD)", "Due", "Status", "Paid with", "Marked paid", "Confirmed", "Note"];
+  const lines = [header.map(csvCell).join(",")];
+  for (const row of rows) {
+    lines.push(
+      [
+        day(row.created_at),
+        row.customer,
+        row.title,
+        (row.amount_cents / 100).toFixed(2),
+        row.due_date ?? "",
+        STATUS_TEXT[invoiceStatus(row)],
+        row.claimed_method ? methodLabel(row.claimed_method) : "",
+        day(row.claimed_at),
+        day(row.confirmed_at),
+        row.note ?? "",
+      ]
+        .map(csvCell)
+        .join(","),
+    );
+  }
+  return `\uFEFF${lines.join("\r\n")}\r\n`;
+}
+

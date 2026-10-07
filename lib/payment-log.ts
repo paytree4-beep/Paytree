@@ -185,7 +185,7 @@ export function formatWhen(iso: string, timeZone: string): string {
   }).format(new Date(iso));
 }
 
-function csvCell(value: string): string {
+export function csvCell(value: string): string {
   // Stop spreadsheet formulas from running (CSV injection), then quote.
   const safe = /^[=+\-@\t\r]/.test(value) ? `'${value}` : value;
   return `"${safe.replace(/"/g, '""')}"`;

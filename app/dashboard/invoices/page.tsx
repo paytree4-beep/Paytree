@@ -5,6 +5,7 @@
 // "I've paid". You confirm when the money arrives.
 
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -12,9 +13,10 @@ import { Notice } from "@/components/auth/fields";
 import { SubmitButton } from "@/components/auth/submit-button";
 import { Logo } from "@/components/brand/logo";
 import { ShareLink } from "@/components/dashboard/share-link";
+import { TimeZoneCookie } from "@/components/dashboard/time-zone-cookie";
 import { param, type SearchParams } from "@/lib/auth";
-import { invoiceStatus, isOverdue } from "@/lib/invoices";
-import { formatMoney, methodLabel } from "@/lib/payment-log";
+import { invoiceStatus, isOverdue, summarizeInvoices, type InvoiceRow } from "@/lib/invoices";
+import { formatMoney, formatWhen, methodLabel, safeTimeZone } from "@/lib/payment-log";
 import { SITE_URL } from "@/lib/site";
 import { formatEventDate } from "@/lib/splits";
 import { createClient } from "@/lib/supabase/server";
@@ -28,19 +30,9 @@ const ERRORS: Record<string, string> = {
   title: "Say what the invoice is for, for example Haircut.",
   amount: "Enter an amount of at least $1.00, for example 60 or 45.50.",
   save: "We could not create the invoice. Please try again.",
+  export: "We could not prepare the download. Please try again.",
 };
 
-type InvoiceRow = {
-  id: string;
-  customer: string;
-  title: string;
-  amount_cents: number;
-  due_date: string | null;
-  claimed_at: string | null;
-  claimed_method: string | null;
-  confirmed_at: string | null;
-  created_at: string;
-};
 
 const input =
   "min-h-[52px] w-full rounded-xl border border-[#C9D6CE] bg-white px-4 text-base text-[#0B1F18] outline-none focus:border-[#064E3B]";
@@ -58,20 +50,24 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Sea
 
   const { data, error: loadError } = await supabase
     .from("invoices")
-    .select("id, customer, title, amount_cents, due_date, claimed_at, claimed_method, confirmed_at, created_at")
+    .select("id, customer, title, amount_cents, due_date, note, claimed_at, claimed_method, confirmed_at, created_at")
     .eq("owner_id", user.id)
     .order("created_at", { ascending: false })
-    .limit(50);
+    .limit(200);
   const invoices = (data ?? []) as InvoiceRow[];
 
   const params = await searchParams;
   const error = param(params, "error");
   const created = invoices.find((i) => i.id === param(params, "created"));
   const today = new Date().toISOString().slice(0, 10);
-  const unpaidTotal = invoices.filter((i) => !i.confirmed_at).reduce((sum, i) => sum + i.amount_cents, 0);
+  const tzCookie = (await cookies()).get("pt_tz")?.value ?? null;
+  const timeZone = safeTimeZone(tzCookie);
+  const totals = summarizeInvoices(invoices, new Date(), timeZone);
+  const when = (iso: string) => formatWhen(iso, timeZone);
 
   return (
     <div className="min-h-screen bg-[#FAF5EA] text-[#0B1F18]">
+      <TimeZoneCookie current={tzCookie} />
       <header className="sticky top-0 z-40 border-b border-white/80 bg-[#FAF5EA]/85 px-4 py-2.5 backdrop-blur-xl">
         <div className="mx-auto flex max-w-[880px] items-center justify-between gap-4">
           <Logo size={30} tone="dark" />
@@ -96,6 +92,25 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Sea
         {loadError ? <Notice tone="error">Invoices are being set up. Please try again in a few minutes.</Notice> : null}
         {error && ERRORS[error] ? <Notice tone="error">{ERRORS[error]}</Notice> : null}
 
+        {invoices.length > 0 ? (
+          <section className="grid grid-cols-3 gap-2 sm:gap-3">
+            {[
+              { label: "Received this month", value: totals.receivedThisMonth, tone: "text-[#16A34A]" },
+              { label: "Waiting to confirm", value: totals.waiting, tone: "text-[#7A5A12]" },
+              { label: "Not paid yet", value: totals.unpaid, tone: "text-[#B42318]" },
+            ].map((t) => (
+              <div key={t.label} className="rounded-2xl border border-[#DCE5DF] bg-white p-3 sm:p-4">
+                <p className="text-[11px] font-bold uppercase leading-tight tracking-[0.06em] text-[#4B6358] sm:text-[12px]">{t.label}</p>
+                <p className={`mt-1 font-serif text-[22px] leading-none sm:text-[28px] ${t.tone}`}>{formatMoney(t.value)}</p>
+              </div>
+            ))}
+            <p className="col-span-3 text-[13px] text-[#4B6358]">
+              All time: {formatMoney(totals.receivedAll)} received from {totals.paidCount} paid{" "}
+              {totals.paidCount === 1 ? "invoice" : "invoices"}.
+            </p>
+          </section>
+        ) : null}
+
         {created ? (
           <section className="rounded-2xl border-2 border-[#C9A048] bg-white p-5">
             <p className="text-[13px] font-bold uppercase tracking-[0.1em] text-[#7A5A12]">Your invoice is ready</p>
@@ -114,10 +129,21 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Sea
         ) : null}
 
         <section className="rounded-2xl border border-[#DCE5DF] bg-white p-5">
-          <div className="flex items-baseline justify-between gap-3">
+          <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 className="text-sm font-bold uppercase tracking-[0.1em] text-[#4B6358]">Your invoices</h2>
-            {unpaidTotal > 0 ? (
-              <p className="text-[14px] font-semibold text-[#7A5A12]">{formatMoney(unpaidTotal)} not paid yet</p>
+            {invoices.length > 0 ? (
+              // A file download, not a page: a plain link is right here.
+              // eslint-disable-next-line @next/next/no-html-link-for-pages
+              <a
+                href="/dashboard/invoices/export"
+                download
+                className="inline-flex min-h-10 items-center gap-2 rounded-full border border-[#064E3B]/40 px-4 text-[13px] font-bold text-[#064E3B]"
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M12 3v12 M7 10l5 5 5-5 M5 21h14" />
+                </svg>
+                Download for Excel
+              </a>
             ) : null}
           </div>
           {invoices.length === 0 ? (
@@ -171,6 +197,51 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Sea
                         </form>
                       </div>
                     </div>
+                    <details className="group rounded-xl bg-[#F7FAF8] px-3 py-1.5">
+                      <summary className="flex min-h-9 cursor-pointer list-none items-center gap-1 text-[13px] font-bold text-[#064E3B] [&::-webkit-details-marker]:hidden">
+                        <span className="transition-transform group-open:rotate-90">›</span> Details
+                      </summary>
+                      <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 pb-2 text-[13px]">
+                        <dt className="text-[#4B6358]">Invoice for</dt>
+                        <dd className="font-semibold">{inv.title}</dd>
+                        <dt className="text-[#4B6358]">Amount</dt>
+                        <dd className="font-semibold">{formatMoney(inv.amount_cents)}</dd>
+                        <dt className="text-[#4B6358]">Created</dt>
+                        <dd>{when(inv.created_at)}</dd>
+                        {inv.due_date ? (
+                          <>
+                            <dt className="text-[#4B6358]">Due</dt>
+                            <dd>{formatEventDate(inv.due_date)}</dd>
+                          </>
+                        ) : null}
+                        {inv.claimed_at ? (
+                          <>
+                            <dt className="text-[#4B6358]">Marked paid</dt>
+                            <dd>
+                              {when(inv.claimed_at)}
+                              {inv.claimed_method ? ` · ${methodLabel(inv.claimed_method)}` : ""}
+                            </dd>
+                          </>
+                        ) : null}
+                        {inv.confirmed_at ? (
+                          <>
+                            <dt className="text-[#4B6358]">Confirmed</dt>
+                            <dd className="font-semibold text-[#16A34A]">{when(inv.confirmed_at)}</dd>
+                          </>
+                        ) : null}
+                        {inv.note ? (
+                          <>
+                            <dt className="text-[#4B6358]">Note</dt>
+                            <dd>{inv.note}</dd>
+                          </>
+                        ) : null}
+                      </dl>
+                      {status !== "paid" ? (
+                        <div className="pb-2">
+                          <ShareLink url={`${SITE_URL}/invoice/${inv.id}`} name={name} />
+                        </div>
+                      ) : null}
+                    </details>
                     {status === "waiting" ? (
                       <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-[#E2C27A] bg-[#FBF6EA] p-3">
                         <p className="text-[13px] font-semibold text-[#7A5A12]">
