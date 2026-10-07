@@ -20,13 +20,10 @@ import { PRICING, SITE_HOST, SITE_URL } from "@/lib/site";
 import { createClient } from "@/lib/supabase/server";
 import { deleteAccount, setPageMode, setPublished, updateProfile } from "./actions";
 import { ShareCardMaker } from "@/components/dashboard/share-card";
-import { setPaymentLog } from "./log/actions";
-import { SaleCelebration } from "@/components/dashboard/sale-celebration";
 import { WelcomeCelebration } from "@/components/dashboard/welcome-celebration";
 import { OwnerCookie } from "@/components/dashboard/owner-cookie";
 import { GettingStarted } from "@/components/dashboard/getting-started";
 import { InstallCard } from "@/components/dashboard/install-card";
-import { cookies } from "next/headers";
 import { openBillingPortal, startCheckout } from "./billing-actions";
 import { computeAccess, grantsAccess, type SubscriptionRow } from "@/lib/billing";
 import { billingConfigured } from "@/lib/stripe";
@@ -42,10 +39,8 @@ const NOTICES: Record<string, string> = {
   password: "Your new password is saved.",
   subscribed: "Thank you! Your membership is active and your page is live. It can take a few seconds to update.",
   "checkout-cancelled": "Checkout was cancelled. You have not been charged.",
-  "log-on": "The payment log is on. Customers now see an \u201cI\u2019ve paid\u201d button on your page.",
   "tip-on": "Tip me is on. Your page now says \u201cSend me a tip\u201d.",
   "tip-off": "Your page is back to a regular payment page.",
-  "log-off": "The payment log is off. The \u201cI\u2019ve paid\u201d button is hidden. Your history is kept.",
 };
 
 const ERRORS: Record<string, string> = {
@@ -56,7 +51,6 @@ const ERRORS: Record<string, string> = {
   "delete-billing": "We could not cancel your subscription, so your account was not deleted. Please try again.",
   billing: "We could not open checkout. Please try again in a moment.",
   portal: "We could not open billing settings. Please try again in a moment.",
-  log: "We could not change the payment log setting. Please try again.",
 };
 
 type ProfileRow = {
@@ -106,23 +100,6 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
   const views7 = typeof weekViews === "number" ? weekViews : 0;
   const taps7 = Math.max(0, (typeof weekAll === "number" ? weekAll : 0) - views7);
 
-  // Payment log (optional). Read on its own so it never breaks the dashboard.
-  const { data: logData, error: logError } = await supabase
-    .from("profiles")
-    .select("payment_log_enabled")
-    .eq("id", user.id)
-    .maybeSingle();
-  const logReady = !logError;
-  const logEnabled = (logData as { payment_log_enabled?: boolean } | null)?.payment_log_enabled === true;
-  const { count: pendingCount } = logReady
-    ? await supabase
-        .from("payment_claims")
-        .select("id", { count: "exact", head: true })
-        .eq("profile_id", user.id)
-        .eq("status", "pending")
-    : { count: 0 };
-  const waiting = typeof pendingCount === "number" ? pendingCount : 0;
-
   // Invoices a customer marked as paid, waiting for the owner to confirm.
   const { count: invoiceWaitingCount } = await supabase
     .from("invoices")
@@ -131,23 +108,6 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
     .not("claimed_at", "is", null)
     .is("confirmed_at", null);
   const invoicesWaiting = typeof invoiceWaitingCount === "number" ? invoiceWaitingCount : 0;
-
-  // Celebrate new "I've paid" notes once: compare the newest one with the
-  // newest the owner has already seen (cookie set by SaleCelebration).
-  const { data: newestRow } = logReady
-    ? await supabase
-        .from("payment_claims")
-        .select("created_at")
-        .eq("profile_id", user.id)
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle()
-    : { data: null };
-  const newestSale = (newestRow as { created_at?: string } | null)?.created_at ?? null;
-  const seenRaw = (await cookies()).get("pt_seen_sale")?.value;
-  const seenSale = seenRaw ? decodeURIComponent(seenRaw) : null;
-  const celebrate =
-    newestSale !== null && (seenSale === null || new Date(newestSale).getTime() > new Date(seenSale).getTime());
 
   // Tip me mode. Read on its own so a missing column never breaks the page.
   const { data: modeRow, error: modeError } = await supabase
@@ -182,14 +142,13 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
   const notice = param(params, "notice");
   const error = param(params, "error");
   const pagePath = `/${profile.username}`;
-  const VIEWS = ["home", "link", "log", "profile", "settings", "billing", "share"] as const;
+  const VIEWS = ["home", "link", "profile", "settings", "billing", "share"] as const;
   const requestedView = param(params, "view");
   const view = VIEWS.find((v) => v === requestedView) ?? "home";
 
   const tiles: { icon: string; title: string; detail: string; href: string; badge?: string }[] = [
     { icon: "🔗", title: "Your link & QR", detail: `${SITE_HOST}/${profile.username}`, href: "/dashboard?view=link" },
-    { icon: "💰", title: "Money", detail: "All your income in one place", href: "/dashboard/money" },
-    { icon: "📒", title: "My budget", detail: "Spending and monthly bills", href: "/dashboard/budget" },
+    { icon: "💰", title: "Money", detail: "What came in and what you spent", href: "/dashboard/budget" },
     { icon: "🌳", title: "Money tree", detail: "Your month as an apple tree", href: "/dashboard/tree" },
     {
       icon: "💳",
@@ -208,17 +167,6 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
     },
     { icon: "📸", title: tipMode ? "Tip me card" : "Pay me here card", detail: "For Instagram & TikTok", href: "/dashboard?view=share" },
     { icon: "📊", title: "Statistics", detail: `${views7} views · ${taps7} taps this week`, href: "/dashboard/stats" },
-    ...(logReady
-      ? [
-          {
-            icon: "🧾",
-            title: "Payment log",
-            detail: logEnabled ? (waiting > 0 ? `${waiting} waiting` : "On") : "Off · optional",
-            href: "/dashboard?view=log",
-            badge: waiting > 0 ? String(waiting) : undefined,
-          },
-        ]
-      : []),
     { icon: "👤", title: "Profile", detail: "Photo, name and bio", href: "/dashboard?view=profile" },
     ...(billingOn
       ? [{ icon: "⭐", title: "Membership", detail: isMember ? "Active" : access.reason === "trial" ? `${access.trialDaysLeft} days left` : "Paused", href: "/dashboard?view=billing" }]
@@ -228,7 +176,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
 
   return (
     <div className="min-h-screen bg-[#FAF5EA] text-[#0B1F18]">
-      {notice === "welcome" ? <WelcomeCelebration /> : celebrate && newestSale ? <SaleCelebration latest={newestSale} /> : null}
+      {notice === "welcome" ? <WelcomeCelebration /> : null}
       <OwnerCookie username={profile.username} />
       <header className="sticky top-0 z-40 border-b border-white/80 bg-[#FAF5EA]/85 px-4 py-2.5 backdrop-blur-xl">
         <div className="mx-auto flex max-w-[880px] items-center justify-between gap-4">
@@ -422,53 +370,6 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
           </>
         ) : null}
 
-
-        {view === "log" ? (
-          <>
-        {logReady ? (
-          <section id="log" className="scroll-mt-4 rounded-2xl border border-[#DCE5DF] bg-white p-5 sm:p-6">
-            <div className="flex items-center justify-between gap-3">
-              <h2 className="text-sm font-bold uppercase tracking-[0.1em] text-[#4B6358]">Payment log</h2>
-              <span
-                className={`inline-flex min-h-8 items-center rounded-full px-3 text-[13px] font-semibold ${
-                  logEnabled ? "bg-[#E3F0EA] text-[#064E3B]" : "bg-[#F3F4F2] text-[#4B6358]"
-                }`}
-              >
-                {logEnabled ? "On" : "Off"}
-              </span>
-            </div>
-            <p className="mt-2 text-[15px] text-[#4B6358]">
-              {logEnabled
-                ? waiting > 0
-                  ? `${celebrate ? "New payment! " : ""}${waiting} ${waiting === 1 ? "payment is" : "payments are"} waiting for you to confirm.`
-                  : "Customers can tap \u201cI\u2019ve paid\u201d on your page. You confirm, and PayTree adds up your day and month."
-                : "Optional. Add an \u201cI\u2019ve paid\u201d button to your page, confirm payments with one tap, see today\u2019s and this month\u2019s totals, and download them for Excel."}
-            </p>
-            <div className="mt-4 flex flex-wrap gap-3">
-              {logEnabled ? (
-                <Link
-                  href="/dashboard/log"
-                  className="inline-flex min-h-11 items-center rounded-full bg-[#064E3B] px-6 font-bold text-[#FBFBFB]"
-                >
-                  {waiting > 0 ? `Open payment log (${waiting})` : "Open payment log"}
-                </Link>
-              ) : null}
-              <form action={setPaymentLog}>
-                <input type="hidden" name="enable" value={logEnabled ? "0" : "1"} />
-                <button
-                  type="submit"
-                  className={`inline-flex min-h-11 items-center rounded-full px-6 font-bold ${
-                    logEnabled ? "border border-[#064E3B]/40 text-[#064E3B]" : "bg-[#064E3B] text-[#FBFBFB]"
-                  }`}
-                >
-                  {logEnabled ? "Turn off" : "Turn on payment log"}
-                </button>
-              </form>
-            </div>
-          </section>
-        ) : null}
-          </>
-        ) : null}
 
         {view === "profile" ? (
           <>

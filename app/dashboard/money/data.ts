@@ -37,7 +37,7 @@ export async function loadMoneyEntries(supabase: Client, userId: string): Promis
       what: c.note ?? "Payment page",
       method: c.method,
       claimedAt: c.created_at,
-      href: "/dashboard/log",
+      href: "/dashboard/budget",
     });
   }
 
@@ -65,7 +65,7 @@ export async function loadMoneyEntries(supabase: Client, userId: string): Promis
       what: i.title,
       method: i.claimed_method,
       claimedAt: i.claimed_at,
-      href: `/invoice/${i.id}`,
+      href: "/dashboard/invoices",
     });
   }
 
@@ -95,7 +95,7 @@ export async function loadMoneyEntries(supabase: Client, userId: string): Promis
         what: split.title,
         method: p.method ?? null,
         claimedAt: p.created_at ?? null,
-        href: `/bill/${p.split_id}`,
+        href: "/dashboard/split",
       });
     }
   }

@@ -4,7 +4,7 @@
 // commitments (rent, phone, subscriptions), and how full the tree is.
 // Pure helpers only (no database), so they can be tested.
 
-import { parseAmount } from "./payment-log";
+import { csvCell, parseAmount } from "./payment-log";
 import { parseEventDate } from "./splits";
 
 export const CATEGORIES = [
@@ -248,4 +248,36 @@ export function cleanMonth(raw: unknown, latest: string): string | null {
   if (typeof raw !== "string" || !/^\d{4}-(0[1-9]|1[0-2])$/.test(raw)) return null;
   if (raw < "2020-01" || raw > latest) return null;
   return raw;
+}
+
+/** One line of the Excel download: money that came in or went out. */
+export interface BookRow {
+  date: string;
+  kind: "in" | "out";
+  amountCents: number;
+  category: string | null;
+  note: string;
+  source: string;
+}
+
+/** Everything that came in and went out, newest first, for Excel and Google Sheets. */
+export function bookToCsv(rows: BookRow[]): string {
+  const header = ["Date", "Type", "Amount (USD)", "Category", "Note or customer", "Source"];
+  const lines = [header.map(csvCell).join(",")];
+  const sorted = [...rows].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
+  for (const r of sorted) {
+    lines.push(
+      [
+        r.date,
+        r.kind === "in" ? "Came in" : "Spent",
+        (r.amountCents / 100).toFixed(2),
+        r.kind === "out" && r.category ? categoryOf(r.category).label : "",
+        r.note,
+        r.source,
+      ]
+        .map(csvCell)
+        .join(","),
+    );
+  }
+  return `\uFEFF${lines.join("\r\n")}\r\n`;
 }

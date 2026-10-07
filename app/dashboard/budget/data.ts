@@ -50,7 +50,8 @@ export async function loadBudget(supabase: Client, userId: string, opts: { month
 
   // Confirmed PayTree payments, per day in the owner's time zone.
   const payTreeByDay = new Map<string, number>();
-  for (const e of await loadMoneyEntries(supabase, userId)) {
+  const autoEntries = await loadMoneyEntries(supabase, userId);
+  for (const e of autoEntries) {
     const day = dayKey(new Date(e.at), timeZone);
     payTreeByDay.set(day, (payTreeByDay.get(day) ?? 0) + e.amountCents);
   }
@@ -92,6 +93,8 @@ export async function loadBudget(supabase: Client, userId: string, opts: { month
     isCurrentMonth: month === currentMonth,
     seed: `${userId}:${month}`,
     moves,
+    autoEntries,
+    firstMonth: from.slice(0, 7),
     monthMoves: moves.filter((m) => inMonth(m.on_date)),
     todayMoves: moves.filter((m) => m.on_date === today),
     commitments,

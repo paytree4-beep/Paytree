@@ -124,3 +124,48 @@ export async function payCommitment(formData: FormData): Promise<void> {
   }
   done("paid");
 }
+
+// ---------------------------------------------------------------------------
+// Instant versions: the page updates by itself, so these save in the
+// background and answer with a small result instead of reloading the page.
+// ---------------------------------------------------------------------------
+
+export type QuickMoveInput = { kind: string; amount: string; category: string; note: string; on_date: string };
+export type QuickMoveResult = { ok: true; id: string } | { ok: false; error: string };
+
+export async function addMoveQuick(input: QuickMoveInput): Promise<QuickMoveResult> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { ok: false, error: "login" };
+  if (!input || typeof input !== "object") return { ok: false, error: "save" };
+  const values = input as unknown as Record<string, unknown>;
+  const parsed = parseMove((name) => values[name], await today());
+  if ("error" in parsed) return { ok: false, error: parsed.error };
+  const move = parsed as Exclude<typeof parsed, { error: unknown }>;
+  const { data, error } = await supabase
+    .from("money_moves")
+    .insert({
+      owner_id: user.id,
+      kind: move.kind,
+      amount_cents: move.amountCents,
+      category: move.category,
+      note: move.note,
+      on_date: move.onDate,
+    })
+    .select("id")
+    .single();
+  if (error || !data) return { ok: false, error: "save" };
+  return { ok: true, id: (data as { id: string }).id };
+}
+
+export async function deleteMoveQuick(id: string): Promise<boolean> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user || typeof id !== "string" || !UUID.test(id)) return false;
+  const { error } = await supabase.from("money_moves").delete().eq("id", id).eq("owner_id", user.id);
+  return !error;
+}

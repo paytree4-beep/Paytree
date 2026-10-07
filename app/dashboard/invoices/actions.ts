@@ -82,3 +82,40 @@ export async function deleteInvoice(formData: FormData): Promise<void> {
   revalidatePath(HERE);
   redirect(HERE);
 }
+
+// Instant versions: they save in the background and answer yes or no, so the
+// page can change at once without reloading.
+
+async function quickOwner(id: string) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user || typeof id !== "string" || !isSplitId(id)) return null;
+  return { supabase, user };
+}
+
+export async function confirmInvoiceQuick(id: string): Promise<boolean> {
+  const o = await quickOwner(id);
+  if (!o) return false;
+  const { error } = await o.supabase.from("invoices").update({ confirmed_at: new Date().toISOString() }).eq("id", id).eq("owner_id", o.user.id);
+  return !error;
+}
+
+export async function rejectInvoiceQuick(id: string): Promise<boolean> {
+  const o = await quickOwner(id);
+  if (!o) return false;
+  const { error } = await o.supabase
+    .from("invoices")
+    .update({ claimed_at: null, claimed_method: null, confirmed_at: null })
+    .eq("id", id)
+    .eq("owner_id", o.user.id);
+  return !error;
+}
+
+export async function deleteInvoiceQuick(id: string): Promise<boolean> {
+  const o = await quickOwner(id);
+  if (!o) return false;
+  const { error } = await o.supabase.from("invoices").delete().eq("id", id).eq("owner_id", o.user.id);
+  return !error;
+}

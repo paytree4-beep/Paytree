@@ -16,7 +16,6 @@ import { badgeColor } from "@/lib/payment-colors";
 import { CATEGORIES, METHOD_FORMS, findMethodForm, formValues } from "@/lib/payment-forms";
 import { createClient } from "@/lib/supabase/server";
 import { removePaymentMethod, savePaymentMethod } from "./actions";
-import { PAID_BOX_ID } from "@/lib/payment-log";
 
 export const metadata: Metadata = { title: "Payment methods", robots: { index: false } };
 export const dynamic = "force-dynamic";
@@ -56,24 +55,6 @@ export default async function PaymentsPage({ searchParams }: { searchParams: Sea
     .map((row) => METHOD_FORMS.find((m) => m.id === row.method_id))
     .filter((m): m is (typeof METHOD_FORMS)[number] => Boolean(m))
     .map((m) => ({ id: m.id, title: m.title, color: badgeColor(m.id).bg }));
-
-  // The "I've paid" box can be moved too, when the payment log is on.
-  // Read on their own so a missing column never breaks this page.
-  const { data: logRow } = await supabase
-    .from("profiles")
-    .select("payment_log_enabled")
-    .eq("id", user.id)
-    .maybeSingle();
-  if ((logRow as { payment_log_enabled?: boolean } | null)?.payment_log_enabled === true && orderItems.length > 0) {
-    const { data: posRow } = await supabase
-      .from("profiles")
-      .select("paid_box_position")
-      .eq("id", user.id)
-      .maybeSingle();
-    const raw = (posRow as { paid_box_position?: number | null } | null)?.paid_box_position;
-    const at = typeof raw === "number" ? Math.max(0, Math.min(raw, orderItems.length)) : orderItems.length;
-    orderItems.splice(at, 0, { id: PAID_BOX_ID, title: "\u201cI\u2019ve paid\u201d box (Optional)", color: "#D9B873" });
-  }
 
   return (
     <div className="min-h-screen bg-[#FAF5EA] text-[#0B1F18]">

@@ -20,7 +20,8 @@ import { formatMoney, formatWhen, methodLabel, safeTimeZone } from "@/lib/paymen
 import { SITE_URL } from "@/lib/site";
 import { formatEventDate } from "@/lib/splits";
 import { createClient } from "@/lib/supabase/server";
-import { confirmInvoice, createInvoice, deleteInvoice, rejectInvoiceClaim } from "./actions";
+import { ConfirmPair, InstantDelete } from "@/components/ui/instant-actions";
+import { confirmInvoiceQuick, createInvoice, deleteInvoiceQuick, rejectInvoiceQuick } from "./actions";
 
 export const metadata: Metadata = { title: "Invoices", robots: { index: false } };
 export const dynamic = "force-dynamic";
@@ -166,7 +167,7 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Sea
                 const status = invoiceStatus(inv);
                 const overdue = isOverdue(inv.due_date, status, today);
                 return (
-                  <li key={inv.id} className="flex flex-col gap-2 py-3">
+                  <li key={inv.id} data-instant-row className="flex flex-col gap-2 py-3">
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                       <div>
                         <p className="font-bold">
@@ -201,12 +202,7 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Sea
                         >
                           Open
                         </Link>
-                        <form action={deleteInvoice}>
-                          <input type="hidden" name="id" value={inv.id} />
-                          <button type="submit" className="inline-flex min-h-10 items-center px-2 text-[14px] text-[#B42318] underline underline-offset-2">
-                            Delete
-                          </button>
-                        </form>
+                        <InstantDelete id={inv.id} action={deleteInvoiceQuick} />
                       </div>
                     </div>
                     <details className="group rounded-xl bg-[#F7FAF8] px-3 py-1.5">
@@ -259,20 +255,7 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Sea
                         <p className="text-[13px] font-semibold text-[#7A5A12]">
                           {inv.customer} says they paid. Check your app, then confirm:
                         </p>
-                        <span className="flex gap-1">
-                          <form action={confirmInvoice}>
-                            <input type="hidden" name="id" value={inv.id} />
-                            <button type="submit" className="inline-flex min-h-10 items-center rounded-full bg-[#064E3B] px-4 text-[13px] font-bold text-[#FBFBFB]">
-                              Confirm ✓
-                            </button>
-                          </form>
-                          <form action={rejectInvoiceClaim}>
-                            <input type="hidden" name="id" value={inv.id} />
-                            <button type="submit" className="inline-flex min-h-10 items-center px-2 text-[13px] text-[#B42318] underline underline-offset-2">
-                              Not received
-                            </button>
-                          </form>
-                        </span>
+                        <ConfirmPair id={inv.id} confirm={confirmInvoiceQuick} reject={rejectInvoiceQuick} rejectLabel="Not received" />
                       </div>
                     ) : null}
                   </li>

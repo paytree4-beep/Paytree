@@ -16,7 +16,8 @@ import { formatMoney, methodLabel } from "@/lib/payment-log";
 import { SITE_URL } from "@/lib/site";
 import { formatEventDate, shareCents } from "@/lib/splits";
 import { createClient } from "@/lib/supabase/server";
-import { confirmSplitPayment, createSplit, deleteSplit, removeSplitPayment } from "./actions";
+import { ConfirmPair, InstantDelete } from "@/components/ui/instant-actions";
+import { confirmSplitPaymentQuick, createSplit, deleteSplitQuick, removeSplitPaymentQuick } from "./actions";
 
 export const metadata: Metadata = { title: "Split the bill", robots: { index: false } };
 export const dynamic = "force-dynamic";
@@ -153,7 +154,7 @@ export default async function SplitPage({ searchParams }: { searchParams: Search
                 const paid = Math.min(rows.filter((r) => r.confirmed_at).length, s.people);
                 const waiting = rows.filter((r) => !r.confirmed_at);
                 return (
-                  <li key={s.id} className="flex flex-col gap-2 py-3">
+                  <li key={s.id} data-instant-row className="flex flex-col gap-2 py-3">
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                       <div>
                         <p className="font-bold">{s.title}</p>
@@ -174,12 +175,7 @@ export default async function SplitPage({ searchParams }: { searchParams: Search
                         >
                           Open
                         </Link>
-                        <form action={deleteSplit}>
-                          <input type="hidden" name="id" value={s.id} />
-                          <button type="submit" className="inline-flex min-h-10 items-center px-2 text-[14px] text-[#B42318] underline underline-offset-2">
-                            Delete
-                          </button>
-                        </form>
+                        <InstantDelete id={s.id} action={deleteSplitQuick} />
                       </div>
                     </div>
                     {waiting.length > 0 ? (
@@ -189,25 +185,12 @@ export default async function SplitPage({ searchParams }: { searchParams: Search
                         </p>
                         <ul className="mt-2 flex flex-col gap-2">
                           {waiting.map((r) => (
-                            <li key={r.id} className="flex items-center justify-between gap-2">
+                            <li key={r.id} data-instant-row className="flex items-center justify-between gap-2">
                               <span className="font-semibold">
                                 ⏳ {r.name}
                                 {r.method ? <span className="block text-[12px] font-medium text-[#7A5A12]">via {methodLabel(r.method)}</span> : null}
                               </span>
-                              <span className="flex gap-1">
-                                <form action={confirmSplitPayment}>
-                                  <input type="hidden" name="id" value={r.id} />
-                                  <button type="submit" className="inline-flex min-h-10 items-center rounded-full bg-[#064E3B] px-4 text-[13px] font-bold text-[#FBFBFB]">
-                                    Confirm ✓
-                                  </button>
-                                </form>
-                                <form action={removeSplitPayment}>
-                                  <input type="hidden" name="id" value={r.id} />
-                                  <button type="submit" className="inline-flex min-h-10 items-center px-2 text-[13px] text-[#B42318] underline underline-offset-2">
-                                    Remove
-                                  </button>
-                                </form>
-                              </span>
+                              <ConfirmPair id={r.id} confirm={confirmSplitPaymentQuick} reject={removeSplitPaymentQuick} rejectLabel="Remove" />
                             </li>
                           ))}
                         </ul>

@@ -73,3 +73,35 @@ export async function removeSplitPayment(formData: FormData): Promise<void> {
   revalidatePath("/dashboard/split");
   redirect("/dashboard/split");
 }
+
+// Instant versions: they save in the background and answer yes or no, so the
+// page can change at once without reloading.
+
+async function quickUser() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  return user ? { supabase, user } : null;
+}
+
+export async function confirmSplitPaymentQuick(id: string): Promise<boolean> {
+  const o = await quickUser();
+  if (!o || typeof id !== "string" || !UUID.test(id)) return false;
+  const { error } = await o.supabase.from("bill_split_payments").update({ confirmed_at: new Date().toISOString() }).eq("id", id);
+  return !error;
+}
+
+export async function removeSplitPaymentQuick(id: string): Promise<boolean> {
+  const o = await quickUser();
+  if (!o || typeof id !== "string" || !UUID.test(id)) return false;
+  const { error } = await o.supabase.from("bill_split_payments").delete().eq("id", id);
+  return !error;
+}
+
+export async function deleteSplitQuick(id: string): Promise<boolean> {
+  const o = await quickUser();
+  if (!o || typeof id !== "string" || !isSplitId(id)) return false;
+  const { error } = await o.supabase.from("bill_splits").delete().eq("id", id).eq("owner_id", o.user.id);
+  return !error;
+}

@@ -15,8 +15,7 @@ import { SITE_HOST, SITE_URL } from "@/lib/site";
 import { PaymentMethods } from "./payment-methods";
 import { QrCard } from "./qr-card";
 import { AppleHalo } from "@/components/marketing/apples";
-import { PaidForm } from "./paid-form";
-import { param, type SearchParams } from "@/lib/auth";
+import type { SearchParams } from "@/lib/auth";
 
 
 // Always read fresh data, so a change saved in the dashboard shows up on the
@@ -56,9 +55,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-export default async function PublicPaymentPage({ params, searchParams }: PageProps) {
+export default async function PublicPaymentPage({ params }: PageProps) {
   const { username } = await params;
-  const query = await searchParams;
   const profile = await getProfileByUsername(username);
 
   if (!profile) {
@@ -129,41 +127,18 @@ export default async function PublicPaymentPage({ params, searchParams }: PagePr
 
       {/* Payment methods */}
       <main className="mx-auto w-full max-w-[560px] flex-1 px-5 pb-28 pt-6">
-        {(() => {
-          const paidBox = profile.paymentLog ? (
-            <PaidForm
-              username={profile.username}
-              displayName={profile.displayName}
-              methods={methods.map((m) => m.id)}
-              sent={param(query, "paid") === "1"}
-              error={param(query, "paid_error")}
-            />
-          ) : null;
-          // Placed among the methods only when the owner moved it up;
-          // otherwise it sits at the very bottom, after the QR code.
-          const among =
-            typeof profile.paidPosition === "number" && profile.paidPosition < methods.length;
-          return (
-            <>
-              <PaymentMethods
-                username={profile.username}
-                displayName={profile.displayName}
-                methods={methods}
-                mode={profile.pageMode}
-                extraIndex={profile.paidPosition}
-                extra={among ? paidBox : null}
-              />
+        <PaymentMethods
+          username={profile.username}
+          displayName={profile.displayName}
+          methods={methods}
+          mode={profile.pageMode}
+        />
 
-              <QrCard
-                url={`${SITE_URL}/${profile.username}`}
-                label={`${SITE_HOST}/${profile.username}`}
-                name={profile.displayName}
-              />
-
-              {!among && paidBox ? <div className="mt-6">{paidBox}</div> : null}
-            </>
-          );
-        })()}
+        <QrCard
+          url={`${SITE_URL}/${profile.username}`}
+          label={`${SITE_HOST}/${profile.username}`}
+          name={profile.displayName}
+        />
 
         <p className="mt-8 text-center text-[13px] text-[#4B6358]">
           Always confirm the recipient before you send money.
