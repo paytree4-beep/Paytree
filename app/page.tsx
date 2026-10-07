@@ -56,40 +56,16 @@ const METHODS = [
   { id: "check", name: "Check by mail" },
 ];
 
-const FEATURES: { title: string; body: string; Icon: LucideIcon; tint: string; apple?: boolean }[] = [
-  { title: "Split the bill", body: "Dinner or a trip: everyone sees their share and pays you.", Icon: Pizza, tint: "#E5484D", apple: true },
-  { title: "Pay me here", body: "A ready card for Stories, plus a video with music for TikTok and Reels.", Icon: Clapperboard, tint: "#3FA34D", apple: true },
-  { title: "Tip me", body: "Creators and musicians: turn your page into a tip jar.", Icon: HandCoins, tint: "#E8AE1C", apple: true },
+const FEATURES: { title: string; body: string; Icon: LucideIcon; tint: string }[] = [
+  { title: "Split the bill", body: "Dinner or a trip: everyone sees their share and pays you.", Icon: Pizza, tint: "#E5484D" },
+  { title: "Pay me here", body: "A ready card for Stories, plus a video with music for TikTok and Reels.", Icon: Clapperboard, tint: "#3FA34D" },
+  { title: "Tip me", body: "Creators and musicians: turn your page into a tip jar.", Icon: HandCoins, tint: "#E8AE1C" },
   { title: "One link", body: "Cash App, Venmo, Zelle, PayPal and more in one place.", Icon: Link2, tint: "#E5484D" },
   { title: "Your QR code", body: "For your counter, booth or business card.", Icon: QrCode, tint: "#064E3B" },
   { title: "Payment log", body: "Confirm payments and see daily and monthly totals.", Icon: ClipboardCheck, tint: "#6D1ED4" },
   { title: "Private stats", body: "Visits and taps. No cookies, no tracking.", Icon: BarChart3, tint: "#7BC86C" },
   { title: "Paid to you", body: "Money goes straight to your accounts.", Icon: ShieldCheck, tint: "#008CFF" },
 ];
-
-/** Title in the apple colors: first letter of each word red, the rest green and yellow. */
-function AppleTitle({ text }: { text: string }) {
-  const others = ["#3FA34D", "#E8AE1C"];
-  let n = 0;
-  let wordStart = true;
-  return (
-    <>
-      {Array.from(text).map((ch, i) => {
-        if (ch === " ") {
-          wordStart = true;
-          return " ";
-        }
-        const color = wordStart ? "#E5484D" : others[n++ % others.length];
-        wordStart = false;
-        return (
-          <span key={i} style={{ color }}>
-            {ch}
-          </span>
-        );
-      })}
-    </>
-  );
-}
 
 const STEPS = [
   { n: "1", title: "Sign up", body: "Pick your link name." },
@@ -147,9 +123,9 @@ const PHONE =
 /** Two small phones side by side: a payment page and its statistics. */
 function PhoneExample() {
   return (
-    <div className="mx-auto flex w-full max-w-[460px] items-start justify-center gap-3">
+    <div className="mx-auto flex w-full max-w-[460px] items-start justify-center">
       {/* Phone 1: the public payment page */}
-      <div className="w-1/2 max-w-[220px]">
+      <div className="w-[66%] max-w-[260px]">
         <div
           role="img"
           aria-label="Example PayTree page for Cedar Coffee Co. with Cash App, Venmo, Zelle, Apple Cash and a QR code"
@@ -193,26 +169,6 @@ function PhoneExample() {
         <p className="mt-2 text-center text-[12px] font-semibold text-[#2F4A3E]">Your page</p>
       </div>
 
-      {/* Next to the phone: the three standout features, stacked */}
-      <div className="flex w-1/2 max-w-[220px] flex-col gap-2.5 self-center">
-        {FEATURES.filter((f) => f.apple).map(({ title, body, Icon, tint }) => (
-          <div key={title} className={`flex flex-col gap-1 p-3 ring-2 ring-[#E2C27A]/70 ${glass}`}>
-            <span className="flex items-center gap-2">
-              <span
-                className="flex h-7 w-7 flex-none items-center justify-center rounded-lg text-white"
-                style={{ backgroundColor: tint }}
-                aria-hidden="true"
-              >
-                <Icon className="h-4 w-4" strokeWidth={2.2} />
-              </span>
-              <span className="text-[17px] font-extrabold leading-tight">
-                <AppleTitle text={title} />
-              </span>
-            </span>
-            <span className="text-[14.5px] font-medium leading-snug text-[#0F2419]">{body}</span>
-          </div>
-        ))}
-      </div>
     </div>
   );
 }
@@ -221,7 +177,7 @@ export default function HomePage() {
   const trialCta = `Start your ${TRIAL_DAYS}-day free trial`;
 
   return (
-    <div className="relative min-h-screen overflow-x-clip bg-[#FAF5EA] text-[18px] leading-[1.6] text-[#0B1F18]">
+    <div className="relative min-h-screen overflow-x-clip bg-[#FAF5EA] text-[19px] leading-[1.6] text-[#0B1F18]">
       <AppleBackdrop />
 
       <div className="relative z-10">
@@ -254,7 +210,7 @@ export default function HomePage() {
         {/* Hero */}
         <section className="mx-auto grid max-w-[1180px] items-center gap-14 px-5 pb-20 pt-14 sm:px-6 lg:grid-cols-[1.15fr_1fr] lg:pt-20">
           <div className="flex min-w-0 flex-col items-start gap-6">
-            <span className={`inline-flex items-center gap-2 px-4 py-2 text-[14px] font-bold tracking-[0.08em] text-[#064E3B] ${glass} rounded-full`}>
+            <span className={`inline-flex items-center gap-2 px-4 py-2 text-[15px] font-bold tracking-[0.08em] text-[#064E3B] ${glass} rounded-full`}>
               <span className="h-2 w-2 rounded-full bg-[#7BC86C]" aria-hidden="true" />
               {TRIAL_DAYS} DAYS FREE · NO CARD NEEDED
             </span>
@@ -263,7 +219,7 @@ export default function HomePage() {
               <br />
               <span className={goldText}>One simple link.</span>
             </h1>
-            <p className="max-w-[560px] text-[20px] leading-[1.65] font-medium text-[#0F2419] sm:text-[21px]">
+            <p className="max-w-[560px] text-[21px] leading-[1.65] font-medium text-[#0F2419] sm:text-[22px]">
               Make it easier and faster for your customers to pay you.
             </p>
             <ul aria-label="Included" className="flex flex-wrap gap-2">
@@ -326,12 +282,10 @@ export default function HomePage() {
                 <h2 className={headingClass}>Everything you need to get paid. Nothing you don&rsquo;t.</h2>
               </Reveal>
               <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-                {FEATURES.filter((f) => !f.apple).map(({ title, body, Icon, tint, apple }, i) => (
-                  <Reveal key={title} delay={i * 60} className={i === 4 ? "col-span-2 lg:col-span-1" : ""}>
+                {FEATURES.map(({ title, body, Icon, tint }, i) => (
+                  <Reveal key={title} delay={i * 60}>
                     <div
-                      className={`flex h-full flex-col gap-2 p-4 transition-transform duration-300 hover:-translate-y-1 motion-reduce:transition-none ${glass} ${
-                        apple ? "ring-2 ring-[#E2C27A]/70" : ""
-                      }`}
+                      className={`flex h-full flex-col gap-2 p-4 transition-transform duration-300 hover:-translate-y-1 motion-reduce:transition-none ${glass}`}
                     >
                       <span
                         className="flex h-9 w-9 items-center justify-center rounded-xl text-white"
@@ -340,10 +294,8 @@ export default function HomePage() {
                       >
                         <Icon className="h-[18px] w-[18px]" strokeWidth={2.2} />
                       </span>
-                      <h3 className={`font-extrabold leading-tight ${apple ? "text-[18px]" : "text-[16px]"}`}>
-                        {apple ? <AppleTitle text={title} /> : title}
-                      </h3>
-                      <p className="text-[15px] leading-snug font-medium text-[#0F2419]">{body}</p>
+                      <h3 className="text-[18px] font-extrabold leading-tight text-[#0B1F18]">{title}</h3>
+                      <p className="text-[16px] leading-snug font-medium text-[#0F2419]">{body}</p>
                     </div>
                   </Reveal>
                 ))}
@@ -361,8 +313,8 @@ export default function HomePage() {
                     <span aria-hidden="true" className={`font-serif text-[34px] leading-none sm:text-[48px] ${goldText}`}>
                       {s.n}
                     </span>
-                    <h3 className="text-[16px] font-bold leading-tight sm:text-[21px]">{s.title}</h3>
-                    <p className="text-[15px] leading-snug font-medium text-[#0F2419] sm:text-[18px]">{s.body}</p>
+                    <h3 className="text-[16px] font-bold leading-tight sm:text-[22px]">{s.title}</h3>
+                    <p className="text-[16px] leading-snug font-medium text-[#0F2419] sm:text-[19px]">{s.body}</p>
                   </li>
                 ))}
               </ol>
@@ -375,7 +327,7 @@ export default function HomePage() {
               <Reveal className="flex max-w-[640px] flex-col items-center gap-3 text-center">
                 <span className="text-sm font-bold tracking-[0.14em] text-[#9A6E1A]">PRICING</span>
                 <h2 className={headingClass}>Try everything free for {TRIAL_DAYS} days</h2>
-                <p className="text-[20px] font-medium text-[#0F2419]">No card needed. One simple plan with every feature after that.</p>
+                <p className="text-[21px] font-medium text-[#0F2419]">No card needed. One simple plan with every feature after that.</p>
               </Reveal>
               <Reveal className="w-full">
                 <Pricing />
@@ -388,12 +340,12 @@ export default function HomePage() {
             <Reveal className={`mx-auto flex max-w-[860px] flex-col gap-4 p-7 sm:p-12 ${glass}`}>
               <span className="text-sm font-bold tracking-[0.14em] text-[#9A6E1A]">ABOUT US</span>
               <h2 className={headingClass}>Built for the question every business hears</h2>
-              <p className="text-[20px] leading-[1.75] font-medium text-[#0F2419]">
+              <p className="text-[21px] leading-[1.75] font-medium text-[#0F2419]">
                 <em>&ldquo;Do you take Zelle, Venmo or Cash App?&rdquo;</em> PayTree answers it with one simple link.
                 We built a calm, elegant page that brings all your payment methods together, so your customers can
                 pay you in seconds, and you can focus on your work.
               </p>
-              <p className="text-[20px] leading-[1.75] font-medium text-[#0F2419]">
+              <p className="text-[21px] leading-[1.75] font-medium text-[#0F2419]">
                 <strong className="text-[#064E3B]">We never touch your money.</strong> Payments go straight from
                 your customers to your own accounts. Our mission is simple: make getting paid effortless for
                 businesses and professionals everywhere.
@@ -411,7 +363,7 @@ export default function HomePage() {
                 {FAQ.map(({ q, a }) => (
                   <Reveal key={q}>
                     <details className={`group px-6 py-1 ${glass} rounded-[22px]`}>
-                      <summary className="flex min-h-[60px] cursor-pointer list-none items-center justify-between gap-4 text-[18px] font-bold text-[#064E3B] [&::-webkit-details-marker]:hidden">
+                      <summary className="flex min-h-[60px] cursor-pointer list-none items-center justify-between gap-4 text-[19px] font-bold text-[#064E3B] [&::-webkit-details-marker]:hidden">
                         {q}
                         <span
                           aria-hidden="true"
@@ -420,7 +372,7 @@ export default function HomePage() {
                           +
                         </span>
                       </summary>
-                      <p className="pb-5 text-[18px] leading-[1.7] font-medium text-[#0F2419]">{a}</p>
+                      <p className="pb-5 text-[19px] leading-[1.7] font-medium text-[#0F2419]">{a}</p>
                     </details>
                   </Reveal>
                 ))}
@@ -435,7 +387,7 @@ export default function HomePage() {
                 <h2 className="font-serif text-[clamp(36px,5vw,64px)] font-normal leading-[1.05] [text-wrap:balance]">
                   Ready to get paid?
                 </h2>
-                <p className="max-w-[520px] text-[20px] font-medium text-[#0F2419]">
+                <p className="max-w-[520px] text-[21px] font-medium text-[#0F2419]">
                   Build your payment page in two minutes. {TRIAL_DAYS} days free, no card needed.
                 </p>
                 <Cta variant="emerald" className="min-w-[260px] shadow-[0_18px_40px_-18px_rgba(6,78,59,0.8)]">
