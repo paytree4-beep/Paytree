@@ -7,23 +7,10 @@
 import { csvCell, parseAmount } from "./payment-log";
 import { parseEventDate } from "./splits";
 
-export const CATEGORIES = [
-  { id: "food", label: "Food", icon: "🍔" },
-  { id: "shopping", label: "Shopping", icon: "🛍️" },
-  { id: "transport", label: "Transport", icon: "🚗" },
-  { id: "bills", label: "Bills", icon: "🧾" },
-  { id: "home", label: "Home", icon: "🏠" },
-  { id: "health", label: "Health", icon: "💊" },
-  { id: "fun", label: "Fun", icon: "🎉" },
-  { id: "business", label: "Business", icon: "💼" },
-  { id: "other", label: "Other", icon: "📦" },
-] as const;
+import { CATEGORIES, categoryOf, shiftMonth, type CategoryId } from "./budget-basics";
 
-export type CategoryId = (typeof CATEGORIES)[number]["id"];
-
-export function categoryOf(id: string | null | undefined) {
-  return CATEGORIES.find((c) => c.id === id) ?? CATEGORIES[CATEGORIES.length - 1];
-}
+export { CATEGORIES, categoryOf, shiftMonth };
+export type { CategoryId };
 
 function clean(raw: unknown, max: number): string {
   if (typeof raw !== "string") return "";
@@ -234,13 +221,6 @@ export function totalsFor(moves: MoveRow[], payTreeByDay: Map<string, number>, i
 export function monthLength(month: string): number {
   const [y, m] = month.split("-").map(Number);
   return new Date(Date.UTC(y, m, 0)).getUTCDate();
-}
-
-/** "2026-10" -> "2026-09" (step -1) or "2026-11" (step 1). */
-export function shiftMonth(month: string, step: number): string {
-  const [y, m] = month.split("-").map(Number);
-  const d = new Date(Date.UTC(y, m - 1 + step, 15));
-  return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}`;
 }
 
 /** A valid "YYYY-MM" between 2020 and `latest`, or null. */

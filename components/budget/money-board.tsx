@@ -12,8 +12,7 @@ import { useRef, useState } from "react";
 import type { FormEvent } from "react";
 
 import { addMoveQuick, deleteMoveQuick } from "@/app/dashboard/budget/actions";
-import { CATEGORIES, categoryOf, parseMove, shiftMonth } from "@/lib/budget";
-import { formatMoney } from "@/lib/payment-log";
+import { CATEGORIES, categoryOf, checkMove, formatMoney, shiftMonth } from "@/lib/budget-basics";
 
 export type BoardEntry = {
   id: string;
@@ -111,7 +110,7 @@ export function MoneyBoard({
       note: String(data.get("note") ?? ""),
       on_date: String(data.get("on_date") ?? today),
     };
-    const parsed = parseMove((name) => (values as Record<string, unknown>)[name], today);
+    const parsed = checkMove((name) => (values as Record<string, unknown>)[name], today);
     if ("error" in parsed) {
       setError(ERRORS[parsed.error] ?? ERRORS.save);
       return;
