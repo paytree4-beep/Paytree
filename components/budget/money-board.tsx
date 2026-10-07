@@ -90,13 +90,6 @@ export function MoneyBoard({
 
   function pickPeriod(next: Period) {
     setPeriod(next);
-    try {
-      const url = new URL(window.location.href);
-      url.searchParams.set("period", next);
-      window.history.replaceState(window.history.state, "", url.pathname + url.search + url.hash);
-    } catch {
-      // ignore
-    }
   }
 
   async function onAdd(event: FormEvent<HTMLFormElement>) {
@@ -267,16 +260,16 @@ export function MoneyBoard({
         </h2>
         <form ref={formRef} onSubmit={onAdd} className="mt-3 flex flex-col gap-3" noValidate>
           <div className="grid grid-cols-2 gap-3">
-            <label className="flex flex-col gap-1.5">
+            <label className="flex min-w-0 flex-col gap-1.5">
               <span className="text-sm font-semibold">Amount</span>
               <span className="flex min-h-[52px] items-center rounded-xl border border-[#C9D6CE] bg-white px-4 focus-within:border-[#064E3B]">
                 <span className="text-[#4B6358]">$</span>
-                <input name="amount" inputMode="decimal" maxLength={12} placeholder="12.50" className="min-w-0 flex-1 bg-transparent py-3 pl-1 text-base outline-none" />
+                <input name="amount" inputMode="decimal" maxLength={12} placeholder="Type amount" className="min-w-0 flex-1 bg-transparent py-3 pl-1 text-base outline-none" />
               </span>
             </label>
-            <label className="flex flex-col gap-1.5">
+            <label className="flex min-w-0 flex-col gap-1.5">
               <span className="text-sm font-semibold">Date</span>
-              <input name="on_date" type="date" defaultValue={today} max={today} className={input} />
+              <input name="on_date" type="date" defaultValue={today} max={today} className={`${input} min-w-0 max-w-full appearance-none`} />
             </label>
           </div>
           {kind === "out" ? (

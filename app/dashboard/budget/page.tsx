@@ -22,7 +22,7 @@ import { createClient } from "@/lib/supabase/server";
 import { addCommitment, deleteCommitment, payCommitment } from "./actions";
 import { loadBudget } from "./data";
 
-export const metadata: Metadata = { title: "Money", robots: { index: false } };
+export const metadata: Metadata = { title: "Income & spending", robots: { index: false } };
 export const dynamic = "force-dynamic";
 
 const ERRORS: Record<string, string> = {
@@ -104,7 +104,7 @@ export default async function BudgetPage({ searchParams }: { searchParams: Searc
 
       <main className="mx-auto flex max-w-[880px] flex-col gap-5 px-5 pb-20 pt-6">
         <div>
-          <h1 className="font-serif text-[38px] leading-[1.05] text-[#064E3B]">Money 💰</h1>
+          <h1 className="font-serif text-[38px] leading-[1.05] text-[#064E3B]">Income &amp; spending 💰</h1>
           <p className="mt-2 text-[15px] text-[#3F574C]">
             What came in and what you spent. Only you can see this page. PayTree never holds your money.
           </p>

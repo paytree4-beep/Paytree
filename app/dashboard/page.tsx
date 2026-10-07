@@ -69,22 +69,24 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const { data } = await supabase
-    .from("profiles")
-    .select("username, display_name, bio, is_published, avatar_path, created_at")
-    .eq("id", user.id)
-    .maybeSingle();
-  if (!data) redirect("/onboarding");
-  const profile = data as ProfileRow;
-
-  const { count } = await supabase
-    .from("payment_methods")
-    .select("id", { count: "exact", head: true })
-    .eq("profile_id", user.id);
-  const methodCount = typeof count === "number" ? count : 0;
-
+  // Everything the dashboard needs is asked in one go, not one after another:
+  // each question to the database costs a round trip, and they add up.
   const weekAgo = new Date(Date.now() - 7 * 86_400_000).toISOString();
-  const [{ count: weekViews }, { count: weekAll }] = await Promise.all([
+  const [
+    { data },
+    { count },
+    { count: weekViews },
+    { count: weekAll },
+    { count: invoiceWaitingCount },
+    { data: modeRow, error: modeError },
+    { data: subData },
+  ] = await Promise.all([
+    supabase
+      .from("profiles")
+      .select("username, display_name, bio, is_published, avatar_path, created_at")
+      .eq("id", user.id)
+      .maybeSingle(),
+    supabase.from("payment_methods").select("id", { count: "exact", head: true }).eq("profile_id", user.id),
     supabase
       .from("analytics_events")
       .select("id", { count: "exact", head: true })
@@ -96,33 +98,30 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
       .select("id", { count: "exact", head: true })
       .eq("profile_id", user.id)
       .gte("occurred_at", weekAgo),
+    // Invoices a customer marked as paid, waiting for the owner to confirm.
+    supabase
+      .from("invoices")
+      .select("id", { count: "exact", head: true })
+      .eq("owner_id", user.id)
+      .not("claimed_at", "is", null)
+      .is("confirmed_at", null),
+    // Tip me mode. Read on its own so a missing column never breaks the page.
+    supabase.from("profiles").select("page_mode").eq("id", user.id).maybeSingle(),
+    supabase
+      .from("subscriptions")
+      .select("provider, provider_customer_id, provider_subscription_id, plan, status, current_period_end, cancel_at_period_end")
+      .eq("user_id", user.id)
+      .maybeSingle(),
   ]);
+  if (!data) redirect("/onboarding");
+  const profile = data as ProfileRow;
+  const methodCount = typeof count === "number" ? count : 0;
   const views7 = typeof weekViews === "number" ? weekViews : 0;
   const taps7 = Math.max(0, (typeof weekAll === "number" ? weekAll : 0) - views7);
-
-  // Invoices a customer marked as paid, waiting for the owner to confirm.
-  const { count: invoiceWaitingCount } = await supabase
-    .from("invoices")
-    .select("id", { count: "exact", head: true })
-    .eq("owner_id", user.id)
-    .not("claimed_at", "is", null)
-    .is("confirmed_at", null);
   const invoicesWaiting = typeof invoiceWaitingCount === "number" ? invoiceWaitingCount : 0;
-
-  // Tip me mode. Read on its own so a missing column never breaks the page.
-  const { data: modeRow, error: modeError } = await supabase
-    .from("profiles")
-    .select("page_mode")
-    .eq("id", user.id)
-    .maybeSingle();
   const modeReady = !modeError;
   const tipMode = (modeRow as { page_mode?: string } | null)?.page_mode === "tip";
 
-  const { data: subData } = await supabase
-    .from("subscriptions")
-    .select("provider, provider_customer_id, provider_subscription_id, plan, status, current_period_end, cancel_at_period_end")
-    .eq("user_id", user.id)
-    .maybeSingle();
   const subscription = subData as SubscriptionRow | null;
   const billingOn = billingConfigured();
   const isMember = !billingOn || grantsAccess(subscription);
@@ -148,7 +147,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
 
   const tiles: { icon: string; title: string; detail: string; href: string; badge?: string }[] = [
     { icon: "🔗", title: "Your link & QR", detail: `${SITE_HOST}/${profile.username}`, href: "/dashboard?view=link" },
-    { icon: "💰", title: "Money", detail: "What came in and what you spent", href: "/dashboard/budget" },
+    { icon: "💰", title: "Income & spending", detail: "What came in and what you spent", href: "/dashboard/budget" },
     { icon: "🌳", title: "Money tree", detail: "Your month as an apple tree", href: "/dashboard/tree" },
     {
       icon: "💳",
@@ -165,7 +164,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
       href: "/dashboard/invoices",
       badge: invoicesWaiting > 0 ? String(invoicesWaiting) : undefined,
     },
-    { icon: "📸", title: tipMode ? "Tip me card" : "Pay me here card", detail: "For Instagram & TikTok", href: "/dashboard?view=share" },
+    { icon: "📸", title: "Pay me / Tip me card", detail: "Card and video for Instagram & TikTok", href: "/dashboard?view=share" },
     { icon: "📊", title: "Statistics", detail: `${views7} views · ${taps7} taps this week`, href: "/dashboard/stats" },
     { icon: "👤", title: "Profile", detail: "Photo, name and bio", href: "/dashboard?view=profile" },
     ...(billingOn

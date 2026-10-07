@@ -28,21 +28,24 @@ export async function loadBudget(supabase: Client, userId: string, opts: { month
   const year = month.slice(0, 4);
   const from = `${year < today.slice(0, 4) ? year : today.slice(0, 4)}-01-01`;
 
-  const { data: moveData, error: movesError } = await supabase
-    .from("money_moves")
-    .select("id, kind, amount_cents, category, note, on_date, commitment_id")
-    .eq("owner_id", userId)
-    .gte("on_date", from)
-    .order("on_date", { ascending: false })
-    .order("created_at", { ascending: false })
-    .limit(10000);
+  // The three reads are independent, so they run together.
+  const [{ data: moveData, error: movesError }, { data: commitmentData }, autoEntries] = await Promise.all([
+    supabase
+      .from("money_moves")
+      .select("id, kind, amount_cents, category, note, on_date, commitment_id")
+      .eq("owner_id", userId)
+      .gte("on_date", from)
+      .order("on_date", { ascending: false })
+      .order("created_at", { ascending: false })
+      .limit(10000),
+    supabase
+      .from("commitments")
+      .select("id, name, amount_cents, due_day, category")
+      .eq("owner_id", userId)
+      .order("due_day", { ascending: true }),
+    loadMoneyEntries(supabase, userId),
+  ]);
   const moves = (moveData ?? []) as MoveRow[];
-
-  const { data: commitmentData } = await supabase
-    .from("commitments")
-    .select("id, name, amount_cents, due_day, category")
-    .eq("owner_id", userId)
-    .order("due_day", { ascending: true });
   const commitments = (commitmentData ?? []) as CommitmentRow[];
   const paidIds = new Set(
     moves.filter((m) => m.commitment_id && m.on_date.slice(0, 7) === currentMonth).map((m) => m.commitment_id as string),
@@ -50,7 +53,6 @@ export async function loadBudget(supabase: Client, userId: string, opts: { month
 
   // Confirmed PayTree payments, per day in the owner's time zone.
   const payTreeByDay = new Map<string, number>();
-  const autoEntries = await loadMoneyEntries(supabase, userId);
   for (const e of autoEntries) {
     const day = dayKey(new Date(e.at), timeZone);
     payTreeByDay.set(day, (payTreeByDay.get(day) ?? 0) + e.amountCents);
@@ -77,12 +79,7 @@ export async function loadBudget(supabase: Client, userId: string, opts: { month
 
   const tree = treeState(monthTotals.income, monthTotals.spent);
 
-  // Read on its own, so a missing column never breaks the page.
-  const { data: prefRow, error: prefError } = await supabase.from("profiles").select("daily_summary").eq("id", userId).maybeSingle();
-  const dailySummary = prefError ? null : (prefRow as { daily_summary?: boolean } | null)?.daily_summary !== false;
-
   return {
-    dailySummary,
     tzCookie,
     timeZone,
     today,

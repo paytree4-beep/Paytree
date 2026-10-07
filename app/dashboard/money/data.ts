@@ -13,13 +13,25 @@ type Client = Awaited<ReturnType<typeof createClient>>;
 export async function loadMoneyEntries(supabase: Client, userId: string): Promise<MoneyEntry[]> {
   const entries: MoneyEntry[] = [];
 
-  // 1. The public page's "I've paid" notes the owner marked Received.
-  const { data: claims } = await supabase
-    .from("payment_claims")
-    .select("payer_name, amount_cents, method, note, received_at, created_at")
-    .eq("profile_id", userId)
-    .eq("status", "received")
-    .limit(5000);
+  // The three sources are independent, so they are read together.
+  const [{ data: claims }, { data: invoices }, { data: splits }] = await Promise.all([
+    // 1. Old "I've paid" notes from the payment page that the owner marked Received.
+    supabase
+      .from("payment_claims")
+      .select("payer_name, amount_cents, method, note, received_at, created_at")
+      .eq("profile_id", userId)
+      .eq("status", "received")
+      .limit(5000),
+    // 2. Invoices the owner confirmed.
+    supabase
+      .from("invoices")
+      .select("id, customer, title, amount_cents, claimed_method, claimed_at, confirmed_at")
+      .eq("owner_id", userId)
+      .not("confirmed_at", "is", null)
+      .limit(5000),
+    // 3. Split bills (their confirmed shares are read next).
+    supabase.from("bill_splits").select("id, title, total_cents, people").eq("owner_id", userId).limit(1000),
+  ]);
   for (const c of (claims ?? []) as {
     payer_name: string;
     amount_cents: number | null;
@@ -41,13 +53,6 @@ export async function loadMoneyEntries(supabase: Client, userId: string): Promis
     });
   }
 
-  // 2. Invoices the owner confirmed.
-  const { data: invoices } = await supabase
-    .from("invoices")
-    .select("id, customer, title, amount_cents, claimed_method, claimed_at, confirmed_at")
-    .eq("owner_id", userId)
-    .not("confirmed_at", "is", null)
-    .limit(5000);
   for (const i of (invoices ?? []) as {
     id: string;
     claimed_at: string | null;
@@ -69,12 +74,7 @@ export async function loadMoneyEntries(supabase: Client, userId: string): Promis
     });
   }
 
-  // 3. Split-bill shares the owner confirmed.
-  const { data: splits } = await supabase
-    .from("bill_splits")
-    .select("id, title, total_cents, people")
-    .eq("owner_id", userId)
-    .limit(1000);
+  // Split-bill shares the owner confirmed.
   const splitById = new Map(
     ((splits ?? []) as { id: string; title: string; total_cents: number; people: number }[]).map((s) => [s.id, s]),
   );

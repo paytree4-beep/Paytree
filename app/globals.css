@@ -86,3 +86,8 @@
 /* Small spinner for buttons that are working */
 @keyframes pt-spin { to { transform: rotate(360deg); } }
 .pt-spin { animation: pt-spin 0.8s linear infinite; }
+
+/* No 300ms wait on iPhone taps (it waits to see a double-tap zoom), so buttons answer on the first tap. */
+a, button, summary, label, [role="tab"], input, select, textarea {
+  touch-action: manipulation;
+}
