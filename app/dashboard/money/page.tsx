@@ -147,16 +147,50 @@ export default async function MoneyPage({ searchParams }: { searchParams: Search
           ) : (
             <ul className="mt-3 divide-y divide-[#EEF3F0]">
               {recent.map((e, i) => (
-                <li key={i} className="flex items-center justify-between gap-3 py-3">
-                  <div className="min-w-0">
-                    <p className="truncate font-bold">{e.from}</p>
-                    <p className="truncate text-[13px] text-[#4B6358]">
-                      {SOURCES.find((s) => s.id === e.source)?.icon} {e.what}
-                      {e.method ? ` · ${methodLabel(e.method)}` : ""}
-                    </p>
-                    <p className="text-[12px] text-[#6B7F75]">{formatWhen(e.at, timeZone)}</p>
-                  </div>
-                  <p className="flex-none font-bold text-[#16A34A]">+{formatMoney(e.amountCents)}</p>
+                <li key={i}>
+                  <details className="group">
+                    <summary className="flex cursor-pointer list-none items-center justify-between gap-3 py-3 [&::-webkit-details-marker]:hidden">
+                      <div className="min-w-0">
+                        <p className="truncate font-bold">{e.from}</p>
+                        <p className="truncate text-[13px] text-[#4B6358]">
+                          {SOURCES.find((s) => s.id === e.source)?.icon} {e.what}
+                          {e.method ? ` · ${methodLabel(e.method)}` : ""}
+                        </p>
+                        <p className="text-[12px] text-[#6B7F75]">{formatWhen(e.at, timeZone)}</p>
+                      </div>
+                      <div className="flex flex-none items-center gap-2">
+                        <p className="font-bold text-[#16A34A]">+{formatMoney(e.amountCents)}</p>
+                        <span className="text-[18px] font-bold text-[#064E3B] transition-transform group-open:rotate-90">›</span>
+                      </div>
+                    </summary>
+                    <div className="mb-3 rounded-xl bg-[#F7FAF8] px-3 py-2">
+                      <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-[13px]">
+                        <dt className="text-[#4B6358]">From</dt>
+                        <dd className="font-semibold">{e.from}</dd>
+                        <dt className="text-[#4B6358]">For</dt>
+                        <dd>{e.what}</dd>
+                        <dt className="text-[#4B6358]">Amount</dt>
+                        <dd className="font-semibold">{formatMoney(e.amountCents)}</dd>
+                        <dt className="text-[#4B6358]">Paid with</dt>
+                        <dd>{e.method ? methodLabel(e.method) : "Not given"}</dd>
+                        <dt className="text-[#4B6358]">Source</dt>
+                        <dd>{SOURCE_LABELS[e.source]}</dd>
+                        {e.claimedAt ? (
+                          <>
+                            <dt className="text-[#4B6358]">Said paid</dt>
+                            <dd>{formatWhen(e.claimedAt, timeZone)}</dd>
+                          </>
+                        ) : null}
+                        <dt className="text-[#4B6358]">Confirmed</dt>
+                        <dd className="font-semibold text-[#16A34A]">{formatWhen(e.at, timeZone)}</dd>
+                      </dl>
+                      {e.href ? (
+                        <Link href={e.href} className="mt-2 inline-flex min-h-10 items-center font-bold text-[#064E3B] underline underline-offset-2">
+                          {e.source === "invoice" ? "Open invoice ›" : e.source === "split" ? "Open the bill ›" : "Open payment log ›"}
+                        </Link>
+                      ) : null}
+                    </div>
+                  </details>
                 </li>
               ))}
             </ul>

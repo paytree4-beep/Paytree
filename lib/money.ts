@@ -18,6 +18,10 @@ export interface MoneyEntry {
   /** What it was for. */
   what: string;
   method: string | null;
+  /** When the payer said they paid (if known). */
+  claimedAt?: string | null;
+  /** Where to see it in full. */
+  href?: string;
 }
 
 export const SOURCE_LABELS: Record<MoneySource, string> = {
