@@ -16,7 +16,7 @@ export const OG_SIZE = { width: 1200, height: 630 };
 
 /** Words with the first letter red and the others green / yellow, like the share card. */
 export function ColoredWords({ text, size }: { text: string; size: number }) {
-  const others = ["#3FA34D", "#E8AE1C"];
+  const others = ["#E5484D", "#E5484D"]; // all red
   let n = 0;
   return (
     <div style={{ display: "flex", gap: size * 0.28 }}>
