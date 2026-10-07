@@ -36,7 +36,8 @@ export default async function TreePage() {
   if (!user) redirect("/login?next=/dashboard/tree");
 
   const b = await loadBudget(supabase, user.id);
-  const { tree, summary } = b;
+  const { tree } = b;
+  const summary = b.monthTotals;
   const kept = countApples(tree.onTree);
   const fell = countApples(tree.fallen);
 
@@ -68,7 +69,7 @@ export default async function TreePage() {
           <div className="rounded-2xl border border-white/90 bg-white/85 p-3">
             <p className="text-[12px] font-bold uppercase tracking-[0.06em] text-[#3F574C]">🍎 On the tree</p>
             <p className="mt-1 text-[18px] font-bold">
-              🍎 {kept.red} · 🍏 {kept.green} · 🍋 {kept.yellow}
+              {kept.gold > 0 ? `🌟 ${kept.gold} · ` : ""}🍎 {kept.red} · 🍏 {kept.green} · 🍋 {kept.yellow}
             </p>
             <p className="mt-1 text-[12px] text-[#4B6358]">
               Kept {formatMoney(Math.max(0, summary.left))} of {formatMoney(summary.income)}
@@ -77,13 +78,14 @@ export default async function TreePage() {
           <div className="rounded-2xl border border-white/90 bg-white/85 p-3">
             <p className="text-[12px] font-bold uppercase tracking-[0.06em] text-[#3F574C]">🍂 Fell</p>
             <p className="mt-1 text-[18px] font-bold">
-              🍎 {fell.red} · 🍏 {fell.green} · 🍋 {fell.yellow}
+              {fell.gold > 0 ? `🌟 ${fell.gold} · ` : ""}🍎 {fell.red} · 🍏 {fell.green} · 🍋 {fell.yellow}
             </p>
             <p className="mt-1 text-[12px] text-[#4B6358]">Spent {formatMoney(summary.spent)}</p>
           </div>
         </div>
 
         <div className="flex w-full flex-wrap justify-center gap-2 text-[13px] font-semibold text-[#3F574C]">
+          <span className="rounded-full bg-white/85 px-3 py-1">🌟 Gold = {formatMoney(APPLE_VALUES.gold).replace(".00", "")}</span>
           <span className="rounded-full bg-white/85 px-3 py-1">🍎 Red = {formatMoney(APPLE_VALUES.red).replace(".00", "")}</span>
           <span className="rounded-full bg-white/85 px-3 py-1">🍏 Green = {formatMoney(APPLE_VALUES.green).replace(".00", "")}</span>
           <span className="rounded-full bg-white/85 px-3 py-1">🍋 Yellow = {formatMoney(APPLE_VALUES.yellow).replace(".00", "")}</span>
@@ -92,10 +94,33 @@ export default async function TreePage() {
         <TreeShare svgId="money-tree" month={b.monthName} label={tree.label} onTree={tree.onTree.length} />
 
         <p className="mt-2 max-w-[420px] text-[13px] text-[#4B6358]">
-          How it works: what you keep this month hangs on your tree as apples, and what you spend falls to the grass. A red
-          apple is $1,000, a green one $100 and a yellow one $10, so the more you keep, the fuller and redder your tree. A new
+          How it works: what you keep this month hangs on your tree as apples, and what you spend falls to the grass. A shiny gold
+          apple is $10,000, a red one $1,000, a green one $100 and a yellow one $10, so the more you keep, the fuller and redder your tree. A new
           tree grows every month.
         </p>
+        {b.months.length > 1 ? (
+          <section className="mt-4 w-full">
+            <h2 className="font-serif text-[30px] text-[#064E3B]">My year 🌳</h2>
+            <p className="text-[14px] text-[#3F574C]">Every month grows a new tree. Tap one to see that month.</p>
+            <ul className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-4">
+              {b.months.map((m) => (
+                <li key={m.month}>
+                  <Link
+                    href={`/dashboard/budget?period=month${m.month !== b.currentMonth ? `&m=${m.month}` : ""}`}
+                    className={`flex flex-col items-center rounded-2xl border bg-white/85 p-2 ${
+                      m.month === b.currentMonth ? "border-[#C9A048]" : "border-white/90"
+                    }`}
+                  >
+                    <MoneyTree apples={m.tree.onTree} fallen={m.tree.fallen} id={`year-${m.month}`} seed={m.seed} />
+                    <span className="text-[14px] font-bold text-[#064E3B]">{m.name}</span>
+                    <span className="text-[11px] text-[#4B6358]">{m.tree.mood === "empty" ? "—" : m.tree.label}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ) : null}
+
         <Link
           href="/dashboard/budget"
           className="inline-flex min-h-12 items-center rounded-full border-2 border-[#064E3B] bg-white px-6 font-bold text-[#064E3B]"

@@ -2,16 +2,20 @@
 //
 // The Money tree, drawn like the PayTree logo: a golden dollar-sign trunk,
 // golden branches and big green leaves. Apples on the branches are money kept
-// this month, apples on the grass were spent. Red = $1,000, green = $100,
-// yellow = $10. Apples are scattered at random (the same way each time). Plain SVG, so it renders on the server and can be turned into
-// a picture for sharing.
+// this month, apples on the grass were spent. A shiny gold apple = $10,000,
+// red = $1,000, green = $100, yellow = $10. Apples are scattered at random
+// (the same way each time). Plain SVG, so it renders on the server and can be
+// turned into a picture for sharing.
 
 import type { AppleColor } from "@/lib/budget";
 
 const APPLE =
   "M32 19c-4-4-12-5-17 0-6 6-5 18 0 26 4 7 9 11 13 10 2-.4 3-1.4 4-1.4s2 1 4 1.4c4 1 9-3 13-10 5-8 6-20 0-26-5-5-13-4-17 0z";
 // Clear, strong colors that stand out from the leaves.
-const FILL: Record<AppleColor, string> = { red: "#B3121D", green: "#C6E33A", yellow: "#FFC20E" };
+const FILL: Record<Exclude<AppleColor, "gold">, string> = { red: "#B3121D", green: "#C6E33A", yellow: "#FFC20E" };
+
+// A four-point sparkle, drawn around gold apples.
+const SPARKLE = "M0 -9 C 1 -2, 2 -1, 9 0 C 2 1, 1 2, 0 9 C -1 2, -2 1, -9 0 C -2 -1, -1 -2, 0 -9 Z";
 
 // x0, y0 (on the trunk), x1, y1 (tip), thickness
 const BRANCHES: [number, number, number, number, number][] = [
@@ -70,18 +74,56 @@ function Leaf({ x, y, a, s }: { x: number; y: number; a: number; s: number }) {
   );
 }
 
-function Apple({ x, y, color, i, size = 40, fallen = false }: { x: number; y: number; color: AppleColor; i: number; size?: number; fallen?: boolean }) {
+function Apple({
+  x,
+  y,
+  color,
+  i,
+  treeId,
+  size = 40,
+  fallen = false,
+}: {
+  x: number;
+  y: number;
+  color: AppleColor;
+  i: number;
+  treeId: string;
+  size?: number;
+  fallen?: boolean;
+}) {
   const s = size / 64;
+  const gold = color === "gold";
   const tilt = fallen ? (i % 2 ? 22 : -18) : 0;
   return (
     <g className={fallen ? "pt-tree-fall" : "pt-tree-pop"} style={{ animationDelay: `${(i * 0.05).toFixed(2)}s`, transformOrigin: `${x}px ${y}px` }}>
+      {gold ? <circle cx={x} cy={y + size * 0.05} r={size * 0.95} fill={`url(#${treeId}-glow)`} className="pt-gold-glow" /> : null}
       <g transform={`translate(${x - size / 2} ${y - size / 2}) rotate(${tilt} ${size / 2} ${size / 2}) scale(${s})`}>
         <path d={APPLE} fill="#FFFFFF" stroke="#FFFFFF" strokeWidth="7" strokeLinejoin="round" />
-        <path d={APPLE} fill={FILL[color]} stroke="#3A1A08" strokeOpacity=".5" strokeWidth="2" />
-        <ellipse cx="22" cy="28" rx="4" ry="7" fill="#fff" opacity=".5" transform="rotate(-20 22 28)" />
+        <path
+          d={APPLE}
+          fill={gold ? `url(#${treeId}-goldapple)` : FILL[color]}
+          stroke={gold ? "#7A5300" : "#3A1A08"}
+          strokeOpacity={gold ? 0.8 : 0.5}
+          strokeWidth="2"
+        />
+        {gold ? <path d={APPLE} fill={`url(#${treeId}-shine)`} className="pt-gold-shine" /> : null}
+        <ellipse cx="22" cy="28" rx="4" ry="7" fill="#fff" opacity={gold ? 0.85 : 0.5} transform="rotate(-20 22 28)" />
         <path d="M32 19c0-5 1-8 3-11" stroke="#6B4A2B" strokeWidth="2.6" fill="none" strokeLinecap="round" />
         <path d="M34 13c4-6 11-6 14-4-3 5-9 7-14 4z" fill="#3E8E3A" />
       </g>
+      {gold ? (
+        <g pointerEvents="none">
+          {[
+            [0.5, -0.46, 1.5, 0],
+            [-0.55, -0.1, 1, 0.6],
+            [0.42, 0.5, 0.9, 1.1],
+          ].map(([dx, dy, k, delay], n) => (
+            <g key={n} transform={`translate(${(x + size * dx).toFixed(1)} ${(y + size * dy).toFixed(1)}) scale(${k})`}>
+              <path d={SPARKLE} fill="#FFFFFF" stroke="#F2B705" strokeWidth=".8" className="pt-sparkle" style={{ animationDelay: `${((i % 4) * 0.3 + delay).toFixed(2)}s` }} />
+            </g>
+          ))}
+        </g>
+      ) : null}
     </g>
   );
 }
@@ -127,9 +169,31 @@ export function MoneyTree({
         @keyframes pt-tree-fall { 0% { transform: translateY(-300px); opacity: 0; } 60% { opacity: 1; } 80% { transform: translateY(6px); } 100% { transform: translateY(0); } }
         .pt-tree-pop { animation: pt-tree-pop .5s ease-out both; }
         .pt-tree-fall { animation: pt-tree-fall .9s cubic-bezier(.55,0,.4,1) both; }
-        @media (prefers-reduced-motion: reduce) { .pt-tree-pop, .pt-tree-fall { animation: none; } }
+        @keyframes pt-sparkle { 0%, 100% { opacity: .2; } 50% { opacity: 1; } }
+        @keyframes pt-gold-shine { 0%, 100% { opacity: .35; } 50% { opacity: .95; } }
+        @keyframes pt-gold-glow { 0%, 100% { opacity: .55; } 50% { opacity: 1; } }
+        .pt-sparkle { animation: pt-sparkle 1.4s ease-in-out infinite; }
+        .pt-gold-shine { animation: pt-gold-shine 2.2s ease-in-out infinite; }
+        .pt-gold-glow { animation: pt-gold-glow 2.2s ease-in-out infinite; }
+        @media (prefers-reduced-motion: reduce) { .pt-tree-pop, .pt-tree-fall, .pt-sparkle, .pt-gold-shine, .pt-gold-glow { animation: none; } }
       `}</style>
       <defs>
+        <radialGradient id={`${id}-goldapple`} cx=".38" cy=".38" r=".75">
+          <stop offset="0" stopColor="#FFF6C2" />
+          <stop offset=".35" stopColor="#F7CD3B" />
+          <stop offset=".75" stopColor="#D49A0E" />
+          <stop offset="1" stopColor="#9C6A05" />
+        </radialGradient>
+        <radialGradient id={`${id}-glow`}>
+          <stop offset="0" stopColor="#FFE680" stopOpacity=".95" />
+          <stop offset=".55" stopColor="#FFD23F" stopOpacity=".45" />
+          <stop offset="1" stopColor="#FFD23F" stopOpacity="0" />
+        </radialGradient>
+        <linearGradient id={`${id}-shine`} x1="0" y1="0" x2="1" y2="1">
+          <stop offset=".3" stopColor="#FFFFFF" stopOpacity="0" />
+          <stop offset=".48" stopColor="#FFFFFF" stopOpacity=".85" />
+          <stop offset=".6" stopColor="#FFFFFF" stopOpacity="0" />
+        </linearGradient>
         <linearGradient id={gold} x1="0" x2="1">
           <stop offset="0" stopColor="#A87A1E" />
           <stop offset=".5" stopColor="#E2BC5E" />
@@ -159,10 +223,10 @@ export function MoneyTree({
         <Leaf key={i} {...l} />
       ))}
       {treeSpots.map(([x, y], i) => (
-        <Apple key={`t${i}`} x={x} y={y} color={apples[i]} i={i} />
+        <Apple key={`t${i}`} x={x} y={y} color={apples[i]} i={i} treeId={id} size={apples[i] === "gold" ? 46 : 40} />
       ))}
       {grassSpots.map(([x, y], i) => (
-        <Apple key={`g${i}`} x={x} y={y} color={fallen[i]} i={i} size={32} fallen />
+        <Apple key={`g${i}`} x={x} y={y} color={fallen[i]} i={i} treeId={id} size={fallen[i] === "gold" ? 38 : 32} fallen />
       ))}
     </svg>
   );

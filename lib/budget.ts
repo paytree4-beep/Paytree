@@ -141,22 +141,25 @@ export function commitmentState(dueDay: number, paidThisMonth: boolean, today: s
 /** Room on the branches, and on the grass. */
 export const TREE_SLOTS = 30;
 
-export type AppleColor = "red" | "green" | "yellow";
+export type AppleColor = "gold" | "red" | "green" | "yellow";
 
-/** What one apple is worth, in cents: red is the most valuable. */
-export const APPLE_VALUES: Record<AppleColor, number> = { red: 100_000, green: 10_000, yellow: 1_000 };
+/** What one apple is worth, in cents: a shiny gold apple is the most valuable. */
+export const APPLE_VALUES: Record<AppleColor, number> = { gold: 1_000_000, red: 100_000, green: 10_000, yellow: 1_000 };
 
 /**
- * Money as apples, biggest first: $2,350 -> 2 red, 3 green, 5 yellow.
+ * Money as apples, biggest first: $12,350 -> 1 gold, 2 red, 3 green, 5 yellow.
  * Amounts under $10 round to the nearest yellow apple. At most `max` apples.
  */
 export function applesFor(cents: number, max: number = TREE_SLOTS): AppleColor[] {
   if (cents <= 0) return [];
-  const red = Math.floor(cents / APPLE_VALUES.red);
-  const afterRed = cents - red * APPLE_VALUES.red;
+  const gold = Math.floor(cents / APPLE_VALUES.gold);
+  const afterGold = cents - gold * APPLE_VALUES.gold;
+  const red = Math.floor(afterGold / APPLE_VALUES.red);
+  const afterRed = afterGold - red * APPLE_VALUES.red;
   const green = Math.floor(afterRed / APPLE_VALUES.green);
   const yellow = Math.round((afterRed - green * APPLE_VALUES.green) / APPLE_VALUES.yellow);
   const out: AppleColor[] = [
+    ...Array<AppleColor>(gold).fill("gold"),
     ...Array<AppleColor>(red).fill("red"),
     ...Array<AppleColor>(green).fill("green"),
     ...Array<AppleColor>(yellow).fill("yellow"),
@@ -165,7 +168,7 @@ export function applesFor(cents: number, max: number = TREE_SLOTS): AppleColor[]
 }
 
 export function countApples(apples: AppleColor[]): Record<AppleColor, number> {
-  const c: Record<AppleColor, number> = { red: 0, green: 0, yellow: 0 };
+  const c: Record<AppleColor, number> = { gold: 0, red: 0, green: 0, yellow: 0 };
   for (const a of apples) c[a] += 1;
   return c;
 }
@@ -191,8 +194,10 @@ const MOOD_LABELS: Record<TreeMood, string> = {
 
 /**
  * Apples on the tree = what is left this month (in = minus out), apples on
- * the grass = what was spent. Red $1,000, green $100, yellow $10, so a
- * bigger income really makes a fuller, redder tree.
+ * the grass = what was spent. Gold $10,000, red $1,000, green $100,
+ * yellow $10, so a
+ * bigger income really makes a fuller, redder tree, and every $10,000 is a
+ * shiny gold apple.
  */
 export function treeState(income: number, spent: number): TreeState {
   const onTree = applesFor(Math.max(0, income - spent));
@@ -201,4 +206,46 @@ export function treeState(income: number, spent: number): TreeState {
   const keptShare = income > 0 ? Math.max(0, (income - spent) / income) : 0;
   const mood: TreeMood = keptShare >= 0.6 ? "thriving" : keptShare >= 0.35 ? "healthy" : keptShare >= 0.15 ? "watch" : "care";
   return { onTree, fallen, mood, label: MOOD_LABELS[mood] };
+}
+
+export interface PeriodTotals {
+  income: number;
+  spent: number;
+  left: number;
+}
+
+/**
+ * Money in and out for the days that `inPeriod` accepts. `payTreeByDay` holds
+ * confirmed PayTree payments per day ("2026-10-07" -> cents).
+ */
+export function totalsFor(moves: MoveRow[], payTreeByDay: Map<string, number>, inPeriod: (day: string) => boolean): PeriodTotals {
+  let income = 0;
+  let spent = 0;
+  for (const [day, cents] of payTreeByDay) if (inPeriod(day)) income += cents;
+  for (const m of moves) {
+    if (!inPeriod(m.on_date)) continue;
+    if (m.kind === "in") income += m.amount_cents;
+    else spent += m.amount_cents;
+  }
+  return { income, spent, left: income - spent };
+}
+
+/** Number of days in "2026-02" (28). */
+export function monthLength(month: string): number {
+  const [y, m] = month.split("-").map(Number);
+  return new Date(Date.UTC(y, m, 0)).getUTCDate();
+}
+
+/** "2026-10" -> "2026-09" (step -1) or "2026-11" (step 1). */
+export function shiftMonth(month: string, step: number): string {
+  const [y, m] = month.split("-").map(Number);
+  const d = new Date(Date.UTC(y, m - 1 + step, 15));
+  return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}`;
+}
+
+/** A valid "YYYY-MM" between 2020 and `latest`, or null. */
+export function cleanMonth(raw: unknown, latest: string): string | null {
+  if (typeof raw !== "string" || !/^\d{4}-(0[1-9]|1[0-2])$/.test(raw)) return null;
+  if (raw < "2020-01" || raw > latest) return null;
+  return raw;
 }
