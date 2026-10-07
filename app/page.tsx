@@ -123,9 +123,9 @@ const PHONE =
 /** Two small phones side by side: a payment page and its statistics. */
 function PhoneExample() {
   return (
-    <div className="mx-auto flex w-full max-w-[460px] items-start justify-center">
+    <div className="mx-auto flex w-full max-w-[460px] items-center justify-center gap-4">
       {/* Phone 1: the public payment page */}
-      <div className="w-[66%] max-w-[260px]">
+      <div className="w-1/2 max-w-[220px] flex-none">
         <div
           role="img"
           aria-label="Example PayTree page for Cedar Coffee Co. with Cash App, Venmo, Zelle, Apple Cash and a QR code"
@@ -169,6 +169,23 @@ function PhoneExample() {
         <p className="mt-2 text-center text-[12px] font-semibold text-[#2F4A3E]">Your page</p>
       </div>
 
+      {/* Next to the phone: ready in 3 steps */}
+      <div id="how" className="flex w-1/2 max-w-[220px] scroll-mt-24 flex-col gap-3">
+        <p className="font-serif text-[24px] leading-tight text-[#064E3B]">Ready in 3 steps</p>
+        <ol className="flex flex-col gap-3">
+          {STEPS.map((step) => (
+            <li key={step.n} className={`flex gap-3 p-3 ${glass}`}>
+              <span aria-hidden="true" className={`font-serif text-[34px] leading-none ${goldText}`}>
+                {step.n}
+              </span>
+              <span className="min-w-0">
+                <span className="block text-[17px] font-bold leading-tight text-[#0B1F18]">{step.title}</span>
+                <span className="mt-0.5 block text-[14px] font-medium leading-snug text-[#0F2419]">{step.body}</span>
+              </span>
+            </li>
+          ))}
+        </ol>
+      </div>
     </div>
   );
 }
@@ -301,24 +318,6 @@ export default function HomePage() {
                 ))}
               </div>
             </div>
-          </section>
-
-          {/* Steps */}
-          <section id="how" className="px-5 pb-20 sm:px-6">
-            <Reveal className={`mx-auto max-w-[1180px] p-6 sm:p-10 ${glass}`}>
-              <h2 className={headingClass}>Ready in 3 steps</h2>
-              <ol className="mt-6 grid grid-cols-3 gap-3 sm:gap-8">
-                {STEPS.map((s) => (
-                  <li key={s.n} className="flex min-w-0 flex-col gap-1.5 border-t-2 border-[#064E3B] pt-3">
-                    <span aria-hidden="true" className={`font-serif text-[34px] leading-none sm:text-[48px] ${goldText}`}>
-                      {s.n}
-                    </span>
-                    <h3 className="text-[16px] font-bold leading-tight sm:text-[22px]">{s.title}</h3>
-                    <p className="text-[16px] leading-snug font-medium text-[#0F2419] sm:text-[19px]">{s.body}</p>
-                  </li>
-                ))}
-              </ol>
-            </Reveal>
           </section>
 
           {/* Pricing */}
