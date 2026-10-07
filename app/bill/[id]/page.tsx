@@ -183,7 +183,7 @@ export default async function BillPage({ params, searchParams }: Props) {
         className="sticky bottom-0 z-40 border-t border-white/80 bg-white/75 px-4 pt-3.5 text-center text-[#064E3B] backdrop-blur-xl"
         style={{ paddingBottom: "max(0.875rem, env(safe-area-inset-bottom))" }}
       >
-        <Link href={`/?ref=${profile.username}`} className="inline-flex min-h-11 items-center justify-center font-semibold hover:underline">
+        <Link href="/" className="inline-flex min-h-11 items-center justify-center font-semibold hover:underline">
           🍕 Split your next bill with PayTree
         </Link>
       </footer>

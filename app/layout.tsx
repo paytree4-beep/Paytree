@@ -8,7 +8,6 @@ import type { Metadata, Viewport } from "next";
 import { Instrument_Serif, Plus_Jakarta_Sans } from "next/font/google";
 import type { ReactNode } from "react";
 
-import { RefCapture } from "@/components/ref-capture";
 import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 
@@ -63,7 +62,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={`${sans.variable} ${serif.variable}`}>
       <body className="min-h-screen bg-[#FBFBFB] font-sans text-[#0B1F18] antialiased">
-        <RefCapture />
         {children}
       </body>
     </html>

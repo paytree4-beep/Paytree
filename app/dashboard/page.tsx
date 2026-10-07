@@ -26,8 +26,6 @@ import { WelcomeCelebration } from "@/components/dashboard/welcome-celebration";
 import { OwnerCookie } from "@/components/dashboard/owner-cookie";
 import { GettingStarted } from "@/components/dashboard/getting-started";
 import { InstallCard } from "@/components/dashboard/install-card";
-import { InviteCard } from "@/components/dashboard/invite-card";
-import { createAdminClient } from "@/lib/supabase/admin";
 import { cookies } from "next/headers";
 import { openBillingPortal, startCheckout } from "./billing-actions";
 import { computeAccess, grantsAccess, type SubscriptionRow } from "@/lib/billing";
@@ -160,21 +158,6 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
   const modeReady = !modeError;
   const tipMode = (modeRow as { page_mode?: string } | null)?.page_mode === "tip";
 
-  // Referral link: how many people joined through it.
-  let joined = 0;
-  try {
-    const admin = createAdminClient();
-    if (admin) {
-      const { count: joinedCount } = await admin
-        .from("profiles")
-        .select("id", { count: "exact", head: true })
-        .eq("referred_by", user.id);
-      joined = typeof joinedCount === "number" ? joinedCount : 0;
-    }
-  } catch {
-    joined = 0;
-  }
-
   const { data: subData } = await supabase
     .from("subscriptions")
     .select("provider, provider_customer_id, provider_subscription_id, plan, status, current_period_end, cancel_at_period_end")
@@ -199,7 +182,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
   const notice = param(params, "notice");
   const error = param(params, "error");
   const pagePath = `/${profile.username}`;
-  const VIEWS = ["home", "link", "invite", "log", "profile", "settings", "billing", "share"] as const;
+  const VIEWS = ["home", "link", "log", "profile", "settings", "billing", "share"] as const;
   const requestedView = param(params, "view");
   const view = VIEWS.find((v) => v === requestedView) ?? "home";
 
@@ -236,7 +219,6 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
           },
         ]
       : []),
-    { icon: "🎁", title: "Invite friends", detail: joined > 0 ? `${joined} joined with your link` : "Your personal link", href: "/dashboard?view=invite" },
     { icon: "👤", title: "Profile", detail: "Photo, name and bio", href: "/dashboard?view=profile" },
     ...(billingOn
       ? [{ icon: "⭐", title: "Membership", detail: isMember ? "Active" : access.reason === "trial" ? `${access.trialDaysLeft} days left` : "Paused", href: "/dashboard?view=billing" }]
@@ -446,9 +428,6 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
           </>
         ) : null}
 
-        {view === "invite" ? (
-          <InviteCard link={`${SITE_URL}/?ref=${profile.username}`} name={profile.display_name} joined={joined} />
-        ) : null}
 
         {view === "log" ? (
           <>
