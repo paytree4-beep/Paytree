@@ -114,38 +114,6 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Sea
         ) : null}
 
         <section className="rounded-2xl border border-[#DCE5DF] bg-white p-5">
-          <h2 className="text-sm font-bold uppercase tracking-[0.1em] text-[#4B6358]">New invoice</h2>
-          <form action={createInvoice} className="mt-4 flex flex-col gap-4" noValidate>
-            <label className="flex flex-col gap-1.5">
-              <span className="text-sm font-semibold">Customer name</span>
-              <input name="customer" maxLength={60} placeholder="Sara Johnson" autoComplete="off" className={input} />
-            </label>
-            <label className="flex flex-col gap-1.5">
-              <span className="text-sm font-semibold">What is it for?</span>
-              <input name="title" maxLength={80} placeholder="Haircut and color" className={input} />
-            </label>
-            <div className="grid grid-cols-2 gap-3">
-              <label className="flex flex-col gap-1.5">
-                <span className="text-sm font-semibold">Amount</span>
-                <span className="flex min-h-[52px] items-center rounded-xl border border-[#C9D6CE] bg-white px-4 focus-within:border-[#064E3B]">
-                  <span className="text-[#4B6358]">$</span>
-                  <input name="amount" inputMode="decimal" maxLength={12} placeholder="60" className="min-w-0 flex-1 bg-transparent py-3 pl-1 text-base outline-none" />
-                </span>
-              </label>
-              <label className="flex flex-col gap-1.5">
-                <span className="text-sm font-semibold">Due date (optional)</span>
-                <input name="due_date" type="date" min={today} className={input} />
-              </label>
-            </div>
-            <label className="flex flex-col gap-1.5">
-              <span className="text-sm font-semibold">Note (optional)</span>
-              <input name="note" maxLength={200} placeholder="Thank you for your business!" className={input} />
-            </label>
-            <SubmitButton pendingText="Creating…">Create invoice</SubmitButton>
-          </form>
-        </section>
-
-        <section className="rounded-2xl border border-[#DCE5DF] bg-white p-5">
           <div className="flex items-baseline justify-between gap-3">
             <h2 className="text-sm font-bold uppercase tracking-[0.1em] text-[#4B6358]">Your invoices</h2>
             {unpaidTotal > 0 ? (
@@ -230,6 +198,38 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Sea
             </ul>
           )}
         </section>
+        <section className="rounded-2xl border border-[#DCE5DF] bg-white p-5">
+          <h2 className="text-sm font-bold uppercase tracking-[0.1em] text-[#4B6358]">New invoice</h2>
+          <form action={createInvoice} className="mt-4 flex flex-col gap-4" noValidate>
+            <label className="flex flex-col gap-1.5">
+              <span className="text-sm font-semibold">Customer name</span>
+              <input name="customer" maxLength={60} placeholder="Sara Johnson" autoComplete="off" className={input} />
+            </label>
+            <label className="flex flex-col gap-1.5">
+              <span className="text-sm font-semibold">What is it for?</span>
+              <input name="title" maxLength={80} placeholder="Haircut and color" className={input} />
+            </label>
+            <div className="grid grid-cols-2 gap-3">
+              <label className="flex flex-col gap-1.5">
+                <span className="text-sm font-semibold">Amount</span>
+                <span className="flex min-h-[52px] items-center rounded-xl border border-[#C9D6CE] bg-white px-4 focus-within:border-[#064E3B]">
+                  <span className="text-[#4B6358]">$</span>
+                  <input name="amount" inputMode="decimal" maxLength={12} placeholder="60" className="min-w-0 flex-1 bg-transparent py-3 pl-1 text-base outline-none" />
+                </span>
+              </label>
+              <label className="flex flex-col gap-1.5">
+                <span className="text-sm font-semibold">Due date (optional)</span>
+                <input name="due_date" type="date" min={today} className={input} />
+              </label>
+            </div>
+            <label className="flex flex-col gap-1.5">
+              <span className="text-sm font-semibold">Note (optional)</span>
+              <input name="note" maxLength={200} placeholder="Thank you for your business!" className={input} />
+            </label>
+            <SubmitButton pendingText="Creating…">Create invoice</SubmitButton>
+          </form>
+        </section>
+
       </main>
     </div>
   );

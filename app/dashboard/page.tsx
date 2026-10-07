@@ -124,6 +124,15 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
     : { count: 0 };
   const waiting = typeof pendingCount === "number" ? pendingCount : 0;
 
+  // Invoices a customer marked as paid, waiting for the owner to confirm.
+  const { count: invoiceWaitingCount } = await supabase
+    .from("invoices")
+    .select("id", { count: "exact", head: true })
+    .eq("owner_id", user.id)
+    .not("claimed_at", "is", null)
+    .is("confirmed_at", null);
+  const invoicesWaiting = typeof invoiceWaitingCount === "number" ? invoiceWaitingCount : 0;
+
   // Celebrate new "I've paid" notes once: compare the newest one with the
   // newest the owner has already seen (cookie set by SaleCelebration).
   const { data: newestRow } = logReady
@@ -203,7 +212,13 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
       badge: methodCount === 0 ? "!" : undefined,
     },
     { icon: "🍕", title: "Split the bill", detail: "Share a bill with friends", href: "/dashboard/split" },
-    { icon: "🧾", title: "Invoices", detail: "Send a customer a bill", href: "/dashboard/invoices" },
+    {
+      icon: "🧾",
+      title: "Invoices",
+      detail: invoicesWaiting > 0 ? `${invoicesWaiting} to confirm` : "Send a customer a bill",
+      href: "/dashboard/invoices",
+      badge: invoicesWaiting > 0 ? String(invoicesWaiting) : undefined,
+    },
     { icon: "📸", title: tipMode ? "Tip me card" : "Pay me here card", detail: "For Instagram & TikTok", href: "/dashboard?view=share" },
     { icon: "📊", title: "Statistics", detail: `${views7} views · ${taps7} taps this week`, href: "/dashboard/stats" },
     ...(logReady
