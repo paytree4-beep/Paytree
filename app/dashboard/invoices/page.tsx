@@ -45,16 +45,17 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Sea
   } = await supabase.auth.getUser();
   if (!user) redirect("/login?next=/dashboard/invoices");
 
-  const { data: profileRow } = await supabase.from("profiles").select("display_name").eq("id", user.id).maybeSingle();
+  const [{ data: profileRow }, { data, error: loadError }] = await Promise.all([
+    supabase.from("profiles").select("display_name").eq("id", user.id).maybeSingle(),
+    supabase
+      .from("invoices")
+      .select("id, customer, title, amount_cents, due_date, note, claimed_at, claimed_method, confirmed_at, created_at")
+      .eq("owner_id", user.id)
+      .order("created_at", { ascending: false })
+      .limit(200),
+  ]);
   if (!profileRow) redirect("/onboarding");
   const name = (profileRow as { display_name: string }).display_name;
-
-  const { data, error: loadError } = await supabase
-    .from("invoices")
-    .select("id, customer, title, amount_cents, due_date, note, claimed_at, claimed_method, confirmed_at, created_at")
-    .eq("owner_id", user.id)
-    .order("created_at", { ascending: false })
-    .limit(200);
   const invoices = (data ?? []) as InvoiceRow[];
 
   const params = await searchParams;

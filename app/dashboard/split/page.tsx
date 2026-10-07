@@ -41,16 +41,17 @@ export default async function SplitPage({ searchParams }: { searchParams: Search
   } = await supabase.auth.getUser();
   if (!user) redirect("/login?next=/dashboard/split");
 
-  const { data: profileRow } = await supabase.from("profiles").select("display_name").eq("id", user.id).maybeSingle();
+  const [{ data: profileRow }, { data, error: loadError }] = await Promise.all([
+    supabase.from("profiles").select("display_name").eq("id", user.id).maybeSingle(),
+    supabase
+      .from("bill_splits")
+      .select("id, title, total_cents, people, created_at, event_date")
+      .eq("owner_id", user.id)
+      .order("created_at", { ascending: false })
+      .limit(30),
+  ]);
   if (!profileRow) redirect("/onboarding");
   const name = (profileRow as { display_name: string }).display_name;
-
-  const { data, error: loadError } = await supabase
-    .from("bill_splits")
-    .select("id, title, total_cents, people, created_at, event_date")
-    .eq("owner_id", user.id)
-    .order("created_at", { ascending: false })
-    .limit(30);
   const splits = (data ?? []) as SplitRow[];
 
   const ids = splits.map((s) => s.id);

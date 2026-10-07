@@ -8,7 +8,8 @@
 // shows up by itself under "Came in".
 
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import type { FormEvent } from "react";
 
 import { addMoveQuick, deleteMoveQuick } from "@/app/dashboard/budget/actions";
@@ -63,7 +64,19 @@ export function MoneyBoard({
   initialPeriod: Period;
 }) {
   const currentMonth = today.slice(0, 7);
+  const router = useRouter();
   const [entries, setEntries] = useState<BoardEntry[]>(initialEntries);
+  // Entries being deleted right now: a refresh must not bring them back for a moment.
+  const deleting = useRef<Set<string>>(new Set());
+  // Entries removed while their save was still running: deleted as soon as the save finishes.
+  const dropAfterSave = useRef<Set<string>>(new Set());
+  // Whenever the page brings fresh numbers from the database, they win over our guesses.
+  useEffect(() => {
+    setEntries((prev) => [
+      ...prev.filter((e) => e.id.startsWith("temp-")),
+      ...initialEntries.filter((e) => !deleting.current.has(e.id)),
+    ]);
+  }, [initialEntries]);
   const [kind, setKind] = useState<Kind>("in");
   const [period, setPeriod] = useState<Period>(initialPeriod);
   const [month, setMonth] = useState(initialMonth);
@@ -125,27 +138,49 @@ export function MoneyBoard({
     };
     setEntries((prev) => [entry, ...prev]);
     form.reset();
-    const result = await addMoveQuick(values);
-    if (result.ok) {
-      setEntries((prev) => prev.map((e) => (e.id === tempId ? { ...e, id: result.id } : e)));
+    let result: Awaited<ReturnType<typeof addMoveQuick>>;
+    try {
+      result = await addMoveQuick(values);
+    } catch {
+      result = { ok: false, error: "save" };
+    }
+    if (result.ok && dropAfterSave.current.has(tempId)) {
+      dropAfterSave.current.delete(tempId);
+      await deleteMoveQuick(result.id).catch(() => false);
+    } else if (result.ok) {
+      setEntries((prev) => prev.filter((e) => e.id !== tempId));
+      setEntries((prev) => [{ ...entry, id: result.id }, ...prev.filter((e) => e.id !== result.id)]);
     } else {
       setEntries((prev) => prev.filter((e) => e.id !== tempId));
       setError(ERRORS[result.error] ?? ERRORS.save);
     }
+    router.refresh();
   }
 
   async function onDelete(entry: BoardEntry) {
-    if (entry.id.startsWith("temp-")) return;
+    if (entry.id.startsWith("temp-")) {
+      dropAfterSave.current.add(entry.id);
+      setEntries((prev) => prev.filter((e) => e.id !== entry.id));
+      return;
+    }
     setEntries((prev) => prev.filter((e) => e.id !== entry.id));
     setUndo(entry);
     if (undoTimer.current) clearTimeout(undoTimer.current);
     undoTimer.current = setTimeout(() => setUndo(null), 7000);
-    const ok = await deleteMoveQuick(entry.id);
+    deleting.current.add(entry.id);
+    let ok = false;
+    try {
+      ok = await deleteMoveQuick(entry.id);
+    } catch {
+      ok = false;
+    }
+    deleting.current.delete(entry.id);
     if (!ok) {
-      setEntries((prev) => [entry, ...prev]);
+      setEntries((prev) => [entry, ...prev.filter((e) => e.id !== entry.id)]);
       setUndo(null);
       setError(ERRORS.save);
     }
+    router.refresh();
   }
 
   async function onUndo() {
@@ -156,19 +191,25 @@ export function MoneyBoard({
     tempCounter.current += 1;
     const tempId = `temp-${tempCounter.current}`;
     setEntries((prev) => [{ ...entry, id: tempId }, ...prev]);
-    const result = await addMoveQuick({
-      kind: entry.kind,
-      amount: (entry.cents / 100).toFixed(2),
-      category: entry.category ?? "other",
-      note: entry.title === "Income" || entry.title === categoryOf(entry.category).label ? "" : entry.title,
-      on_date: entry.date,
-    });
+    let result: Awaited<ReturnType<typeof addMoveQuick>>;
+    try {
+      result = await addMoveQuick({
+        kind: entry.kind,
+        amount: (entry.cents / 100).toFixed(2),
+        category: entry.category ?? "other",
+        note: entry.title === "Income" || entry.title === categoryOf(entry.category).label ? "" : entry.title,
+        on_date: entry.date,
+      });
+    } catch {
+      result = { ok: false, error: "save" };
+    }
+    setEntries((prev) => prev.filter((e) => e.id !== tempId));
     if (result.ok) {
-      setEntries((prev) => prev.map((e) => (e.id === tempId ? { ...e, id: result.id } : e)));
+      setEntries((prev) => [{ ...entry, id: result.id }, ...prev.filter((e) => e.id !== result.id)]);
     } else {
-      setEntries((prev) => prev.filter((e) => e.id !== tempId));
       setError(ERRORS.save);
     }
+    router.refresh();
   }
 
   const tab = (id: Period, label: string) => (

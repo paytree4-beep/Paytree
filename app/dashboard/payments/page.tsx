@@ -29,19 +29,16 @@ export default async function PaymentsPage({ searchParams }: { searchParams: Sea
   } = await supabase.auth.getUser();
   if (!user) redirect("/login?next=/dashboard/payments");
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("username")
-    .eq("id", user.id)
-    .maybeSingle();
+  const [{ data: profile }, { data }] = await Promise.all([
+    supabase.from("profiles").select("username").eq("id", user.id).maybeSingle(),
+    supabase
+      .from("payment_methods")
+      .select("method_id, public_config, position")
+      .eq("profile_id", user.id)
+      .order("position", { ascending: true }),
+  ]);
   if (!profile) redirect("/onboarding");
   const username = (profile as { username: string }).username;
-
-  const { data } = await supabase
-    .from("payment_methods")
-    .select("method_id, public_config, position")
-    .eq("profile_id", user.id)
-    .order("position", { ascending: true });
   const stored = new Map<string, unknown>();
   for (const row of (data ?? []) as Row[]) stored.set(row.method_id, row.public_config);
 
