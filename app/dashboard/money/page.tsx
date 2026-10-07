@@ -74,11 +74,11 @@ export default async function MoneyPage({ searchParams }: { searchParams: Search
         </div>
 
         <section className="rounded-2xl border border-[#DCE5DF] bg-white p-5">
-          <p className="text-[13px] font-bold uppercase tracking-[0.1em] text-[#4B6358]">This month</p>
-          <p className="mt-1 font-serif text-[52px] leading-none text-[#064E3B]">{formatMoney(summary.thisMonth)}</p>
+          <p className="text-[13px] font-bold uppercase tracking-[0.1em] text-[#4B6358]">Today</p>
+          <p className="mt-1 font-serif text-[52px] leading-none text-[#064E3B]">{formatMoney(summary.today)}</p>
           <div className="mt-4 grid grid-cols-3 gap-2">
             {[
-              { label: "Today", value: summary.today },
+              { label: "This month", value: summary.thisMonth },
               { label: "This year", value: summary.thisYear },
               { label: "All time", value: summary.allTime },
             ].map((t) => (
