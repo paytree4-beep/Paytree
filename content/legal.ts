@@ -181,7 +181,7 @@ export const TERMS: LegalDocument = {
     {
       id: "contact",
       title: "Contact us",
-      intro: ["ABUHIDAR LLC, Sheridan, WY 82801, USA. Email: paytree4@gmail.com."],
+      intro: ["ABUHIDAR LLC, 30 N Gould St, Ste R, Sheridan, WY 82801, USA. Email: paytree4@gmail.com."],
     },
   ],
 };
@@ -310,7 +310,7 @@ export const PRIVACY: LegalDocument = {
     {
       id: "contact-privacy",
       title: "Contact us",
-      intro: ["ABUHIDAR LLC, Sheridan, WY 82801, USA. Privacy requests: paytree4@gmail.com."],
+      intro: ["ABUHIDAR LLC, 30 N Gould St, Ste R, Sheridan, WY 82801, USA. Privacy requests: paytree4@gmail.com."],
     },
   ],
 };
