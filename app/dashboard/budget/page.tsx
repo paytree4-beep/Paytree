@@ -11,6 +11,7 @@ import { redirect } from "next/navigation";
 import { Notice } from "@/components/auth/fields";
 import { SubmitButton } from "@/components/auth/submit-button";
 import { Logo } from "@/components/brand/logo";
+import { PeriodTabs } from "@/components/ui/period-tabs";
 import { MoneyTree } from "@/components/budget/money-tree";
 import { TimeZoneCookie } from "@/components/dashboard/time-zone-cookie";
 import { param, type SearchParams } from "@/lib/auth";
@@ -42,6 +43,28 @@ const NOTICES: Record<string, string> = {
 const input =
   "min-h-[52px] w-full rounded-xl border border-[#C9D6CE] bg-white px-4 text-base text-[#0B1F18] outline-none focus:border-[#064E3B]";
 
+function Totals({ t }: { t: { income: number; spent: number; left: number } }) {
+  return (
+    <div className="mt-3 grid grid-cols-3 gap-2">
+      <div className="rounded-xl bg-[#ECF7F0] p-3">
+        <p className="text-[11px] font-bold uppercase tracking-[0.06em] text-[#3F574C]">Came in</p>
+        <p className="mt-1 font-serif text-[22px] leading-none text-[#16A34A]">{formatMoney(t.income)}</p>
+      </div>
+      <div className="rounded-xl bg-[#FEF3F2] p-3">
+        <p className="text-[11px] font-bold uppercase tracking-[0.06em] text-[#3F574C]">Spent</p>
+        <p className="mt-1 font-serif text-[22px] leading-none text-[#B42318]">{formatMoney(t.spent)}</p>
+      </div>
+      <div className="rounded-xl bg-[#F4F8F6] p-3">
+        <p className="text-[11px] font-bold uppercase tracking-[0.06em] text-[#3F574C]">Left</p>
+        <p className={`mt-1 font-serif text-[22px] leading-none ${t.left < 0 ? "text-[#B42318]" : "text-[#064E3B]"}`}>
+          {t.left < 0 ? "−" : ""}
+          {formatMoney(Math.abs(t.left))}
+        </p>
+      </div>
+    </div>
+  );
+}
+
 function shortDate(day: string): string {
   return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", timeZone: "UTC" }).format(new Date(`${day}T12:00:00Z`));
 }
@@ -57,11 +80,10 @@ export default async function BudgetPage({ searchParams }: { searchParams: Searc
   const b = await loadBudget(supabase, user.id, { month: param(params, "m") });
   const requested = param(params, "period");
   const period: "today" | "month" | "year" = requested === "today" || requested === "year" ? requested : "month";
-  const t = period === "today" ? b.todayTotals : period === "year" ? b.yearTotals : b.monthTotals;
-  const listMoves = period === "today" ? b.todayMoves : b.monthMoves;
+  const listMoves = b.monthMoves;
   const prevMonth = shiftMonth(b.month, -1);
   const nextMonth = shiftMonth(b.month, 1);
-  const tab = (p: string, m = b.month) => `/dashboard/budget?period=${p}${m !== b.currentMonth ? `&m=${m}` : ""}`;
+  const monthHref = (m: string) => `/dashboard/budget?period=month${m !== b.currentMonth ? `&m=${m}` : ""}`;
   const error = param(params, "error");
   const notice = param(params, "notice");
   const commitmentsTotal = b.commitments.reduce((sum, c) => sum + c.amount_cents, 0);
@@ -96,119 +118,117 @@ export default async function BudgetPage({ searchParams }: { searchParams: Searc
 
         {/* Today / month / year */}
         <section className="rounded-2xl border border-[#DCE5DF] bg-white p-5">
-          <nav className="flex flex-wrap gap-2" aria-label="Period">
-            {[
-              { id: "today", label: "Today", href: tab("today", b.currentMonth) },
-              { id: "month", label: b.isCurrentMonth ? "This month" : b.monthName, href: tab("month") },
-              { id: "year", label: b.year === b.today.slice(0, 4) ? "This year" : b.year, href: tab("year") },
-            ].map((p) => (
-              <Link
-                key={p.id}
-                href={p.href}
-                scroll={false}
-                aria-current={p.id === period ? "page" : undefined}
-                className={`inline-flex min-h-10 items-center rounded-full px-4 text-[14px] font-bold ${
-                  p.id === period ? "bg-[#064E3B] text-white" : "border border-[#DCE5DF] bg-white text-[#064E3B]"
-                }`}
-              >
-                {p.label}
-              </Link>
-            ))}
-          </nav>
-
-          {period === "month" ? (
-            <div className="mt-3 flex items-center justify-between">
-              <Link href={tab("month", prevMonth)} scroll={false} aria-label="Previous month" className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#DCE5DF] text-[18px] font-bold text-[#064E3B]">
-                ‹
-              </Link>
-              <p className="text-[15px] font-bold uppercase tracking-[0.1em] text-[#4B6358]">
-                {b.monthName} {b.year}
-              </p>
-              {b.isCurrentMonth ? (
-                <span className="h-10 w-10" />
-              ) : (
-                <Link href={tab("month", nextMonth)} scroll={false} aria-label="Next month" className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#DCE5DF] text-[18px] font-bold text-[#064E3B]">
-                  ›
-                </Link>
-              )}
-            </div>
-          ) : (
-            <p className="mt-3 text-[13px] font-bold uppercase tracking-[0.1em] text-[#4B6358]">
-              {period === "today" ? "Today" : b.year}
-            </p>
-          )}
-
-          <div className="mt-3 grid grid-cols-3 gap-2">
-            <div className="rounded-xl bg-[#ECF7F0] p-3">
-              <p className="text-[11px] font-bold uppercase tracking-[0.06em] text-[#3F574C]">Came in</p>
-              <p className="mt-1 font-serif text-[22px] leading-none text-[#16A34A]">{formatMoney(t.income)}</p>
-            </div>
-            <div className="rounded-xl bg-[#FEF3F2] p-3">
-              <p className="text-[11px] font-bold uppercase tracking-[0.06em] text-[#3F574C]">Spent</p>
-              <p className="mt-1 font-serif text-[22px] leading-none text-[#B42318]">{formatMoney(t.spent)}</p>
-            </div>
-            <div className="rounded-xl bg-[#F4F8F6] p-3">
-              <p className="text-[11px] font-bold uppercase tracking-[0.06em] text-[#3F574C]">Left</p>
-              <p className={`mt-1 font-serif text-[22px] leading-none ${t.left < 0 ? "text-[#B42318]" : "text-[#064E3B]"}`}>
-                {t.left < 0 ? "−" : ""}
-                {formatMoney(Math.abs(t.left))}
-              </p>
-            </div>
-          </div>
-
-          {period === "month" ? (
-            <>
-              <div className="mt-3 grid grid-cols-2 gap-2 text-[14px]">
-                {b.isCurrentMonth ? (
-                  <p className="rounded-xl border border-[#EEF3F0] px-3 py-2">
-                    Spent today <strong className="block text-[17px]">{formatMoney(b.todayTotals.spent)}</strong>
-                  </p>
-                ) : null}
-                <p className={`rounded-xl border border-[#EEF3F0] px-3 py-2 ${b.isCurrentMonth ? "" : "col-span-2"}`}>
-                  Daily average <strong className="block text-[17px]">{formatMoney(b.dailyAverage)}</strong>
-                </p>
-              </div>
-              {b.payTreeMonth > 0 ? (
-                <p className="mt-2 text-[12px] text-[#4B6358]">Came in includes {formatMoney(b.payTreeMonth)} from PayTree payments you confirmed.</p>
-              ) : null}
-              <Link href="/dashboard/tree" className="mt-3 flex items-center gap-3 rounded-xl bg-[#F7FAF8] p-2 pr-4 hover:bg-[#EEF5F0]">
-                <span className="w-16 flex-none">
-                  <MoneyTree apples={b.tree.onTree} fallen={b.tree.fallen} id="mini-tree" seed={b.seed} />
-                </span>
-                <span className="flex-1">
-                  <span className="block font-bold text-[#064E3B]">{b.isCurrentMonth ? "My money tree 🌳" : `${b.monthName}'s tree 🌳`}</span>
-                  <span className="text-[13px] text-[#3F574C]">
-                    {b.tree.label} · {b.tree.onTree.length} {b.tree.onTree.length === 1 ? "apple" : "apples"} on the tree
-                  </span>
-                </span>
-                <span className="font-bold text-[#064E3B]">›</span>
-              </Link>
-            </>
-          ) : null}
-
-          {period === "year" ? (
-            <ul className="mt-4 divide-y divide-[#EEF3F0] rounded-xl border border-[#EEF3F0]">
-              {[...b.months].reverse().map((m) => (
-                <li key={m.month}>
-                  <Link href={tab("month", m.month)} scroll={false} className="flex items-center gap-3 px-3 py-2.5 hover:bg-[#F7FAF8]">
-                    <span className="w-10 flex-none">
-                      <MoneyTree apples={m.tree.onTree} fallen={m.tree.fallen} id={`y-${m.month}`} seed={m.seed} />
-                    </span>
-                    <span className="w-10 flex-none font-bold">{m.name}</span>
-                    <span className="flex-1 text-[13px] text-[#3F574C]">
-                      <span className="text-[#16A34A]">+{formatMoney(m.income)}</span> ·{" "}
-                      <span className="text-[#B42318]">−{formatMoney(m.spent)}</span>
-                    </span>
-                    <span className={`font-bold ${m.left < 0 ? "text-[#B42318]" : "text-[#064E3B]"}`}>
-                      {m.left < 0 ? "−" : ""}
-                      {formatMoney(Math.abs(m.left))}
-                    </span>
-                    <span className="font-bold text-[#064E3B]">›</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          ) : null}
+          <PeriodTabs
+            initial={period}
+            tabs={[
+              {
+                id: "today",
+                label: "Today",
+                content: (
+                  <>
+                    <p className="mt-3 text-[13px] font-bold uppercase tracking-[0.1em] text-[#4B6358]">Today</p>
+                    <Totals t={b.todayTotals} />
+                    {b.todayMoves.length > 0 ? (
+                      <ul className="mt-3 divide-y divide-[#EEF3F0]">
+                        {b.todayMoves.map((m) => (
+                          <li key={m.id} className="flex items-center justify-between gap-3 py-2 text-[14px]">
+                            <span className="truncate">
+                              {m.kind === "in" ? "💵" : categoryOf(m.category).icon} {m.note ?? (m.kind === "in" ? "Income" : categoryOf(m.category).label)}
+                            </span>
+                            <strong className={m.kind === "in" ? "text-[#16A34A]" : "text-[#B42318]"}>
+                              {m.kind === "in" ? "+" : "−"}
+                              {formatMoney(m.amount_cents)}
+                            </strong>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="mt-3 text-[14px] text-[#4B6358]">Nothing added today.</p>
+                    )}
+                  </>
+                ),
+              },
+              {
+                id: "month",
+                label: b.isCurrentMonth ? "This month" : b.monthName,
+                content: (
+                  <>
+                    <div className="mt-3 flex items-center justify-between">
+                      <Link href={monthHref(prevMonth)} scroll={false} aria-label="Previous month" className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#DCE5DF] text-[18px] font-bold text-[#064E3B]">
+                        ‹
+                      </Link>
+                      <p className="text-[15px] font-bold uppercase tracking-[0.1em] text-[#4B6358]">
+                        {b.monthName} {b.year}
+                      </p>
+                      {b.isCurrentMonth ? (
+                        <span className="h-10 w-10" />
+                      ) : (
+                        <Link href={monthHref(nextMonth)} scroll={false} aria-label="Next month" className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#DCE5DF] text-[18px] font-bold text-[#064E3B]">
+                          ›
+                        </Link>
+                      )}
+                    </div>
+                    <Totals t={b.monthTotals} />
+                    <div className="mt-3 grid grid-cols-2 gap-2 text-[14px]">
+                      {b.isCurrentMonth ? (
+                        <p className="rounded-xl border border-[#EEF3F0] px-3 py-2">
+                          Spent today <strong className="block text-[17px]">{formatMoney(b.todayTotals.spent)}</strong>
+                        </p>
+                      ) : null}
+                      <p className={`rounded-xl border border-[#EEF3F0] px-3 py-2 ${b.isCurrentMonth ? "" : "col-span-2"}`}>
+                        Daily average <strong className="block text-[17px]">{formatMoney(b.dailyAverage)}</strong>
+                      </p>
+                    </div>
+                    {b.payTreeMonth > 0 ? (
+                      <p className="mt-2 text-[12px] text-[#4B6358]">Came in includes {formatMoney(b.payTreeMonth)} from PayTree payments you confirmed.</p>
+                    ) : null}
+                    <Link href="/dashboard/tree" className="mt-3 flex items-center gap-3 rounded-xl bg-[#F7FAF8] p-2 pr-4 hover:bg-[#EEF5F0]">
+                      <span className="w-16 flex-none">
+                        <MoneyTree apples={b.tree.onTree} fallen={b.tree.fallen} id="mini-tree" seed={b.seed} />
+                      </span>
+                      <span className="flex-1">
+                        <span className="block font-bold text-[#064E3B]">{b.isCurrentMonth ? "My money tree 🌳" : `${b.monthName}'s tree 🌳`}</span>
+                        <span className="text-[13px] text-[#3F574C]">
+                          {b.tree.label} · {b.tree.onTree.length} {b.tree.onTree.length === 1 ? "apple" : "apples"} on the tree
+                        </span>
+                      </span>
+                      <span className="font-bold text-[#064E3B]">›</span>
+                    </Link>
+                  </>
+                ),
+              },
+              {
+                id: "year",
+                label: b.year === b.today.slice(0, 4) ? "This year" : b.year,
+                content: (
+                  <>
+                    <p className="mt-3 text-[13px] font-bold uppercase tracking-[0.1em] text-[#4B6358]">{b.year}</p>
+                    <Totals t={b.yearTotals} />
+                    <ul className="mt-4 divide-y divide-[#EEF3F0] rounded-xl border border-[#EEF3F0]">
+                      {[...b.months].reverse().map((m) => (
+                        <li key={m.month}>
+                          <Link href={monthHref(m.month)} scroll={false} className="flex items-center gap-3 px-3 py-2.5 hover:bg-[#F7FAF8]">
+                            <span className="w-10 flex-none">
+                              <MoneyTree apples={m.tree.onTree} fallen={m.tree.fallen} id={`y-${m.month}`} seed={m.seed} />
+                            </span>
+                            <span className="w-10 flex-none font-bold">{m.name}</span>
+                            <span className="flex-1 text-[13px] text-[#3F574C]">
+                              <span className="text-[#16A34A]">+{formatMoney(m.income)}</span> · <span className="text-[#B42318]">−{formatMoney(m.spent)}</span>
+                            </span>
+                            <span className={`font-bold ${m.left < 0 ? "text-[#B42318]" : "text-[#064E3B]"}`}>
+                              {m.left < 0 ? "−" : ""}
+                              {formatMoney(Math.abs(m.left))}
+                            </span>
+                            <span className="font-bold text-[#064E3B]">›</span>
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </>
+                ),
+              },
+            ]}
+          />
         </section>
 
         {/* Add */}
@@ -353,13 +373,12 @@ export default async function BudgetPage({ searchParams }: { searchParams: Searc
         </section>
 
         {/* This month's list */}
-        {period !== "year" ? (
         <section className="rounded-2xl border border-[#DCE5DF] bg-white p-5">
           <h2 className="text-sm font-bold uppercase tracking-[0.1em] text-[#4B6358]">
-            {period === "today" ? "Today" : b.isCurrentMonth ? "This month" : `${b.monthName} ${b.year}`}
+            {b.isCurrentMonth ? "This month" : `${b.monthName} ${b.year}`}
           </h2>
           {listMoves.length === 0 ? (
-            <p className="mt-2 text-[15px] text-[#4B6358]">{period === "today" ? "Nothing added today." : "Nothing added this month."}</p>
+            <p className="mt-2 text-[15px] text-[#4B6358]">Nothing added this month.</p>
           ) : (
             <ul className="mt-3 divide-y divide-[#EEF3F0]">
               {listMoves.slice(0, 200).map((m) => {
@@ -393,7 +412,6 @@ export default async function BudgetPage({ searchParams }: { searchParams: Searc
             </ul>
           )}
         </section>
-        ) : null}
       </main>
     </div>
   );

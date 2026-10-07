@@ -10,6 +10,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { Logo } from "@/components/brand/logo";
+import { PeriodTabs } from "@/components/ui/period-tabs";
 import { TimeZoneCookie } from "@/components/dashboard/time-zone-cookie";
 import { param, type SearchParams } from "@/lib/auth";
 import { PERIOD_LABELS, SOURCE_LABELS, sortEntries, summarizeMoney, type MoneyPeriod, type MoneySource } from "@/lib/money";
@@ -38,7 +39,6 @@ export default async function MoneyPage({ searchParams }: { searchParams: Search
   const entries = await loadMoneyEntries(supabase, user.id);
   const summary = summarizeMoney(entries, new Date(), timeZone);
   const recent = sortEntries(entries).slice(0, 25);
-  const best = Math.max(1, ...summary.months.map((m) => m.cents));
   const PERIODS: MoneyPeriod[] = ["today", "month", "year", "all"];
   const requested = param(await searchParams, "period");
   const period: MoneyPeriod = PERIODS.find((p) => p === requested) ?? "month";
@@ -92,51 +92,33 @@ export default async function MoneyPage({ searchParams }: { searchParams: Search
 
         <section className="rounded-2xl border border-[#DCE5DF] bg-white p-5">
           <h2 className="text-sm font-bold uppercase tracking-[0.1em] text-[#4B6358]">By source</h2>
-          <nav className="mt-3 flex flex-wrap gap-2" aria-label="Period">
-            {PERIODS.map((p) => (
-              <Link
-                key={p}
-                href={`/dashboard/money?period=${p}`}
-                scroll={false}
-                aria-current={p === period ? "page" : undefined}
-                className={`inline-flex min-h-10 items-center rounded-full px-4 text-[14px] font-bold ${
-                  p === period ? "bg-[#064E3B] text-white" : "border border-[#DCE5DF] bg-white text-[#064E3B]"
-                }`}
-              >
-                {PERIOD_LABELS[p]}
-              </Link>
-            ))}
-          </nav>
-          <p className="mt-3 text-[14px] text-[#3F574C]">
-            {PERIOD_LABELS[period]}: <strong className="text-[#064E3B]">{formatMoney(periodTotal[period])}</strong>
-          </p>
-          <ul className="mt-2 flex flex-col gap-2">
-            {SOURCES.map((s) => (
-              <li key={s.id}>
-                <Link href={s.href} className="flex min-h-12 items-center justify-between rounded-xl border border-[#EEF3F0] px-4 hover:bg-[#F7FAF8]">
-                  <span className="font-semibold">
-                    {s.icon} {SOURCE_LABELS[s.id]}
-                  </span>
-                  <span className="font-bold text-[#064E3B]">{formatMoney(summary.bySourceIn[period][s.id])} ›</span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        <section className="rounded-2xl border border-[#DCE5DF] bg-white p-5">
-          <h2 className="text-sm font-bold uppercase tracking-[0.1em] text-[#4B6358]">Last 6 months</h2>
-          <div className="mt-4 flex h-[150px] items-end gap-2" role="img" aria-label="Money received in each of the last 6 months">
-            {summary.months.map((m) => (
-              <div key={m.month} className="flex h-full flex-1 flex-col items-center justify-end gap-1">
-                <span className="text-[11px] font-semibold text-[#3F574C]">{m.cents > 0 ? formatMoney(m.cents).replace(/\.00$/, "") : ""}</span>
-                <div
-                  className="w-full max-w-[56px] rounded-t-lg bg-[#064E3B]"
-                  style={{ height: `${Math.max(m.cents > 0 ? 6 : 2, Math.round((m.cents / best) * 100))}%`, opacity: m.cents > 0 ? 1 : 0.15 }}
-                />
-                <span className="text-[12px] font-bold text-[#4B6358]">{m.label}</span>
-              </div>
-            ))}
+          <div className="mt-3">
+            <PeriodTabs
+              initial={period}
+              tabs={PERIODS.map((p) => ({
+                id: p,
+                label: PERIOD_LABELS[p],
+                content: (
+                  <>
+                    <p className="mt-3 text-[14px] text-[#3F574C]">
+                      {PERIOD_LABELS[p]}: <strong className="text-[#064E3B]">{formatMoney(periodTotal[p])}</strong>
+                    </p>
+                    <ul className="mt-2 flex flex-col gap-2">
+                      {SOURCES.map((s) => (
+                        <li key={s.id}>
+                          <Link href={s.href} className="flex min-h-12 items-center justify-between rounded-xl border border-[#EEF3F0] px-4 hover:bg-[#F7FAF8]">
+                            <span className="font-semibold">
+                              {s.icon} {SOURCE_LABELS[s.id]}
+                            </span>
+                            <span className="font-bold text-[#064E3B]">{formatMoney(summary.bySourceIn[p][s.id])} ›</span>
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </>
+                ),
+              }))}
+            />
           </div>
         </section>
 
