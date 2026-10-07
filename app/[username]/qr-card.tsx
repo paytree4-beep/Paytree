@@ -1,7 +1,8 @@
 // app/[username]/qr-card.tsx
 //
 // "Scan to pay" card. Draws a QR code that opens this page, and lets the owner
-// or a visitor save it as a PNG for print or social media.
+// or a visitor save or share it as a branded picture (with the link and
+// paytree.to on it) for print or social media.
 // Requires:  npm install qrcode.react
 
 "use client";
@@ -15,33 +16,127 @@ type QrCardProps = {
   url: string;
   /** Shown under the code, for example paytree.to/hartwell */
   label: string;
+  /** The page owner's name, printed on the shared picture. */
+  name?: string;
 };
 
-/** Renders the on-screen QR SVG into a 1024 px PNG with a white margin. */
-function svgToPng(svg: SVGSVGElement): Promise<Blob | null> {
+function loadImage(src: string): Promise<HTMLImageElement | null> {
   return new Promise((resolve) => {
-    const xml = new XMLSerializer().serializeToString(svg);
     const img = new Image();
-    img.onload = () => {
-      const size = 1024;
-      const pad = 64;
-      const canvas = document.createElement("canvas");
-      canvas.width = size;
-      canvas.height = size;
-      const ctx = canvas.getContext("2d");
-      if (!ctx) return resolve(null);
-      ctx.fillStyle = "#FFFFFF";
-      ctx.fillRect(0, 0, size, size);
-      ctx.imageSmoothingEnabled = false;
-      ctx.drawImage(img, pad, pad, size - pad * 2, size - pad * 2);
-      canvas.toBlob((blob) => resolve(blob), "image/png");
-    };
+    img.onload = () => resolve(img);
     img.onerror = () => resolve(null);
-    img.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(xml)}`;
+    img.src = src;
   });
 }
 
-export function QrCard({ url, label }: QrCardProps) {
+function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+/**
+ * Turns the on-screen QR into a shareable picture that also advertises
+ * PayTree: logo, "Scan to pay", the person's name, the QR, their link and
+ * "Get your own free page at paytree.to". 1080 x 1350 (Instagram portrait).
+ */
+async function svgToPng(svg: SVGSVGElement, label: string, name?: string): Promise<Blob | null> {
+  const xml = new XMLSerializer().serializeToString(svg);
+  const [qr, logo] = await Promise.all([
+    loadImage(`data:image/svg+xml;charset=utf-8,${encodeURIComponent(xml)}`),
+    loadImage("/logo-mark.png"),
+  ]);
+  if (!qr) return null;
+  if (document.fonts?.ready) await document.fonts.ready.catch(() => undefined);
+
+  const W = 1080;
+  const H = 1350;
+  const canvas = document.createElement("canvas");
+  canvas.width = W;
+  canvas.height = H;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return null;
+  const font = getComputedStyle(document.body).fontFamily || "sans-serif";
+
+  const bg = ctx.createLinearGradient(0, 0, 0, H);
+  bg.addColorStop(0, "#E6F2EA");
+  bg.addColorStop(0.55, "#F4F3E8");
+  bg.addColorStop(1, "#FAF5EA");
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, W, H);
+  ctx.textAlign = "center";
+  ctx.textBaseline = "alphabetic";
+
+  // Logo + PayTree
+  ctx.font = `800 56px ${font}`;
+  const brandW = ctx.measureText("PayTree").width;
+  const logoSize = 84;
+  const startX = (W - (logoSize + 16 + brandW)) / 2;
+  if (logo) ctx.drawImage(logo, startX, 58, logoSize, logoSize);
+  ctx.fillStyle = "#064E3B";
+  ctx.textAlign = "left";
+  ctx.fillText("PayTree", startX + logoSize + 16, 120);
+  ctx.textAlign = "center";
+
+  // Scan to pay + name
+  ctx.fillStyle = "#E5484D";
+  ctx.font = `800 40px ${font}`;
+  ctx.fillText("SCAN TO PAY", W / 2, 228);
+  if (name) {
+    let size = 64;
+    ctx.font = `800 ${size}px ${font}`;
+    while (ctx.measureText(name).width > W - 140 && size > 34) {
+      size -= 4;
+      ctx.font = `800 ${size}px ${font}`;
+    }
+    ctx.fillStyle = "#0B1F18";
+    ctx.fillText(name, W / 2, 304);
+  }
+
+  // QR on a white card
+  const card = 700;
+  const cx = (W - card) / 2;
+  const cy = 350;
+  ctx.save();
+  ctx.shadowColor = "rgba(6,78,59,0.25)";
+  ctx.shadowBlur = 50;
+  ctx.shadowOffsetY = 20;
+  ctx.fillStyle = "#FFFFFF";
+  roundRect(ctx, cx, cy, card, card, 48);
+  ctx.fill();
+  ctx.restore();
+  ctx.imageSmoothingEnabled = false;
+  ctx.drawImage(qr, cx + 40, cy + 40, card - 80, card - 80);
+
+  // Their link
+  ctx.fillStyle = "#064E3B";
+  let linkSize = 50;
+  ctx.font = `800 ${linkSize}px ${font}`;
+  while (ctx.measureText(label).width > W - 120 && linkSize > 30) {
+    linkSize -= 2;
+    ctx.font = `800 ${linkSize}px ${font}`;
+  }
+  ctx.fillText(label, W / 2, 1150);
+  ctx.fillStyle = "#3F574C";
+  ctx.font = `600 30px ${font}`;
+  ctx.fillText("Cash App · Venmo · Zelle · and more", W / 2, 1200);
+
+  // Footer ad
+  ctx.fillStyle = "#064E3B";
+  roundRect(ctx, 0, H - 92, W, 92, 0);
+  ctx.fill();
+  ctx.fillStyle = "#FBFBFB";
+  ctx.font = `700 32px ${font}`;
+  ctx.fillText("Get your own free payment page at paytree.to", W / 2, H - 34);
+
+  return new Promise((resolve) => canvas.toBlob((blob) => resolve(blob), "image/png"));
+}
+
+export function QrCard({ url, label, name }: QrCardProps) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const [file, setFile] = useState<File | null>(null);
   const [hint, setHint] = useState("");
@@ -63,13 +158,13 @@ export function QrCard({ url, label }: QrCardProps) {
     const svg = wrapRef.current?.querySelector("svg");
     if (!svg) return;
     let cancelled = false;
-    svgToPng(svg).then((blob) => {
+    svgToPng(svg, label, name).then((blob) => {
       if (!cancelled && blob) setFile(new File([blob], fileName, { type: "image/png" }));
     });
     return () => {
       cancelled = true;
     };
-  }, [url, fileName]);
+  }, [url, fileName, label, name]);
 
   async function downloadPng() {
     if (!file) {
@@ -81,7 +176,7 @@ export function QrCard({ url, label }: QrCardProps) {
     const nav = navigator as Navigator & { canShare?: (data: { files: File[] }) => boolean };
     if (typeof nav.share === "function" && nav.canShare?.({ files: [file] })) {
       try {
-        await nav.share({ files: [file], title: "My PayTree QR code" });
+        await nav.share({ files: [file], title: name ? `Pay ${name}` : "PayTree", text: `Scan to pay${name ? ` ${name}` : ""} · ${url}` });
         flashSaved("Done! If you chose Save Image, it is in your Photos.");
         return;
       } catch (error) {

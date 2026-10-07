@@ -157,6 +157,7 @@ export default async function PublicPaymentPage({ params, searchParams }: PagePr
               <QrCard
                 url={`${SITE_URL}/${profile.username}`}
                 label={`${SITE_HOST}/${profile.username}`}
+                name={profile.displayName}
               />
 
               {!among && paidBox ? <div className="mt-6">{paidBox}</div> : null}

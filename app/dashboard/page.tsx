@@ -422,7 +422,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
           <div className="mt-4">
             <ShareLink url={`${SITE_URL}/${profile.username}`} name={profile.display_name} />
           </div>
-          <QrCard url={`${SITE_URL}/${profile.username}`} label={`${SITE_HOST}/${profile.username}`} />
+          <QrCard url={`${SITE_URL}/${profile.username}`} label={`${SITE_HOST}/${profile.username}`} name={profile.display_name ?? undefined} />
         </section>
           </>
         ) : null}

@@ -62,9 +62,9 @@ const FEATURES: { title: string; body: string; Icon: LucideIcon; tint: string }[
   { title: "Tip me", body: "Creators and musicians: turn your page into a tip jar.", Icon: HandCoins, tint: "#E8AE1C" },
   { title: "One link", body: "Cash App, Venmo, Zelle, PayPal and more in one place.", Icon: Link2, tint: "#E5484D" },
   { title: "Your QR code", body: "For your counter, booth or business card.", Icon: QrCode, tint: "#064E3B" },
-  { title: "Payment log", body: "Confirm payments and see daily and monthly totals.", Icon: ClipboardCheck, tint: "#6D1ED4" },
+  { title: "Payment log", body: "Confirm payments, see daily and monthly totals, and download it all to Excel.", Icon: ClipboardCheck, tint: "#6D1ED4" },
   { title: "Private stats", body: "Visits and taps. No cookies, no tracking.", Icon: BarChart3, tint: "#7BC86C" },
-  { title: "Paid to you", body: "Money goes straight to your accounts.", Icon: ShieldCheck, tint: "#008CFF" },
+  { title: "Paid to you", body: "We never hold your money. It goes straight to your own accounts.", Icon: ShieldCheck, tint: "#008CFF" },
 ];
 
 const STEPS = [
