@@ -83,7 +83,7 @@ export default async function MoneyPage({ searchParams }: { searchParams: Search
               { label: "All time", value: summary.allTime },
             ].map((t) => (
               <div key={t.label} className="rounded-xl bg-[#F4F8F6] p-3">
-                <p className="text-[11px] font-bold uppercase tracking-[0.06em] text-[#4B6358]">{t.label}</p>
+                <p className="whitespace-nowrap text-[10px] font-bold uppercase tracking-[0.04em] text-[#4B6358] sm:text-[11px]">{t.label}</p>
                 <p className="mt-1 font-serif text-[22px] leading-none text-[#064E3B]">{formatMoney(t.value)}</p>
               </div>
             ))}
