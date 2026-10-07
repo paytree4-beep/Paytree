@@ -203,6 +203,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
       badge: methodCount === 0 ? "!" : undefined,
     },
     { icon: "🍕", title: "Split the bill", detail: "Share a bill with friends", href: "/dashboard/split" },
+    { icon: "🧾", title: "Invoices", detail: "Send a customer a bill", href: "/dashboard/invoices" },
     { icon: "📸", title: tipMode ? "Tip me card" : "Pay me here card", detail: "For Instagram & TikTok", href: "/dashboard?view=share" },
     { icon: "📊", title: "Statistics", detail: `${views7} views · ${taps7} taps this week`, href: "/dashboard/stats" },
     ...(logReady
