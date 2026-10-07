@@ -40,7 +40,7 @@ const headingClass =
   "font-serif text-[clamp(34px,4.6vw,56px)] font-normal leading-[1.08] tracking-[-0.01em] text-[#064E3B] [text-wrap:balance]";
 
 const goldText =
-  "pt-shine bg-gradient-to-r from-[#9A6E1A] via-[#C9A048] to-[#9A6E1A] bg-clip-text text-transparent";
+  "pt-shine bg-gradient-to-r from-[#86600F] via-[#B8893A] to-[#86600F] bg-clip-text text-transparent";
 
 const METHODS = [
   { id: "cashapp", name: "Cash App" },
@@ -213,7 +213,7 @@ function PhoneExample() {
                 <AppleTitle text={title} />
               </span>
             </span>
-            <span className="text-[14px] leading-snug text-[#1F362B]">{body}</span>
+            <span className="text-[14.5px] font-medium leading-snug text-[#0F2419]">{body}</span>
           </div>
         ))}
       </div>
@@ -225,7 +225,7 @@ export default function HomePage() {
   const trialCta = `Start your ${TRIAL_DAYS}-day free trial`;
 
   return (
-    <div className="relative min-h-screen overflow-x-clip bg-[#FAF5EA] text-[17px] leading-[1.6] text-[#0B1F18]">
+    <div className="relative min-h-screen overflow-x-clip bg-[#FAF5EA] text-[18px] leading-[1.6] text-[#0B1F18]">
       <AppleBackdrop />
 
       <div className="relative z-10">
@@ -267,7 +267,7 @@ export default function HomePage() {
               <br />
               <span className={goldText}>One simple link.</span>
             </h1>
-            <p className="max-w-[560px] text-[19px] leading-[1.65] text-[#1F362B] sm:text-xl">
+            <p className="max-w-[560px] text-[20px] leading-[1.65] font-medium text-[#0F2419] sm:text-[21px]">
               Make it easier and faster for your customers to pay you.
             </p>
             <ul aria-label="Included" className="flex flex-wrap gap-2">
@@ -293,7 +293,7 @@ export default function HomePage() {
                 See an example
               </a>
             </div>
-            <p className="text-[15px] font-medium text-[#2F4A3E]">
+            <p className="text-[15px] font-medium font-medium text-[#1A3326]">
               Then {PRICING.monthly.price}/month or {PRICING.annual.price}/year. Cancel any time.
             </p>
           </div>
@@ -347,7 +347,7 @@ export default function HomePage() {
                       <h3 className={`font-extrabold leading-tight ${apple ? "text-[18px]" : "text-[16px]"}`}>
                         {apple ? <AppleTitle text={title} /> : title}
                       </h3>
-                      <p className="text-[14px] leading-snug text-[#1F362B]">{body}</p>
+                      <p className="text-[15px] leading-snug font-medium text-[#0F2419]">{body}</p>
                     </div>
                   </Reveal>
                 ))}
@@ -365,8 +365,8 @@ export default function HomePage() {
                     <span aria-hidden="true" className={`font-serif text-[34px] leading-none sm:text-[48px] ${goldText}`}>
                       {s.n}
                     </span>
-                    <h3 className="text-[16px] font-bold leading-tight sm:text-xl">{s.title}</h3>
-                    <p className="text-[14px] leading-snug text-[#1F362B] sm:text-[17px]">{s.body}</p>
+                    <h3 className="text-[16px] font-bold leading-tight sm:text-[21px]">{s.title}</h3>
+                    <p className="text-[15px] leading-snug font-medium text-[#0F2419] sm:text-[18px]">{s.body}</p>
                   </li>
                 ))}
               </ol>
@@ -379,23 +379,23 @@ export default function HomePage() {
               <div className="flex flex-col gap-3 sm:flex-1">
                 <span className="text-sm font-bold tracking-[0.14em] text-[#9A6E1A]">EARN APPLES 🧺</span>
                 <h2 className={headingClass}>Every PayTree page comes with a referral link.</h2>
-                <p className="text-[19px] leading-[1.65] text-[#1F362B]">
+                <p className="text-[20px] leading-[1.65] font-medium text-[#0F2419]">
                   Share your link, or let your page do it for you: every page has a &ldquo;Get your own payment page&rdquo;
                   link that counts as yours. When someone joins PayTree through it, an apple drops in your basket.
                   On January 1, 2027, PayTree buys your apples.
                 </p>
-                <p className="text-[14px] text-[#2F4A3E]">Launch offer for new members who join by December 31, 2026.</p>
+                <p className="text-[14px] font-medium text-[#1A3326]">Launch offer for new members who join by December 31, 2026.</p>
               </div>
               <div className="grid grid-cols-2 gap-3 sm:w-[340px]">
                 <div className="flex flex-col items-center gap-1 rounded-[22px] bg-white/85 p-4 text-center">
                   <Apple color="red" size={52} />
                   <span className="font-serif text-[30px] leading-none text-[#064E3B]">$3.00</span>
-                  <span className="text-[13px] font-semibold text-[#2F4A3E]">for each yearly member</span>
+                  <span className="text-[13px] font-semibold font-medium text-[#1A3326]">for each yearly member</span>
                 </div>
                 <div className="flex flex-col items-center gap-1 rounded-[22px] bg-white/85 p-4 text-center">
                   <Apple color="green" size={44} />
                   <span className="font-serif text-[30px] leading-none text-[#064E3B]">$0.50</span>
-                  <span className="text-[13px] font-semibold text-[#2F4A3E]">for each monthly member</span>
+                  <span className="text-[13px] font-semibold font-medium text-[#1A3326]">for each monthly member</span>
                 </div>
               </div>
             </Reveal>
@@ -407,7 +407,7 @@ export default function HomePage() {
               <Reveal className="flex max-w-[640px] flex-col items-center gap-3 text-center">
                 <span className="text-sm font-bold tracking-[0.14em] text-[#9A6E1A]">PRICING</span>
                 <h2 className={headingClass}>Try everything free for {TRIAL_DAYS} days</h2>
-                <p className="text-[19px] text-[#1F362B]">No card needed. One simple plan with every feature after that.</p>
+                <p className="text-[20px] font-medium text-[#0F2419]">No card needed. One simple plan with every feature after that.</p>
               </Reveal>
               <Reveal className="w-full">
                 <Pricing />
@@ -420,12 +420,12 @@ export default function HomePage() {
             <Reveal className={`mx-auto flex max-w-[860px] flex-col gap-4 p-7 sm:p-12 ${glass}`}>
               <span className="text-sm font-bold tracking-[0.14em] text-[#9A6E1A]">ABOUT US</span>
               <h2 className={headingClass}>Built for the question every business hears</h2>
-              <p className="text-[19px] leading-[1.75] text-[#1F362B]">
+              <p className="text-[20px] leading-[1.75] font-medium text-[#0F2419]">
                 <em>&ldquo;Do you take Zelle, Venmo or Cash App?&rdquo;</em> PayTree answers it with one simple link.
                 We built a calm, elegant page that brings all your payment methods together, so your customers can
                 pay you in seconds, and you can focus on your work.
               </p>
-              <p className="text-[19px] leading-[1.75] text-[#1F362B]">
+              <p className="text-[20px] leading-[1.75] font-medium text-[#0F2419]">
                 <strong className="text-[#064E3B]">We never touch your money.</strong> Payments go straight from
                 your customers to your own accounts. Our mission is simple: make getting paid effortless for
                 businesses and professionals everywhere.
@@ -452,7 +452,7 @@ export default function HomePage() {
                           +
                         </span>
                       </summary>
-                      <p className="pb-5 text-[17px] leading-[1.7] text-[#1F362B]">{a}</p>
+                      <p className="pb-5 text-[18px] leading-[1.7] font-medium text-[#0F2419]">{a}</p>
                     </details>
                   </Reveal>
                 ))}
@@ -467,7 +467,7 @@ export default function HomePage() {
                 <h2 className="font-serif text-[clamp(36px,5vw,64px)] font-normal leading-[1.05] [text-wrap:balance]">
                   Ready to get paid?
                 </h2>
-                <p className="max-w-[520px] text-[19px] text-[#1F362B]">
+                <p className="max-w-[520px] text-[20px] font-medium text-[#0F2419]">
                   Build your payment page in two minutes. {TRIAL_DAYS} days free, no card needed.
                 </p>
                 <Cta variant="emerald" className="min-w-[260px] shadow-[0_18px_40px_-18px_rgba(6,78,59,0.8)]">
@@ -481,7 +481,7 @@ export default function HomePage() {
         </main>
 
         <footer className="px-5 pb-10 sm:px-6">
-          <div className={`mx-auto flex max-w-[1180px] flex-wrap items-center justify-between gap-4 px-6 py-5 text-[15px] text-[#1F362B] ${glass}`}>
+          <div className={`mx-auto flex max-w-[1180px] flex-wrap items-center justify-between gap-4 px-6 py-5 text-[15px] font-medium text-[#0F2419] ${glass}`}>
             <span>&copy; {new Date().getFullYear()} PayTree. All rights reserved.</span>
             <nav aria-label="Legal" className="flex flex-wrap gap-6">
               <a href="#about" className="inline-flex min-h-11 items-center hover:text-[#064E3B]">About</a>

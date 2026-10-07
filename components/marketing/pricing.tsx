@@ -84,10 +84,10 @@ export function Pricing() {
                   </span>
                 ) : null}
                 <span className="font-serif text-[64px] leading-none text-[#064E3B]">{info.price}</span>
-                <span className="text-[#2F4A3E]">{info.period}</span>
+                <span className="font-medium text-[#1A3326]">{info.period}</span>
               </div>
 
-              <p className="min-h-6 text-[16px] text-[#2F4A3E]">
+              <p className="min-h-6 text-[17px] font-medium text-[#1A3326]">
                 {fullPrice ? (
                   <>
                     <strong className="text-[#9A6E1A]">You save {money(PRICES.monthly * 12 - PRICES.annual)} a year.</strong>{" "}
@@ -106,7 +106,7 @@ export function Pricing() {
                   key === "annual" ? "Your own referral link: earn apples 🍎" : "Your own referral link: earn apples 🍏",
                   ...PLAN_FEATURES.slice(5),
                 ].map((text) => (
-                  <li key={text} className="flex items-start gap-3 text-[#0B1F18]">
+                  <li key={text} className="flex items-start gap-3 text-[17px] font-medium text-[#0B1F18]">
                     <span className="mt-[2px] flex h-5 w-5 flex-none items-center justify-center rounded-full bg-[#E3F0EA]">
                       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#064E3B" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                         <path d="M5 12.5l4.5 4.5L19 7.5" />
