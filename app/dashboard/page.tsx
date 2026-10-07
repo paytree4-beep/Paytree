@@ -204,6 +204,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
 
   const tiles: { icon: string; title: string; detail: string; href: string; badge?: string }[] = [
     { icon: "🔗", title: "Your link & QR", detail: `${SITE_HOST}/${profile.username}`, href: "/dashboard?view=link" },
+    { icon: "💰", title: "Money", detail: "All your income in one place", href: "/dashboard/money" },
     {
       icon: "💳",
       title: "Payment methods",
