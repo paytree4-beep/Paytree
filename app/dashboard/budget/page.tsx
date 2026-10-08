@@ -4,6 +4,7 @@
 // this year), the money tree, and your monthly bills. Invoices and split bills
 // you confirm are added to "Came in" by themselves. Private to the owner.
 
+import { getPageUser } from "@/lib/supabase/user";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -43,9 +44,7 @@ const SOURCE_ICONS = { page: "🔗", invoice: "🧾", split: "🍕" } as const;
 
 export default async function BudgetPage({ searchParams }: { searchParams: SearchParams }) {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getPageUser(supabase);
   if (!user) redirect("/login?next=/dashboard/budget");
 
   const params = await searchParams;

@@ -171,6 +171,9 @@ function pop(ctx: BaseAudioContext, out: AudioNode, at: number, pitch: number) {
 /**
  * Schedules the whole tune on `ctx`, starting at `start`, for `seconds`.
  * `landings` are the times (in seconds from start) when apples hit the ground.
+ *
+ * The notes are handed to the audio engine a little at a time (not all at once),
+ * because phones can drop sounds when hundreds are queued in one go.
  */
 export function scheduleTune(ctx: BaseAudioContext, out: AudioNode, start: number, seconds: number, landings: number[]) {
   const master = ctx.createGain();
@@ -180,30 +183,58 @@ export function scheduleTune(ctx: BaseAudioContext, out: AudioNode, start: numbe
   master.gain.linearRampToValueAtTime(0.0001, start + seconds);
   master.connect(out);
 
+  // Everything to play, as (time in seconds from the start, what to do).
+  const jobs: { at: number; run: () => void }[] = [];
+  const job = (beat: number, run: (at: number) => void) => {
+    const at = start + beat * BEAT;
+    jobs.push({ at, run: () => run(at) });
+  };
+
   // The hook is played twice: 8 bars of 4 beats.
   for (let rep = 0; rep < 2; rep++) {
     const offset = rep * 16;
     for (let bar = 0; bar < 4; bar++) {
-      const at = start + (offset + bar * 4) * BEAT;
+      const base = offset + bar * 4;
       const chord = CHORDS[bar];
       // Off-beat chord stabs
-      for (let k = 1; k < 8; k += 2) chord.forEach((n) => lead(ctx, master, n + 12, at + (k * BEAT) / 2, 0.2, 0.08, 2200, 0.07));
+      for (let k = 1; k < 8; k += 2) job(base + k / 2, (at) => chord.forEach((n) => lead(ctx, master, n + 12, at, 0.2, 0.08, 2200, 0.07)));
       // Bouncy bass
-      [0, 0.75, 1.5, 2, 2.75, 3.5].forEach((b) => bass(ctx, master, BASS[bar], at + b * BEAT, BEAT * 0.45));
+      [0, 0.75, 1.5, 2, 2.75, 3.5].forEach((b) => job(base + b, (at) => bass(ctx, master, BASS[bar], at, BEAT * 0.45)));
       // Drums: kick on every beat, claps on 2 and 4, hats between
-      for (let b = 0; b < 4; b++) kick(ctx, master, at + b * BEAT);
-      clap(ctx, master, at + BEAT);
-      clap(ctx, master, at + 3 * BEAT);
-      for (let h = 0; h < 8; h++) hat(ctx, master, at + (h * BEAT) / 2 + BEAT / 4);
+      for (let b = 0; b < 4; b++) job(base + b, (at) => kick(ctx, master, at));
+      job(base + 1, (at) => clap(ctx, master, at));
+      job(base + 3, (at) => clap(ctx, master, at));
+      for (let h = 0; h < 8; h++) job(base + h / 2 + 0.25, (at) => hat(ctx, master, at));
     }
-    HOOK.forEach(([note, beat, len]) => {
-      const at = start + (offset + beat) * BEAT;
-      lead(ctx, master, note, at, Math.max(0.3, len * BEAT * 1.4), 0.3);
-      bell(ctx, master, note + 12, at, 0.8, 0.09);
-    });
+    HOOK.forEach(([note, beat, len]) =>
+      job(offset + beat, (at) => {
+        lead(ctx, master, note, at, Math.max(0.3, len * BEAT * 1.4), 0.3);
+        bell(ctx, master, note + 12, at, 0.8, 0.09);
+      }),
+    );
   }
   // A shower of bells to finish
-  [84, 88, 91, 96].forEach((n, i) => bell(ctx, master, n, start + 31.5 * BEAT + i * 0.05, 1.4, 0.14));
+  [84, 88, 91, 96].forEach((n, i) => job(31.5 + (i * 0.05) / BEAT, (at) => bell(ctx, master, n, at, 1.4, 0.14)));
+  landings.forEach((t, i) => jobs.push({ at: start + t, run: () => pop(ctx, master, start + t, 520 + (i % 5) * 70) }));
+  jobs.sort((x, y) => x.at - y.at);
 
-  landings.forEach((t, i) => pop(ctx, master, start + t, 520 + (i % 5) * 70));
+  // Hand over everything that starts within the next 1.5 seconds, every 200 ms.
+  let next = 0;
+  // An offline render (no real-time clock) gets everything at once.
+  const offline = typeof OfflineAudioContext !== "undefined" && ctx instanceof OfflineAudioContext;
+  const feed = () => {
+    while (next < jobs.length && (offline || jobs[next].at < ctx.currentTime + 1.5)) {
+      try {
+        jobs[next].run();
+      } catch {
+        // one failed note must never silence the rest
+      }
+      next += 1;
+    }
+    return next >= jobs.length;
+  };
+  if (feed()) return;
+  const timer = setInterval(() => {
+    if (feed() || (ctx as AudioContext).state === "closed") clearInterval(timer);
+  }, 200);
 }
