@@ -83,9 +83,20 @@ export async function createCheckoutSession(opts: {
   email: string | undefined;
   customerId: string | null;
   origin: string;
+  /** The account's existing seven-day trial end, not a new trial at checkout. */
+  trialEnd: Date;
 }): Promise<string> {
   const price = priceFor(opts.plan);
   if (!price) throw new Error("price_missing");
+
+  const secondsLeft = Math.ceil((opts.trialEnd.getTime() - Date.now()) / 1000);
+  // Checkout requires trial_end at least 48 hours in the future. For a
+  // shorter remaining trial, round up to whole days instead of charging now.
+  const trial = secondsLeft >= 48 * 3600 + 60
+    ? { "subscription_data[trial_end]": Math.floor(opts.trialEnd.getTime() / 1000) }
+    : secondsLeft > 0
+      ? { "subscription_data[trial_period_days]": Math.ceil(secondsLeft / 86_400) }
+      : {};
 
   const session = await stripe<{ url: string }>("POST", "checkout/sessions", {
     mode: "subscription",
@@ -94,6 +105,7 @@ export async function createCheckoutSession(opts: {
     client_reference_id: opts.userId,
     "metadata[user_id]": opts.userId,
     "subscription_data[metadata][user_id]": opts.userId,
+    ...trial,
     allow_promotion_codes: true,
     ...(opts.customerId ? { customer: opts.customerId } : { customer_email: opts.email }),
     success_url: `${opts.origin}/dashboard?notice=subscribed`,
