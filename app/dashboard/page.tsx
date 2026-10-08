@@ -144,32 +144,43 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
   const requestedView = param(params, "view");
   const view = VIEWS.find((v) => v === requestedView) ?? "home";
 
-  const tiles: { icon: string; title: string; detail: string; href: string; badge?: string }[] = [
-    { icon: "🔗", title: "Your link & QR", detail: `${SITE_HOST}/${profile.username}`, href: "/dashboard/link" },
-    { icon: "💰", title: "Income & spending", detail: "What came in and what you spent", href: "/dashboard/budget" },
-    { icon: "🌳", title: "Money tree", detail: "Your month as an apple tree", href: "/dashboard/tree" },
+  type Tile = { icon: string; title: string; detail: string; href: string; badge?: string; chip?: string };
+  // Order matters: the three core steps first (payment methods, share, profile),
+  // then the secondary tools, then membership and settings at the bottom.
+  const coreTiles: Tile[] = [
     {
       icon: "💳",
-      title: "Payment methods",
-      detail: methodCount === 0 ? "Add your first one" : `${methodCount} on your page`,
+      title: "Payment Methods",
+      detail: methodCount === 0 ? "Add your payment methods" : `${methodCount} payment ${methodCount === 1 ? "method" : "methods"}`,
       href: "/dashboard/payments",
       badge: methodCount === 0 ? "!" : undefined,
     },
-    { icon: "🍕", title: "Split the bill", detail: "Share a bill with friends", href: "/dashboard/split" },
+    { icon: "🔗", title: "Your Link & QR", detail: "Share your link & QR code", href: "/dashboard/link" },
+    { icon: "👤", title: "Profile", detail: "Photo, name & bio", href: "/dashboard/profile" },
+  ];
+  const toolTiles: Tile[] = [
+    { icon: "📸", title: "Pay Me / Tip Me", detail: "Photo & video for Instagram & TikTok", href: "/dashboard/share" },
     {
       icon: "🧾",
       title: "Invoices",
-      detail: invoicesWaiting > 0 ? `${invoicesWaiting} to confirm` : "Send a customer a bill",
+      detail: "Send professional invoices",
       href: "/dashboard/invoices",
       badge: invoicesWaiting > 0 ? String(invoicesWaiting) : undefined,
     },
-    { icon: "📸", title: "Pay me / Tip me card", detail: "Card and video for Instagram & TikTok", href: "/dashboard/share" },
-    { icon: "📊", title: "Statistics", detail: `${views7} views · ${taps7} taps this week`, href: "/dashboard/stats" },
-    { icon: "👤", title: "Profile", detail: "Photo, name and bio", href: "/dashboard/profile" },
+    { icon: "🍕", title: "Split the Bill", detail: "Split a bill with friends", href: "/dashboard/split" },
+    { icon: "📊", title: "Statistics", detail: "Track views & payment taps", href: "/dashboard/stats", chip: `${views7} views · ${taps7} taps this week` },
+    { icon: "💰", title: "Income & Spending", detail: "Track your money in and out", href: "/dashboard/budget" },
+    { icon: "🌳", title: "Money Tree", detail: "See your monthly payment growth", href: "/dashboard/tree" },
     ...(billingOn
-      ? [{ icon: "⭐", title: "Membership", detail: isMember ? "Active" : access.reason === "trial" ? `${access.trialDaysLeft} days left` : "Paused", href: "/dashboard/billing" }]
+      ? [{
+          icon: "⭐",
+          title: "Membership",
+          detail: "Manage your plan",
+          href: "/dashboard/billing",
+          chip: isMember ? "Active" : access.reason === "trial" ? `${access.trialDaysLeft} days left` : "Paused",
+        }]
       : []),
-    { icon: "⚙️", title: "Settings", detail: profile.is_published ? "Page is public" : "Page is hidden", href: "/dashboard/settings" },
+    { icon: "⚙️", title: "Settings", detail: "Account & preferences", href: "/dashboard/settings" },
   ];
 
   return (
@@ -254,10 +265,30 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
             </Link>
           </div>
         ) : null}
-            <GettingStarted methodCount={methodCount} />
+            <GettingStarted methodCount={methodCount} profileDone={Boolean(profile.avatar_path) || Boolean(profile.bio && profile.bio.trim())} />
             <InstallCard />
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+              {coreTiles.map((t) => (
+                <Link
+                  key={t.title}
+                  href={t.href}
+                  className="relative flex min-h-[84px] items-center gap-4 rounded-[22px] border-2 border-[#BFE3CF] bg-white p-4 shadow-[0_14px_30px_-22px_rgba(6,78,59,0.55)] active:scale-[0.98] sm:min-h-[132px] sm:flex-col sm:items-start sm:justify-between sm:gap-2"
+                >
+                  <span className="text-[30px] leading-none" aria-hidden="true">{t.icon}</span>
+                  <span className="flex-1">
+                    <span className="block text-[17px] font-bold leading-tight text-[#064E3B]">{t.title}</span>
+                    <span className="mt-0.5 block text-[13.5px] leading-snug text-[#4B6358]">{t.detail}</span>
+                  </span>
+                  <span className="font-bold text-[#064E3B] sm:hidden" aria-hidden="true">›</span>
+                  {t.badge ? (
+                    <span className="absolute right-3 top-3 rounded-full bg-[#E5484D] px-2 py-0.5 text-[11px] font-bold text-white">{t.badge}</span>
+                  ) : null}
+                </Link>
+              ))}
+            </div>
+            <h2 className="-mb-2 mt-1 text-[12px] font-bold uppercase tracking-[0.1em] text-[#6B7F75]">More tools</h2>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-              {tiles.map((t) => (
+              {toolTiles.map((t) => (
                 <Link
                   key={t.title}
                   href={t.href}
@@ -267,6 +298,9 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
                   <span>
                     <span className="block text-[15px] font-bold leading-tight text-[#064E3B]">{t.title}</span>
                     <span className="mt-0.5 block text-[12.5px] leading-snug text-[#4B6358]">{t.detail}</span>
+                    {t.chip ? (
+                      <span className="mt-1.5 inline-block rounded-full bg-[#E3F0EA] px-2 py-0.5 text-[11px] font-semibold text-[#064E3B]">{t.chip}</span>
+                    ) : null}
                   </span>
                   {t.badge ? (
                     <span className="absolute right-3 top-3 rounded-full bg-[#E5484D] px-2 py-0.5 text-[11px] font-bold text-white">{t.badge}</span>
