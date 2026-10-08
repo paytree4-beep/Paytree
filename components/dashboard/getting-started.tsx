@@ -1,9 +1,9 @@
 "use client";
 // components/dashboard/getting-started.tsx
 //
-// "Get started" checklist on the dashboard: add payment methods, save or share
-// the QR code, send the link to a customer. People who share on day one get
-// value fast. Hides itself when all three are done, or when closed.
+// "Get started" checklist on the dashboard: add payment methods, complete the
+// profile, share the link or QR code. Done items are marked automatically.
+// When all three are done it collapses to a compact "You're all set!" line.
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -12,7 +12,7 @@ import { STEP_EVENT, stepDone } from "@/lib/onboarding-steps";
 
 const HIDE_KEY = "pt_steps_hidden";
 
-export function GettingStarted({ methodCount }: { methodCount: number }) {
+export function GettingStarted({ methodCount, profileDone }: { methodCount: number; profileDone: boolean }) {
   const [state, setState] = useState<{ qr: boolean; share: boolean; hidden: boolean } | null>(null);
 
   useEffect(() => {
@@ -33,11 +33,18 @@ export function GettingStarted({ methodCount }: { methodCount: number }) {
   if (!state || state.hidden) return null;
   const steps = [
     { done: methodCount > 0, title: "Add your payment apps", detail: "Cash App, Venmo, Zelle and more.", href: "/dashboard/payments" },
-    { done: state.qr, title: "Save or share your QR code", detail: "Put it on your counter, booth or Story.", href: "/dashboard?view=link" },
-    { done: state.share, title: "Send your link to a customer", detail: "Copy it or share it in one tap.", href: "/dashboard?view=link" },
+    { done: profileDone, title: "Complete your profile", detail: "Add a photo, your name and a short bio.", href: "/dashboard/profile" },
+    { done: state.qr || state.share, title: "Share your PayTree link & QR code", detail: "Send it to a customer, or put the QR on your counter, booth or Story.", href: "/dashboard?view=link" },
   ];
   const doneCount = steps.filter((s) => s.done).length;
-  if (doneCount === steps.length) return null;
+  if (doneCount === steps.length) {
+    return (
+      <div className="flex items-center gap-3 rounded-2xl border border-[#BFE3CF] bg-[#ECF7F0] px-4 py-3 text-[14px] font-bold text-[#064E3B]">
+        <span className="flex h-7 w-7 flex-none items-center justify-center rounded-full bg-[#16A34A] text-white">✓</span>
+        You&apos;re all set!
+      </div>
+    );
+  }
 
   const hide = () => {
     try {
@@ -52,7 +59,7 @@ export function GettingStarted({ methodCount }: { methodCount: number }) {
     <section className="rounded-2xl border-2 border-[#C9A048] bg-white p-5">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h2 className="font-serif text-[26px] leading-tight text-[#064E3B]">Get started 🍎</h2>
+          <h2 className="font-serif text-[26px] leading-tight text-[#064E3B]">Get started</h2>
           <p className="text-[14px] text-[#3F574C]">
             {doneCount} of {steps.length} done. Pages that are shared on day one get paid much sooner.
           </p>
