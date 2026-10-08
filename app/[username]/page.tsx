@@ -14,6 +14,7 @@ import { applyOrder, getProfileByUsername, resolveMethods } from "@/lib/profiles
 import { SITE_HOST, SITE_URL } from "@/lib/site";
 import { PaymentMethods } from "./payment-methods";
 import { QrCard } from "./qr-card";
+import { TipGate } from "./tip-gate";
 import { AppleHalo } from "@/components/marketing/apples";
 import type { SearchParams } from "@/lib/auth";
 
@@ -114,11 +115,6 @@ export default async function PublicPaymentPage({ params }: PageProps) {
           <p className="text-[18px] font-semibold text-[#3F574C]">
             {SITE_HOST}/{profile.username}
           </p>
-          {profile.pageMode === "tip" ? (
-            <p className="mt-1 rounded-full bg-white/80 px-4 py-1.5 text-[14px] font-bold text-[#064E3B] shadow-sm">
-              Send me a tip
-            </p>
-          ) : null}
           {profile.bio ? (
             <p className="max-w-[420px] text-[15px] text-[#3F574C]">{profile.bio}</p>
           ) : null}
@@ -127,12 +123,23 @@ export default async function PublicPaymentPage({ params }: PageProps) {
 
       {/* Payment methods */}
       <main className="mx-auto w-full max-w-[560px] flex-1 px-5 pb-28 pt-6">
-        <PaymentMethods
-          username={profile.username}
-          displayName={profile.displayName}
-          methods={methods}
-          mode={profile.pageMode}
-        />
+        {profile.pageMode === "tip" ? (
+          <TipGate>
+            <PaymentMethods
+              username={profile.username}
+              displayName={profile.displayName}
+              methods={methods}
+              mode={profile.pageMode}
+            />
+          </TipGate>
+        ) : (
+          <PaymentMethods
+            username={profile.username}
+            displayName={profile.displayName}
+            methods={methods}
+            mode={profile.pageMode}
+          />
+        )}
 
         <QrCard
           url={`${SITE_URL}/${profile.username}`}
