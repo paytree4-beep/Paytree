@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 
 import { signUp } from "@/app/auth-actions";
 import { Field, Notice } from "@/components/auth/fields";
-import { GoogleButtonInForm } from "@/components/auth/google-button";
+import { GoogleSignIn } from "@/components/auth/google-button";
 import { AuthShell } from "@/components/auth/shell";
 import { SubmitButton } from "@/components/auth/submit-button";
 import { AuthTabs } from "@/components/auth/tabs";
@@ -39,6 +39,7 @@ export default async function SignUpPage({ searchParams }: { searchParams: Searc
   return (
     <AuthShell title="Build your payment page" subtitle="All your payment methods. One simple link.">
       <AuthTabs active="signup" />
+      <GoogleSignIn />
       <form action={signUp} className="flex flex-col gap-5" noValidate>
         {error && ERRORS[error] ? <Notice tone="error">{ERRORS[error]}</Notice> : null}
         <input type="hidden" name="from" value="signup" />
@@ -87,7 +88,6 @@ export default async function SignUpPage({ searchParams }: { searchParams: Searc
           </span>
         </label>
         <SubmitButton pendingText="Building your page…">Build your payment page</SubmitButton>
-        <GoogleButtonInForm />
       </form>
     </AuthShell>
   );
