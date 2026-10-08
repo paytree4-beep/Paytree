@@ -12,17 +12,18 @@
 //   STRIPE_PRICE_MONTHLY    price_... for $4.99 / month
 //   STRIPE_PRICE_ANNUAL     optional, only for old yearly subscriptions
 //
-// The "first month $2.99" offer is a Stripe coupon PayTree creates by itself
-// the first time it is needed (no setup in Stripe).
-
 import { createHmac, timingSafeEqual } from "node:crypto";
-
-import { PRICES } from "./site";
 
 export type Plan = "monthly" | "annual";
 
 export function billingConfigured(): boolean {
-  return Boolean(process.env.STRIPE_SECRET_KEY && process.env.STRIPE_PRICE_MONTHLY);
+  return Boolean(
+    process.env.STRIPE_SECRET_KEY &&
+    process.env.STRIPE_WEBHOOK_SECRET &&
+    priceFor("monthly") &&
+    process.env.NEXT_PUBLIC_SUPABASE_URL &&
+    (process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY),
+  );
 }
 
 export function priceFor(plan: Plan): string | null {
@@ -71,26 +72,9 @@ export interface StripeSubscription {
   status: string;
   cancel_at_period_end: boolean;
   current_period_end?: number;
+  ended_at?: number | null;
   metadata?: Record<string, string>;
   items?: { data?: { current_period_end?: number; price?: { id?: string } }[] };
-}
-
-const EARLY_COUPON_ID = "paytree_first_month_early";
-
-/** The "first month $2.99" coupon: created once, then reused. */
-async function earlyCoupon(): Promise<string> {
-  try {
-    await stripe("GET", `coupons/${EARLY_COUPON_ID}`);
-  } catch {
-    await stripe("POST", "coupons", {
-      id: EARLY_COUPON_ID,
-      amount_off: Math.round((PRICES.monthly - PRICES.earlyFirstMonth) * 100),
-      currency: "usd",
-      duration: "once",
-      name: `First month $${PRICES.earlyFirstMonth.toFixed(2)}`,
-    });
-  }
-  return EARLY_COUPON_ID;
 }
 
 export async function createCheckoutSession(opts: {
@@ -99,15 +83,9 @@ export async function createCheckoutSession(opts: {
   email: string | undefined;
   customerId: string | null;
   origin: string;
-  /** Still in the free trial: the first month costs less. */
-  earlyOffer?: boolean;
 }): Promise<string> {
   const price = priceFor(opts.plan);
   if (!price) throw new Error("price_missing");
-  // Stripe allows either a fixed discount or promotion codes, not both.
-  const discount = opts.earlyOffer
-    ? { "discounts[0][coupon]": await earlyCoupon() }
-    : { allow_promotion_codes: true };
 
   const session = await stripe<{ url: string }>("POST", "checkout/sessions", {
     mode: "subscription",
@@ -116,7 +94,7 @@ export async function createCheckoutSession(opts: {
     client_reference_id: opts.userId,
     "metadata[user_id]": opts.userId,
     "subscription_data[metadata][user_id]": opts.userId,
-    ...discount,
+    allow_promotion_codes: true,
     ...(opts.customerId ? { customer: opts.customerId } : { customer_email: opts.email }),
     success_url: `${opts.origin}/dashboard?notice=subscribed`,
     cancel_url: `${opts.origin}/dashboard?notice=checkout-cancelled`,
@@ -143,7 +121,13 @@ export function cancelSubscription(id: string): Promise<StripeSubscription> {
 /** Period end lives on the subscription in older API versions, on its items in newer ones. */
 export function periodEnd(sub: StripeSubscription): string | null {
   const seconds = sub.current_period_end ?? sub.items?.data?.[0]?.current_period_end;
-  return typeof seconds === "number" ? new Date(seconds * 1000).toISOString() : null;
+  if (typeof seconds !== "number" || !Number.isFinite(seconds)) return null;
+  // An immediate cancellation ends access even if Stripe still includes the
+  // scheduled period end in the canceled subscription object.
+  const effective = sub.status === "canceled" && typeof sub.ended_at === "number"
+    ? Math.min(seconds, sub.ended_at)
+    : seconds;
+  return new Date(effective * 1000).toISOString();
 }
 
 /** Maps Stripe's statuses onto the ones the database accepts. */

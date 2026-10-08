@@ -132,6 +132,24 @@ export async function deleteAccount(formData: FormData): Promise<void> {
     }
   }
 
+  // Storage objects do not cascade with auth.users. Remove every avatar in
+  // this owner's folder while the account still exists so deletion is retryable.
+  let avatarsRemoved = false;
+  for (let batch = 0; batch < 20; batch++) {
+    const { data: files, error: listError } = await admin.storage
+      .from("avatars")
+      .list(user.id, { limit: 100 });
+    if (listError) redirect("/dashboard?view=settings&error=delete");
+    const paths = (files ?? []).map((file) => `${user.id}/${file.name}`);
+    if (paths.length === 0) {
+      avatarsRemoved = true;
+      break;
+    }
+    const { error: removeError } = await admin.storage.from("avatars").remove(paths);
+    if (removeError) redirect("/dashboard?view=settings&error=delete");
+  }
+  if (!avatarsRemoved) redirect("/dashboard?view=settings&error=delete");
+
   const { error } = await admin.auth.admin.deleteUser(user.id);
   if (error) redirect("/dashboard?view=settings&error=delete");
 

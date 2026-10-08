@@ -32,7 +32,6 @@ export interface AnalyticsEvent {
   referrerHost: string | null;
   device: DeviceType;
   country: string | null;
-  occurredAt: Date;
 }
 
 const ACTIONS: readonly TrackAction[] = ["view", "open", "copy"];
@@ -113,14 +112,13 @@ export async function recordEvent(event: AnalyticsEvent & { profileId: string })
     const { createAdminClient } = await import("./supabase/admin");
     const admin = createAdminClient();
     if (!admin) return;
-    await admin.from("analytics_events").insert({
-      profile_id: event.profileId,
-      action: event.action,
-      method_id: event.method,
-      referrer_host: event.referrerHost,
-      device: event.device,
-      country: event.country,
-      occurred_at: event.occurredAt.toISOString(),
+    await admin.rpc("record_analytics_event_limited", {
+      p_profile_id: event.profileId,
+      p_action: event.action,
+      p_method_id: event.method,
+      p_referrer_host: event.referrerHost,
+      p_device: event.device,
+      p_country: event.country,
     });
   } catch {
     // Ignore: a lost analytics event is better than a broken page.

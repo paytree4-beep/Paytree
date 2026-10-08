@@ -26,8 +26,8 @@ export interface SubscriptionRow {
 /** True when the row grants access now (same rule as has_active_subscription in SQL). */
 export function grantsAccess(row: SubscriptionRow | null): boolean {
   if (!row) return false;
-  if (row.status === "active" || row.status === "trialing") return true;
-  if (row.status === "past_due" || row.status === "canceled") {
+  if (row.provider === "comp" && row.status === "active") return true;
+  if (["active", "trialing", "past_due", "canceled"].includes(row.status)) {
     return Boolean(row.current_period_end && new Date(row.current_period_end).getTime() > Date.now());
   }
   return false;
@@ -93,24 +93,29 @@ export async function accessFor(userId: string): Promise<Access> {
   );
 }
 
-/** Saves a Stripe subscription for a user. Uses the service role. */
-export async function saveStripeSubscription(userId: string, sub: StripeSubscription): Promise<void> {
+/** Applies a verified Stripe event atomically with its idempotency record. */
+export async function applyStripeSubscriptionEvent(
+  event: { id: string; type: string; created: number },
+  userId: string,
+  sub: StripeSubscription,
+): Promise<boolean> {
   const admin = createAdminClient();
   if (!admin) throw new Error("admin_client_missing");
 
-  const plan = planForPrice(sub.items?.data?.[0]?.price?.id) ?? "monthly";
-  const { error } = await admin.from("subscriptions").upsert(
-    {
-      user_id: userId,
-      provider: "stripe",
-      provider_customer_id: sub.customer,
-      provider_subscription_id: sub.id,
-      plan,
-      status: normalizeStatus(sub.status),
-      current_period_end: periodEnd(sub),
-      cancel_at_period_end: Boolean(sub.cancel_at_period_end),
-    },
-    { onConflict: "user_id" },
-  );
-  if (error) throw new Error(`save_subscription: ${error.message}`);
+  const plan = planForPrice(sub.items?.data?.[0]?.price?.id);
+  if (!plan || !sub.id || typeof sub.customer !== "string") throw new Error("unknown_subscription");
+  const { data, error } = await admin.rpc("apply_stripe_subscription_event", {
+    p_event_id: event.id,
+    p_event_type: event.type,
+    p_event_created: event.created,
+    p_user_id: userId,
+    p_customer_id: sub.customer,
+    p_subscription_id: sub.id,
+    p_plan: plan,
+    p_status: normalizeStatus(sub.status),
+    p_period_end: periodEnd(sub),
+    p_cancel_at_period_end: Boolean(sub.cancel_at_period_end),
+  });
+  if (error) throw new Error(`apply_subscription_event: ${error.message}`);
+  return data === true;
 }

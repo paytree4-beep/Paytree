@@ -14,6 +14,7 @@ import { SITE_HOST } from "@/lib/site";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = { title: "Choose your link", robots: { index: false } };
+export const dynamic = "force-dynamic";
 
 const ERRORS: Record<string, string> = {
   name: "Your display name needs 2 to 60 characters.",

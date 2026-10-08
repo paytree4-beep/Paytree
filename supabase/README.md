@@ -1,6 +1,7 @@
 # PayTree.me database (Supabase)
 
-Phase 1 foundation. Nothing here talks to the app yet; Phase 2 connects it.
+The application uses these migrations for authentication, public pages,
+membership billing, and owner data. Apply them in order before enabling Stripe.
 
 ## What is in this folder
 
@@ -18,14 +19,15 @@ Phase 1 foundation. Nothing here talks to the app yet; Phase 2 connects it.
 | `profiles` | One row per user: username, display name, bio, theme. |
 | `payment_methods` | Public details for each method (handle, link, display order, visibility). |
 | `payment_method_secrets` | Encrypted bank account and routing numbers. Server only. No browser access at all. |
-| `subscriptions` | Plan and status. Provider-neutral until a billing provider is chosen. |
+| `subscriptions` | Membership plan and Stripe status. |
 | `billing_events` | Webhook log. Server only. |
 | `analytics_events` | view / open / copy events. No IP, no user agent, no cookies. |
 
 ## Security rules worth knowing
 
 - Every table has Row Level Security on.
-- Visitors (`anon`) can read only public, visible methods of active profiles.
+- Public pages read published, visible methods on the server after checking
+  membership access. Direct `anon` Data API reads of these rows are denied.
 - Users can only touch rows that belong to them (`auth.uid()`).
 - `payment_method_secrets`, `billing_events` and `analytics_events` cannot be read by
   the browser roles. Only the server key (`service_role`) can.
@@ -38,7 +40,7 @@ Phase 1 foundation. Nothing here talks to the app yet; Phase 2 connects it.
 2. Link the project: `supabase link --project-ref <your-ref>`
 3. Push: `supabase db push`
 
-Or paste the migration file into the Supabase dashboard's SQL Editor and run it once.
+If using the SQL Editor, run every file in `migrations/` in filename order.
 
 ## How to run the tests locally
 
@@ -47,12 +49,14 @@ Needs a local PostgreSQL (not Supabase):
 ```bash
 psql -f tests/00_supabase_stub.sql
 psql -f migrations/20261005000001_foundation.sql
+psql -f migrations/20261006000007_split_tip.sql
+psql -f migrations/20261007233952_billing_readiness.sql
 psql -f tests/10_foundation_rls.test.sql
 ```
 
 Run the tests on a throwaway database; they create test users and a `tst` schema.
 
-The last query prints `passed` and `failed` counts. Expected: 58 passed, 0 failed. Any row marked `<<< FAIL` above it shows which rule broke.
+The last query prints `passed` and `failed` counts. Every check should pass.
 
 ## Rules for future migrations
 
