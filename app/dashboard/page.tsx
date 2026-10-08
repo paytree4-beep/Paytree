@@ -3,6 +3,7 @@
 // The signed-in home. For now: the public link, the profile details and the
 // publish switch. Payment methods arrive in the next phase.
 
+import { getPageUser } from "@/lib/supabase/user";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -64,9 +65,7 @@ type ProfileRow = {
 
 export default async function DashboardPage({ searchParams }: { searchParams: SearchParams }) {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getPageUser(supabase);
   if (!user) redirect("/login");
 
   // Everything the dashboard needs is asked in one go, not one after another:

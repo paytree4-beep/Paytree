@@ -4,6 +4,7 @@
 // customer sees the amount and your payment methods, pays, and taps
 // "I've paid". You confirm when the money arrives.
 
+import { getPageUser } from "@/lib/supabase/user";
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import Link from "next/link";
@@ -40,9 +41,7 @@ const input =
 
 export default async function InvoicesPage({ searchParams }: { searchParams: SearchParams }) {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getPageUser(supabase);
   if (!user) redirect("/login?next=/dashboard/invoices");
 
   const [{ data: profileRow }, { data, error: loadError }] = await Promise.all([

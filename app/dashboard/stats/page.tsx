@@ -4,6 +4,7 @@
 // method, where visitors came from and which devices they used. No visitor
 // is identified: rows hold no IP address, cookie or user agent.
 
+import { getPageUser } from "@/lib/supabase/user";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -41,9 +42,7 @@ function Bar({ label, value, max, color }: { label: string; value: number; max: 
 
 export default async function StatsPage({ searchParams }: { searchParams: SearchParams }) {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getPageUser(supabase);
   if (!user) redirect("/login?next=/dashboard/stats");
 
   const params = await searchParams;

@@ -4,6 +4,7 @@
 // makes some fall. A picture of how this month is going, to keep or share
 // (the shared picture never shows amounts).
 
+import { getPageUser } from "@/lib/supabase/user";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -30,9 +31,7 @@ const TIPS: Record<string, string> = {
 
 export default async function TreePage() {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getPageUser(supabase);
   if (!user) redirect("/login?next=/dashboard/tree");
 
   const b = await loadBudget(supabase, user.id);

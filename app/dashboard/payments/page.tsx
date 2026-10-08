@@ -3,6 +3,7 @@
 // Add, change and remove payment methods. One small form per method, each
 // posting to a Server Action, so it works without any JavaScript.
 
+import { getPageUser } from "@/lib/supabase/user";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -24,9 +25,7 @@ type Row = { method_id: string; public_config: unknown; position: number };
 
 export default async function PaymentsPage({ searchParams }: { searchParams: SearchParams }) {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getPageUser(supabase);
   if (!user) redirect("/login?next=/dashboard/payments");
 
   const [{ data: profile }, { data }] = await Promise.all([

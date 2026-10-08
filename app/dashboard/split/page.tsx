@@ -3,6 +3,7 @@
 // Split the bill: create a link that divides a total between friends. Each
 // person sees their share and your payment methods, and taps "I've paid".
 
+import { getPageUser } from "@/lib/supabase/user";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -36,9 +37,7 @@ const input =
 
 export default async function SplitPage({ searchParams }: { searchParams: SearchParams }) {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getPageUser(supabase);
   if (!user) redirect("/login?next=/dashboard/split");
 
   const [{ data: profileRow }, { data, error: loadError }] = await Promise.all([
