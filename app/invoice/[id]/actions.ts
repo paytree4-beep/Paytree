@@ -8,7 +8,7 @@ import { redirect } from "next/navigation";
 
 import { sendEmail } from "@/lib/email";
 import { formatMoney, methodLabel } from "@/lib/payment-log";
-import { METHOD_IDS, resolveMethods } from "@/lib/profiles";
+import { METHOD_IDS } from "@/lib/profiles";
 import { isSplitId } from "@/lib/splits";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { paymentNoteEmail } from "@/lib/trial-reminders";
@@ -26,36 +26,28 @@ export async function claimInvoicePaid(formData: FormData): Promise<void> {
 
   const admin = createAdminClient();
   if (!admin) redirect(`/invoice/${id}?error=save#paid`);
-  const invoiceData = await loadInvoice(id);
-  if (!invoiceData) redirect("/");
-  if (!resolveMethods(invoiceData.profile.payments).some((m) => m.id === method)) {
-    redirect(`/invoice/${id}?error=method#paid`);
-  }
 
-  // Only the first claim changes state and sends an owner email.
-  const { data: claimed, error } = await admin
+  // Only an open invoice can be marked; a paid one stays paid.
+  const { error } = await admin
     .from("invoices")
     .update({ claimed_at: new Date().toISOString(), claimed_method: method })
     .eq("id", id)
-    .is("confirmed_at", null)
-    .is("claimed_at", null)
-    .select("id")
-    .maybeSingle();
+    .is("confirmed_at", null);
   if (error) redirect(`/invoice/${id}?error=save#paid`);
-  if (!claimed) redirect(`/invoice/${id}?paid=1`);
 
   // Let the owner know by email. Never block the customer if this fails.
   try {
-    if (invoiceData) {
-      const { data: owner } = await admin.auth.admin.getUserById(invoiceData.invoice.owner_id);
+    const data = await loadInvoice(id);
+    if (data) {
+      const { data: owner } = await admin.auth.admin.getUserById(data.invoice.owner_id);
       const to = owner?.user?.email;
       if (to) {
         const message = paymentNoteEmail(
-          invoiceData.profile.displayName,
-          invoiceData.invoice.customer,
-          formatMoney(invoiceData.invoice.amount_cents),
+          data.profile.displayName,
+          data.invoice.customer,
+          formatMoney(data.invoice.amount_cents),
           methodLabel(method),
-          `Invoice: ${invoiceData.invoice.title}`,
+          `Invoice: ${data.invoice.title}`,
         );
         await sendEmail(to, message.subject, message.html, message.text);
       }

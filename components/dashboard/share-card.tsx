@@ -102,6 +102,7 @@ export function ShareCardMaker({
     qr: HTMLImageElement | null;
   } | null>(null);
   const drops = useRef<Drop[]>(makeDrops());
+  const stopRef = useRef(false);
   const [mode, setMode] = useState<"pay" | "tip">(tip ? "tip" : "pay");
   const [ready, setReady] = useState(false);
   const [busy, setBusy] = useState<"" | "image" | "video" | "preview">("");
@@ -406,6 +407,7 @@ export function ShareCardMaker({
         return;
       }
     }
+    stopRef.current = false;
     setBusy(record ? "video" : "preview");
     setStatus(record ? "Recording your video with music… keep this screen open." : "");
 
@@ -452,6 +454,10 @@ export function ShareCardMaker({
 
     await new Promise<void>((resolve) => {
       const tick = () => {
+        if (stopRef.current) {
+          resolve();
+          return;
+        }
         const t = audio.currentTime - startAt;
         draw(Math.max(0, Math.min(t, DURATION)));
         if (t < DURATION + 0.3) requestAnimationFrame(tick);
@@ -463,9 +469,14 @@ export function ShareCardMaker({
     if (recorder && type) {
       recorder.stop();
       await finished;
+      if (stopRef.current) {
+        chunks.length = 0;
+        setStatus("Stopped.");
+      } else {
       const blob = new Blob(chunks, { type: type.split(";")[0] });
       setVideoFile(new File([blob], `paytree-${username}.${type.startsWith("video/mp4") ? "mp4" : "webm"}`, { type: blob.type }));
       setStatus("Your video is ready! Tap Share video and choose Instagram, TikTok or Save Video.");
+      }
     }
     await audio.close().catch(() => null);
     draw(DURATION, true);
@@ -551,6 +562,17 @@ export function ShareCardMaker({
           <strong>Save</strong> to keep it in your Photos. Don&rsquo;t see them? Tap <strong>More</strong> at the end of the
           app row.
         </p>
+      ) : null}
+      {busy === "preview" || busy === "video" ? (
+        <button
+          type="button"
+          onClick={() => {
+            stopRef.current = true;
+          }}
+          className="mx-auto inline-flex min-h-12 items-center gap-2 rounded-full bg-[#E5484D] px-6 text-[16px] font-bold text-white"
+        >
+          ⏹ Stop
+        </button>
       ) : null}
       <button
         type="button"

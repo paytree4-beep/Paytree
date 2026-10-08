@@ -14,7 +14,6 @@ import { param, type SearchParams } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = { title: "Build your payment page", robots: { index: false } };
-export const dynamic = "force-dynamic";
 
 const ERRORS: Record<string, string> = {
   email: "Please enter a valid email address.",

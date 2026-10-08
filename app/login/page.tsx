@@ -14,7 +14,6 @@ import { param, safeNext, type SearchParams } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = { title: "Log in", robots: { index: false } };
-export const dynamic = "force-dynamic";
 
 const ERRORS: Record<string, string> = {
   invalid: "That email and password do not match. Try again, or reset your password.",

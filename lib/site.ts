@@ -46,6 +46,8 @@ export const TRIAL_DAYS = 7;
 export const PRICES = {
   monthly: 4.99,
   annual: 39.99,
+  /** First month for people who subscribe before their free trial ends. */
+  earlyFirstMonth: 2.99,
 } as const;
 
 const money = (value: number) => `$${value.toFixed(2)}`;

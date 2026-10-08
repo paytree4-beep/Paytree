@@ -296,8 +296,6 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
                 <p className="mt-2 text-[15px] text-[#0B1F18]">
                   {subscription.provider === "comp"
                     ? "Your membership is active."
-                    : subscription.status === "trialing"
-                      ? `Your card will be charged for the first time on ${periodEnd ?? "the end of your trial"}. You can cancel before then.`
                     : subscription.status === "past_due"
                       ? `Your last payment did not go through. Update your card to keep your page live${periodEnd ? ` after ${periodEnd}` : ""}.`
                       : subscription.cancel_at_period_end || subscription.status === "canceled"
@@ -329,13 +327,10 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
                 <form action={startCheckout} className="mt-4">
                   <input type="hidden" name="plan" value="monthly" />
                   <SubmitButton pendingText="Opening checkout…">
-                    {access.reason === "trial"
-                      ? `Continue after trial · ${PRICING.monthly.price}/month`
-                      : `Subscribe · ${PRICING.monthly.price} a month`}
+                    {`Subscribe · ${PRICING.monthly.price} a month`}
                   </SubmitButton>
                 </form>
                 <p className="mt-3 text-[13px] text-[#4B6358]">
-                  {access.reason === "trial" ? "No charge today while your trial is active. Stripe shows the first charge date before you confirm. " : ""}
                   Every feature included. Cancel any time. Secure checkout by Stripe. Pay with Apple Pay, Google Pay or card.
                 </p>
                 {subscription?.provider === "stripe" && subscription.provider_customer_id ? (

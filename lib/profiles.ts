@@ -767,8 +767,9 @@ export function settingsFromRows(rows: MethodRow[]): PaymentSettings {
 }
 
 /**
- * Loads a published profile for a visitor through the server-only client.
- * Direct public database reads cannot enforce the app's membership gate.
+ * Loads a published profile by username from Supabase, as a signed-out visitor
+ * would see it. Returns null when the username is invalid, unknown or hidden,
+ * which the page turns into a 404.
  *
  * Without Supabase (local development), the sample profile above is served,
  * and only outside production, so placeholder payment details never go live.
@@ -777,8 +778,8 @@ export async function getProfileByUsername(rawUsername: string): Promise<Profile
   const username = normalizeUsername(rawUsername);
   if (!username) return null;
 
-  const { createAdminClient } = await import("./supabase/admin");
-  const supabase = createAdminClient();
+  const { createPublicClient } = await import("./supabase/public");
+  const supabase = createPublicClient();
   if (!supabase) {
     if (process.env.NODE_ENV === "production") return null;
     return SAMPLE_PROFILES[username] ?? null;
@@ -788,7 +789,6 @@ export async function getProfileByUsername(rawUsername: string): Promise<Profile
     .from("profiles")
     .select("id, username, display_name, bio, avatar_path")
     .eq("username", username)
-    .eq("is_published", true)
     .maybeSingle();
   if (error || !data) return null;
   const profile = data as {
@@ -807,7 +807,6 @@ export async function getProfileByUsername(rawUsername: string): Promise<Profile
     .from("payment_methods")
     .select("method_id, public_config")
     .eq("profile_id", profile.id)
-    .eq("is_visible", true)
     .order("position", { ascending: true });
 
   const methodRows = (rows ?? []) as MethodRow[];

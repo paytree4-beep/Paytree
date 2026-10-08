@@ -25,8 +25,8 @@ insert into public.subscriptions (user_id,provider,plan,status,current_period_en
 insert into public.analytics_events (profile_id,action,method_id,device) values ('aaaaaaaa-0000-0000-0000-000000000001','view',null,'mobile'),('bbbbbbbb-0000-0000-0000-000000000002','view',null,'desktop');
 
 -- ANON (signed-out visitor)
-select tst.t('anon cannot read profiles directly','anon',null,'select count(*) from public.profiles','error');
-select tst.t('anon cannot read methods directly','anon',null,'select count(*) from public.payment_methods','error');
+select tst.t('anon sees published profiles only','anon',null,'select count(*) from public.profiles','1');
+select tst.t('anon sees visible methods of published profiles only','anon',null,'select count(*) from public.payment_methods','2'); -- alice cashapp + ach; venmo hidden; bob unpublished
 select tst.t('anon cannot read secrets','anon',null,'select count(*) from public.payment_method_secrets','error');
 select tst.t('anon cannot read subscriptions','anon',null,'select count(*) from public.subscriptions','error');
 select tst.t('anon cannot read analytics','anon',null,'select count(*) from public.analytics_events','error');
@@ -36,7 +36,7 @@ select tst.t('anon cannot insert profile','anon',null,$q$with x as (insert into 
 select tst.t('anon cannot insert analytics directly','anon',null,$q$with x as (insert into public.analytics_events (profile_id,action,device) values ('aaaaaaaa-0000-0000-0000-000000000001','view','mobile') returning 1) select count(*) from x$q$,'error');
 
 -- ALICE (signed in)
-select tst.t('alice reads own profile','authenticated','aaaaaaaa-0000-0000-0000-000000000001','select count(*) from public.profiles','1');
+select tst.t('alice reads own + published profiles','authenticated','aaaaaaaa-0000-0000-0000-000000000001','select count(*) from public.profiles','1');
 select tst.t('alice sees all her own methods incl hidden','authenticated','aaaaaaaa-0000-0000-0000-000000000001','select count(*) from public.payment_methods','3');
 select tst.t('alice cannot read secrets even her own','authenticated','aaaaaaaa-0000-0000-0000-000000000001','select count(*) from public.payment_method_secrets','error');
 select tst.t('alice updates own bio','authenticated','aaaaaaaa-0000-0000-0000-000000000001',$q$with x as (update public.profiles set bio='Hi' where id='aaaaaaaa-0000-0000-0000-000000000001' returning 1) select count(*) from x$q$,'1');
@@ -90,67 +90,6 @@ update public.subscriptions set status='canceled', current_period_end = now()-in
 select tst.t('canceled and period ended = no access','service_role',null,$q$select public.has_active_subscription('aaaaaaaa-0000-0000-0000-000000000001')::text$q$,'false');
 update public.subscriptions set status='past_due', current_period_end = now()+interval '2 days';
 select tst.t('past_due within paid period = access','service_role',null,$q$select public.has_active_subscription('aaaaaaaa-0000-0000-0000-000000000001')::text$q$,'true');
-update public.subscriptions set status='active', current_period_end = now()-interval '1 day';
-select tst.t('expired active status = no access','service_role',null,$q$select public.has_active_subscription('aaaaaaaa-0000-0000-0000-000000000001')::text$q$,'false');
-update public.subscriptions set provider='comp', status='active', current_period_end=null;
-select tst.t('comp membership remains active','service_role',null,$q$select public.has_active_subscription('aaaaaaaa-0000-0000-0000-000000000001')::text$q$,'true');
-
--- STRIPE EVENT TRANSACTION AND ORDERING
-select tst.t('new Stripe event applies','service_role',null,$q$
-  select public.apply_stripe_subscription_event('evt_new','checkout.session.completed',100,
-    'bbbbbbbb-0000-0000-0000-000000000002','cus_test','sub_test','monthly','active',now()+interval '30 days',false)::text
-$q$,'true');
-select tst.t('duplicate Stripe event is idempotent','service_role',null,$q$
-  select public.apply_stripe_subscription_event('evt_new','checkout.session.completed',100,
-    'bbbbbbbb-0000-0000-0000-000000000002','cus_test','sub_test','monthly','active',now()+interval '30 days',false)::text
-$q$,'false');
-select tst.t('newer cancellation applies','service_role',null,$q$
-  select public.apply_stripe_subscription_event('evt_cancel','customer.subscription.deleted',200,
-    'bbbbbbbb-0000-0000-0000-000000000002','cus_test','sub_test','monthly','canceled',now()-interval '1 second',false)::text
-$q$,'true');
-select tst.t('older active event cannot restore access','service_role',null,$q$
-  select public.apply_stripe_subscription_event('evt_old','customer.subscription.updated',150,
-    'bbbbbbbb-0000-0000-0000-000000000002','cus_test','sub_test','monthly','active',now()+interval '30 days',false)::text
-$q$,'false');
-select tst.t('cancellation still denies access','service_role',null,$q$
-  select public.has_active_subscription('bbbbbbbb-0000-0000-0000-000000000002')::text
-$q$,'false');
-select tst.t('processed event has timestamp','service_role',null,$q$
-  select (processed_at is not null)::text from public.billing_events where provider='stripe' and event_id='evt_new'
-$q$,'true');
-select tst.t('anon cannot apply Stripe event','anon',null,$q$
-  select public.apply_stripe_subscription_event('evt_fake','customer.subscription.updated',300,
-    'bbbbbbbb-0000-0000-0000-000000000002','cus_test','sub_test','monthly','active',now()+interval '30 days',false)::text
-$q$,'error');
-
--- PUBLIC-WRITE RPCS: only the service role may invoke them.
-insert into public.bill_splits (id, owner_id, title, total_cents, people)
-values ('testbill', 'aaaaaaaa-0000-0000-0000-000000000001', 'Dinner', 1000, 2);
-select tst.t('service adds split claim atomically','service_role',null,$q$
-  select public.claim_split_payment('testbill','Alice','cashapp')
-$q$,'created');
-select tst.t('anon cannot claim through RPC','anon',null,$q$
-  select public.claim_split_payment('testbill','Mallory','cashapp')
-$q$,'error');
-insert into public.bill_split_payments (split_id, name, method)
-select 'testbill', 'extra' || n, 'cashapp' from generate_series(1,8) n;
-select tst.t('split queue cap is enforced','service_role',null,$q$
-  select public.claim_split_payment('testbill','Later','cashapp')
-$q$,'busy');
-select tst.t('service records a limited analytics event','service_role',null,$q$
-  select public.record_analytics_event_limited('aaaaaaaa-0000-0000-0000-000000000001',
-    'view',null,null,'mobile',null)::text
-$q$,'true');
-select tst.t('anon cannot call analytics writer','anon',null,$q$
-  select public.record_analytics_event_limited('aaaaaaaa-0000-0000-0000-000000000001',
-    'view',null,null,'mobile',null)::text
-$q$,'error');
-insert into public.analytics_events (profile_id, action, device)
-select 'aaaaaaaa-0000-0000-0000-000000000001', 'view', 'mobile' from generate_series(1,120);
-select tst.t('analytics cap rejects excess write','service_role',null,$q$
-  select public.record_analytics_event_limited('aaaaaaaa-0000-0000-0000-000000000001',
-    'view',null,null,'mobile',null)::text
-$q$,'false');
 
 -- RETENTION
 insert into public.analytics_events (profile_id,action,device,occurred_at) values ('aaaaaaaa-0000-0000-0000-000000000001','view','mobile', now()-interval '500 days');

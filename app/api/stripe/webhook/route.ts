@@ -11,7 +11,7 @@
 
 import { revalidatePath } from "next/cache";
 
-import { applyStripeSubscriptionEvent } from "@/lib/billing";
+import { saveStripeSubscription } from "@/lib/billing";
 import { getSubscription, verifyWebhook, type StripeSubscription } from "@/lib/stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
 
@@ -23,7 +23,6 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 type StripeEvent = {
   id: string;
   type: string;
-  created: number;
   data: { object: Record<string, unknown> };
 };
 
@@ -44,11 +43,6 @@ export async function POST(request: Request): Promise<Response> {
   } catch {
     return new Response("bad json", { status: 400 });
   }
-  if (!/^evt_[A-Za-z0-9]+$/.test(event?.id) ||
-      !Number.isSafeInteger(event?.created) ||
-      !event?.data || typeof event.data.object !== "object" || event.data.object === null) {
-    return new Response("bad event", { status: 400 });
-  }
 
   const handled = [
     "checkout.session.completed",
@@ -57,6 +51,18 @@ export async function POST(request: Request): Promise<Response> {
     "customer.subscription.deleted",
   ];
   if (!handled.includes(event.type)) return new Response(null, { status: 200 });
+
+  const admin = createAdminClient();
+  if (!admin) return new Response("not configured", { status: 500 });
+
+  // Process each event once. A duplicate insert means we already handled it.
+  const { error: seenError } = await admin
+    .from("billing_events")
+    .insert({ provider: "stripe", event_id: event.id, event_type: event.type });
+  if (seenError) {
+    if (seenError.code === "23505") return new Response(null, { status: 200 });
+    return new Response("log failed", { status: 500 });
+  }
 
   try {
     const object = event.data.object;
@@ -68,27 +74,27 @@ export async function POST(request: Request): Promise<Response> {
       const subId = text(object.subscription);
       if (subId) subscription = await getSubscription(subId);
     } else {
-      const subId = text(object.id);
-      if (subId) subscription = await getSubscription(subId);
-      userId = text(subscription?.metadata?.user_id);
+      subscription = object as unknown as StripeSubscription;
+      userId = text(subscription.metadata?.user_id);
     }
 
     if (userId && UUID.test(userId) && subscription) {
-      if (subscription.metadata?.user_id !== userId) throw new Error("subscription_owner_mismatch");
-      const admin = createAdminClient();
-      if (!admin) throw new Error("admin_client_missing");
+      await saveStripeSubscription(userId, subscription);
 
-      const { data, error } = await admin.from("profiles").select("username").eq("id", userId).maybeSingle();
-      if (error) throw error;
-      if (!data) return new Response(null, { status: 200 }); // Deleted account.
-      const applied = await applyStripeSubscriptionEvent(event, userId, subscription);
+      const { data } = await admin.from("profiles").select("username").eq("id", userId).maybeSingle();
       const username = (data as { username?: string } | null)?.username;
-      if (applied && username) revalidatePath(`/${username}`);
+      if (username) revalidatePath(`/${username}`);
     }
 
+    await admin
+      .from("billing_events")
+      .update({ processed_at: new Date().toISOString() })
+      .eq("provider", "stripe")
+      .eq("event_id", event.id);
     return new Response(null, { status: 200 });
-  } catch (error) {
-    console.error("stripe_webhook_processing_failed", error instanceof Error ? error.message : error);
+  } catch {
+    // Let Stripe retry: forget that we saw this event.
+    await admin.from("billing_events").delete().eq("provider", "stripe").eq("event_id", event.id);
     return new Response("processing failed", { status: 500 });
   }
 }
