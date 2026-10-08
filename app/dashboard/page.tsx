@@ -292,16 +292,14 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
                 <Link
                   key={t.title}
                   href={t.href}
-                  className="relative flex min-h-[118px] flex-col justify-between rounded-[22px] border border-white/90 bg-white/85 p-4 shadow-[0_14px_30px_-22px_rgba(6,78,59,0.55)] backdrop-blur-xl active:scale-[0.98]"
+                  className="relative flex min-h-[140px] flex-col items-center justify-center gap-1.5 rounded-[22px] border border-white/90 bg-white/85 p-4 text-center shadow-[0_14px_30px_-22px_rgba(6,78,59,0.55)] backdrop-blur-xl active:scale-[0.98]"
                 >
-                  <span className="text-[26px] leading-none" aria-hidden="true">{t.icon}</span>
-                  <span>
-                    <span className="block text-[15px] font-bold leading-tight text-[#064E3B]">{t.title}</span>
-                    <span className="mt-0.5 block text-[12.5px] leading-snug text-[#4B6358]">{t.detail}</span>
-                    {t.chip ? (
-                      <span className="mt-1.5 inline-block rounded-full bg-[#E3F0EA] px-2 py-0.5 text-[11px] font-semibold text-[#064E3B]">{t.chip}</span>
-                    ) : null}
-                  </span>
+                  <span className="text-[30px] leading-none" aria-hidden="true">{t.icon}</span>
+                  <span className="block text-[17px] font-bold leading-tight text-[#064E3B]">{t.title}</span>
+                  <span className="block text-[14px] leading-snug text-[#4B6358]">{t.detail}</span>
+                  {t.chip ? (
+                    <span className="inline-block rounded-full bg-[#E3F0EA] px-2.5 py-0.5 text-[12px] font-semibold text-[#064E3B]">{t.chip}</span>
+                  ) : null}
                   {t.badge ? (
                     <span className="absolute right-3 top-3 rounded-full bg-[#E5484D] px-2 py-0.5 text-[11px] font-bold text-white">{t.badge}</span>
                   ) : null}
