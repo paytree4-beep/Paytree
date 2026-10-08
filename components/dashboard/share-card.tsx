@@ -3,16 +3,16 @@
 //
 // "Pay me here" / "Tip me" card maker for Instagram Stories, Reels and TikTok.
 // Draws a 1080x1920 card on a canvas (name, photo, QR code, apples) and saves
-// it as a sharp image, or records a 6-second video with music.
+// it as a sharp image, or records a short video with music.
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
 
-import { scheduleTune } from "./card-music";
+import { scheduleTune, TUNE_BPM, TUNE_SECONDS } from "./card-music";
 
 const W = 1080;
 const H = 1920;
-const DURATION = 6; // seconds of video
+const DURATION = TUNE_SECONDS; // seconds of video (the length of the music)
 
 const APPLE_PATH =
   "M32 19c-4-4-12-5-17 0-6 6-5 18 0 26 4 7 9 11 13 10 2-.4 3-1.4 4-1.4s2 1 4 1.4c4 1 9-3 13-10 5-8 6-20 0-26-5-5-13-4-17 0z";
@@ -128,8 +128,55 @@ export function ShareCardMaker({
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = "high";
 
+      // Apples falling in a row at the bottom, then dancing to the beat.
+      // They stay below and above the white card, never over the QR code.
+      const beat = 60 / TUNE_BPM;
+      drops.current.forEach((d, i) => {
+        const img = a.apples[d.color];
+        if (!img) return;
+        const p = still ? 1 : Math.min(1, Math.max(0, (t - d.delay) / FALL));
+        let y = -200 + (d.floor + 200) * bounce(p);
+        let rot = d.spin * p;
+        let sx = 1;
+        let sy = 1;
+        const since = t - d.delay - FALL;
+        if (!still && since > 0) {
+          // Hop on every beat, a little behind the apple next to it (a wave), leaning left then right.
+          const ph = t / beat - i * 0.12;
+          const hop = Math.abs(Math.sin(Math.PI * ph));
+          y -= hop * 70;
+          sy = 0.9 + 0.2 * hop;
+          sx = 1.08 - 0.12 * hop;
+          rot = d.spin * 0.5 + 0.2 * Math.sin(Math.PI * ph);
+        }
+        ctx.save();
+        ctx.translate(d.x, y);
+        ctx.rotate(rot);
+        ctx.scale(sx, sy);
+        ctx.drawImage(img, -d.size / 2, -d.size / 2, d.size, d.size);
+        ctx.restore();
+      });
+
+      // Three small dancers above the card (the card starts at y=230).
+      if (!still && t > 1.0) {
+        const appear = Math.min(1, (t - 1.0) / 0.5);
+        [270, 540, 810].forEach((x, i) => {
+          const img = a.apples[(i + 1) % COLORS.length];
+          if (!img) return;
+          const ph = t / beat + i * 0.33;
+          const hop = Math.abs(Math.sin(Math.PI * ph));
+          ctx.save();
+          ctx.globalAlpha = appear;
+          ctx.translate(x, 150 - hop * 50);
+          ctx.rotate(0.22 * Math.sin(Math.PI * ph));
+          ctx.scale(1.06 - 0.1 * hop, 0.92 + 0.16 * hop);
+          ctx.drawImage(img, -50, -50, 100, 100);
+          ctx.restore();
+        });
+      }
+
       // Card fades and rises in
-      const cardIn = still ? 1 : Math.min(1, Math.max(0, (t - 1.0) / 1.0));
+      const cardIn = still ? 1 : Math.min(1, Math.max(0, (t - 0.3) / 0.6));
       ctx.save();
       ctx.globalAlpha = cardIn;
       ctx.translate(0, (1 - cardIn) * 60);
@@ -259,19 +306,6 @@ export function ShareCardMaker({
       ctx.fillText("Scan the code or tap the link in bio", cx, 1575);
       ctx.restore();
 
-      // Apples falling into a pile at the bottom
-      drops.current.forEach((d) => {
-        const img = a.apples[d.color];
-        if (!img) return;
-        const p = still ? 1 : Math.min(1, Math.max(0, (t - d.delay) / FALL));
-        const settled = !still && p >= 1 ? Math.sin((t - d.delay - FALL) * 1.8 + d.x) * 5 : 0;
-        const y = -200 + (d.floor + 200) * bounce(p) + settled;
-        ctx.save();
-        ctx.translate(d.x, y);
-        ctx.rotate(d.spin * p);
-        ctx.drawImage(img, -d.size / 2, -d.size / 2, d.size, d.size);
-        ctx.restore();
-      });
     },
     [mode, name, shortLink],
   );
@@ -429,7 +463,7 @@ export function ShareCardMaker({
           {mode === "tip" ? "Tip me card" : "Pay me here card 📸"}
         </h1>
         <p className="mt-1 text-[15px] text-[#3F574C]">
-          Made for Instagram Stories, Reels and TikTok. The video is 6 seconds with our own music. Tip: on TikTok you
+          Made for Instagram Stories, Reels and TikTok. The video is about 16 seconds with our own music. Tip: on TikTok you
           can also add a trending sound.
         </p>
       </div>
