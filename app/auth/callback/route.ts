@@ -8,12 +8,10 @@ import type { EmailOtpType } from "@supabase/supabase-js";
 import { NextResponse, type NextRequest } from "next/server";
 
 import { safeNext } from "@/lib/auth";
-import { SITE_URL } from "@/lib/site";
 import { createClient } from "@/lib/supabase/server";
 
 export async function GET(request: NextRequest) {
-  const { searchParams } = request.nextUrl;
-  const origin = SITE_URL;
+  const { searchParams, origin } = request.nextUrl;
   const next = safeNext(searchParams.get("next"), "/dashboard");
   const code = searchParams.get("code");
   const tokenHash = searchParams.get("token_hash");

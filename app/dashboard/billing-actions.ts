@@ -7,7 +7,6 @@
 import { redirect } from "next/navigation";
 
 import { requestOrigin } from "@/lib/auth";
-import { grantsAccess, type SubscriptionRow } from "@/lib/billing";
 import { createCheckoutSession, createPortalSession, type Plan } from "@/lib/stripe";
 import { createClient } from "@/lib/supabase/server";
 
@@ -19,15 +18,14 @@ async function currentUser() {
   if (!user) redirect("/login?next=/dashboard");
   const { data } = await supabase
     .from("subscriptions")
-    .select("provider, provider_customer_id, provider_subscription_id, plan, status, current_period_end, cancel_at_period_end")
+    .select("provider, provider_customer_id")
     .eq("user_id", user.id)
     .maybeSingle();
-  const row = data as SubscriptionRow | null;
+  const row = data as { provider: string; provider_customer_id: string | null } | null;
   return {
     userId: user.id as string,
     email: (user.email as string | undefined) ?? undefined,
     customerId: row?.provider === "stripe" ? row.provider_customer_id : null,
-    member: grantsAccess(row),
   };
 }
 
@@ -35,8 +33,7 @@ export async function startCheckout(formData: FormData): Promise<void> {
   // One plan only: monthly.
   const plan: Plan = "monthly";
   void formData;
-  const { userId, email, customerId, member } = await currentUser();
-  if (member) redirect("/dashboard/billing");
+  const { userId, email, customerId } = await currentUser();
   const origin = await requestOrigin();
 
   let url: string;

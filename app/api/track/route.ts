@@ -21,9 +21,6 @@ function status(code: number): Response {
 }
 
 export async function POST(request: Request): Promise<Response> {
-  if (request.headers.get("sec-gpc") === "1" || request.headers.get("dnt") === "1") {
-    return status(204);
-  }
   const host = request.headers.get("host");
 
   // Only our own pages may report events.
@@ -79,6 +76,7 @@ export async function POST(request: Request): Promise<Response> {
     referrerHost: referrerHost(payload.referrer, host),
     device,
     country: countryFromHeaders(request.headers),
+    occurredAt: new Date(),
   });
 
   return status(204);

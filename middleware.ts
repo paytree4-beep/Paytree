@@ -7,8 +7,6 @@
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-import { safeNext } from "@/lib/auth";
-
 const PRIVATE_PATHS = ["/dashboard", "/onboarding", "/reset-password"];
 
 export async function middleware(request: NextRequest) {
@@ -58,7 +56,7 @@ export async function middleware(request: NextRequest) {
     const next = request.nextUrl.searchParams.get("next") ?? "";
     const target = request.nextUrl.clone();
     target.search = "";
-    target.pathname = path === "/login" ? safeNext(next) : "/dashboard";
+    target.pathname = path === "/login" && next.startsWith("/") && !next.startsWith("//") ? next : "/dashboard";
     const redirect = NextResponse.redirect(target);
     response.cookies.getAll().forEach((cookie) => redirect.cookies.set(cookie));
     return redirect;

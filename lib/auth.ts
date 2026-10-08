@@ -2,11 +2,19 @@
 //
 // Small helpers shared by the sign-up, log-in and dashboard code.
 
+import { headers } from "next/headers";
+
 import { SITE_URL } from "./site";
 
-/** Canonical address for auth emails and Stripe return links. */
+/** The address this request arrived on, used to build links in auth emails. */
 export async function requestOrigin(): Promise<string> {
-  return SITE_URL;
+  const h = await headers();
+  const host = h.get("x-forwarded-host") ?? h.get("host");
+  if (!host) return SITE_URL;
+  const proto =
+    h.get("x-forwarded-proto") ??
+    (host.startsWith("localhost") || host.startsWith("127.0.0.1") ? "http" : "https");
+  return `${proto}://${host}`;
 }
 
 /** Only allow redirects to our own pages, never to another website. */
