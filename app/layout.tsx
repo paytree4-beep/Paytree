@@ -1,10 +1,11 @@
-tsx
+// app/layout.tsx
 //
 // Root layout: loads the two brand fonts, sets the site-wide metadata and
 // wraps every page. Page-level layouts (the legal pages, the public payment
 // page) keep their own headers and footers.
 
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import { Instrument_Serif, Plus_Jakarta_Sans } from "next/font/google";
 import type { ReactNode } from "react";
 
@@ -63,6 +64,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="en" className={`${sans.variable} ${serif.variable}`}>
       <body className="min-h-screen bg-[#FBFBFB] font-sans text-[#0B1F18] antialiased">
         {children}
+        {/* Vercel Analytics: counts visitors and page views. No package needed. */}
+        <Script id="vercel-analytics-init" strategy="afterInteractive">
+          {`window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };`}
+        </Script>
+        <Script src="/_vercel/insights/script.js" strategy="afterInteractive" defer />
       </body>
     </html>
   );
