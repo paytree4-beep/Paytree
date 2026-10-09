@@ -1,4 +1,4 @@
-// app/layout.tsx
+tsx
 //
 // Root layout: loads the two brand fonts, sets the site-wide metadata and
 // wraps every page. Page-level layouts (the legal pages, the public payment
