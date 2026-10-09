@@ -216,7 +216,7 @@ export default function HomePage() {
                 </Link>
                 <Link
                   href="/signup"
-                  className="inline-flex min-h-11 items-center rounded-full bg-[#0B6B50] px-5 text-[15px] font-semibold text-[#FBFBFB]"
+                  className="inline-flex min-h-11 items-center rounded-full bg-[#064E3B] px-5 text-[15px] font-semibold text-[#FBFBFB]"
                 >
                   Start free
                 </Link>
@@ -229,10 +229,10 @@ export default function HomePage() {
         <section className="mx-auto grid max-w-[1180px] items-center gap-14 px-5 pb-20 pt-0 sm:px-6 lg:grid-cols-[1.15fr_1fr] lg:pt-20">
           <div className="flex min-w-0 flex-col items-center gap-6 text-center lg:items-start lg:text-left">
             <div className="flex min-h-[calc(100svh-76px)] w-full flex-col items-center justify-center gap-6 lg:min-h-0 lg:items-start lg:justify-start">
-            <h1 className="font-serif text-[clamp(46px,11vw,92px)] font-normal uppercase leading-[1.03] tracking-[0.01em] text-[#0B6B50] [-webkit-text-stroke:1.5px_#0B6B50] [text-wrap:balance]">
+            <h1 className="font-serif text-[clamp(46px,11vw,92px)] font-normal uppercase leading-[1.03] tracking-[0.01em] text-[#064E3B] [-webkit-text-stroke:1.5px_#064E3B] [text-wrap:balance]">
               All your payment methods.
               <br />
-              <span className="text-[#D2343B] [-webkit-text-stroke:1.5px_#D2343B]">In one link.</span>
+              <span className="text-[#B8893A] [-webkit-text-stroke:1.5px_#B8893A]">In one link.</span>
             </h1>
             <p className="max-w-[560px] text-[21px] leading-[1.65] font-medium text-[#0F2419] sm:text-[22px]">
               Make it easier and faster for your customers to pay you.
@@ -243,13 +243,6 @@ export default function HomePage() {
               </Cta>
             </div>
             <p className="text-[16px] font-bold text-[#064E3B]">No credit card required.</p>
-            </div>
-            <div className="flex flex-col items-center gap-4 pt-2 lg:items-start lg:pt-0">
-              <p className="inline-flex items-center gap-2 rounded-full bg-[#E3F0EA] px-4 py-2 text-[15px] font-semibold text-[#064E3B]">
-                <ShieldCheck className="h-4 w-4 flex-none" aria-hidden="true" />
-                We never touch your money. Customers pay you directly.
-              </p>
-            </div>
             <ul aria-label="Included" className="flex flex-wrap justify-center gap-2 lg:justify-start">
               {[
                 { label: "Your link", Icon: Link2 },
@@ -263,6 +256,13 @@ export default function HomePage() {
                 </li>
               ))}
             </ul>
+            </div>
+            <div className="flex flex-col items-center gap-4 pt-2 lg:items-start lg:pt-0">
+              <p className="inline-flex items-center gap-2 rounded-full bg-[#E3F0EA] px-4 py-2 text-[15px] font-semibold text-[#064E3B]">
+                <ShieldCheck className="h-4 w-4 flex-none" aria-hidden="true" />
+                We never touch your money. Customers pay you directly.
+              </p>
+            </div>
           </div>
 
           <div id="example" className="flex scroll-mt-24 flex-col items-center gap-5">
