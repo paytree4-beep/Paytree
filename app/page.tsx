@@ -226,49 +226,45 @@ export default function HomePage() {
         </header>
 
         {/* Hero */}
-        <section className="mx-auto grid max-w-[1180px] items-center gap-14 px-5 pb-20 pt-14 sm:px-6 lg:grid-cols-[1.15fr_1fr] lg:pt-20">
-          <div className="flex min-w-0 flex-col items-start gap-6">
-            <span className={`inline-flex items-center gap-2 px-4 py-2 text-[15px] font-bold tracking-[0.08em] text-[#064E3B] ${glass} rounded-full`}>
-              <span className="h-2 w-2 rounded-full bg-[#7BC86C]" aria-hidden="true" />
-              {TRIAL_DAYS} DAYS FREE · NO CARD NEEDED
-            </span>
-            <h1 className="font-serif text-[clamp(46px,11vw,92px)] font-normal uppercase leading-[1.03] tracking-[-0.01em] text-[#064E3B] [text-wrap:balance]">
+        <section className="mx-auto grid max-w-[1180px] items-center gap-14 px-5 pb-20 pt-6 sm:px-6 lg:grid-cols-[1.15fr_1fr] lg:pt-20">
+          <div className="flex min-h-[calc(100svh-110px)] min-w-0 flex-col items-center justify-center gap-6 text-center lg:min-h-0 lg:items-start lg:justify-start lg:text-left">
+            <h1 className="font-serif text-[clamp(46px,11vw,92px)] font-normal uppercase leading-[1.03] tracking-[0.01em] text-[#043B2C] [-webkit-text-stroke:1.5px_#043B2C] [text-wrap:balance]">
               All your payment methods.
               <br />
-              <span className={goldText}>One simple link.</span>
+              <span className="text-[#A31D26] [-webkit-text-stroke:1.5px_#A31D26]">In one link.</span>
             </h1>
             <p className="max-w-[560px] text-[21px] leading-[1.65] font-medium text-[#0F2419] sm:text-[22px]">
               Make it easier and faster for your customers to pay you.
             </p>
-            <ul aria-label="Included" className="flex flex-wrap gap-2">
+            <ul aria-label="Included" className="flex flex-wrap justify-center gap-2 lg:justify-start">
               {[
                 { label: "Your link", Icon: Link2 },
                 { label: "QR code", Icon: QrCode },
-                { label: "Statistics", Icon: BarChart3 },
+                { label: "Invoices", Icon: ReceiptText },
+                { label: "& more inside", Icon: null },
               ].map(({ label, Icon }) => (
                 <li key={label} className={`inline-flex min-h-9 items-center gap-1.5 px-3 text-[13px] font-semibold text-[#064E3B] sm:min-h-10 sm:px-4 sm:text-[15px] ${glass} rounded-full`}>
-                  <Icon className="h-4 w-4 text-[#9A6E1A]" aria-hidden="true" />
+                  {Icon ? <Icon className="h-4 w-4 text-[#9A6E1A]" aria-hidden="true" /> : null}
                   {label}
                 </li>
               ))}
             </ul>
-            <div className="flex w-full flex-wrap gap-3 sm:w-auto">
+            <div className="flex w-full flex-wrap justify-center gap-3 sm:w-auto lg:justify-start">
               <Cta variant="emerald" className="w-full shadow-[0_18px_40px_-18px_rgba(6,78,59,0.8)] sm:w-auto sm:min-w-[260px]">
                 {trialCta}
               </Cta>
-              <a
-                href="#example"
-                className={`inline-flex min-h-[52px] w-full items-center justify-center px-7 font-semibold text-[#064E3B] sm:w-auto ${glass} rounded-full`}
-              >
-                See an example
-              </a>
             </div>
-            <p className="text-[15px] font-medium font-medium text-[#1A3326]">
-              Then {PRICING.monthly.price}/month. Cancel any time.
-            </p>
+            <div className="flex flex-col items-center gap-2 lg:items-start">
+              <p className="text-[16px] font-bold text-[#064E3B]">No credit card required.</p>
+              <p className="inline-flex items-center gap-2 rounded-full bg-[#E3F0EA] px-4 py-2 text-[15px] font-semibold text-[#064E3B]">
+                <ShieldCheck className="h-4 w-4 flex-none" aria-hidden="true" />
+                We never touch your money. Customers pay you directly.
+              </p>
+            </div>
           </div>
 
-          <div id="example" className="scroll-mt-24">
+          <div id="example" className="flex scroll-mt-24 flex-col items-center gap-5">
+            <p className="text-[13px] font-bold uppercase tracking-[0.14em] text-[#4B6358]">Example</p>
             <PhoneExample />
           </div>
         </section>
