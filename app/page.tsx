@@ -34,13 +34,13 @@ import { badgeColor } from "@/lib/payment-colors";
 import { PRICING, SIGNUPS_OPEN, SITE_HOST, SITE_URL, TRIAL_DAYS } from "@/lib/site";
 
 const glass =
-  "rounded-[28px] border border-white/70 bg-white/55 shadow-[0_24px_60px_-34px_rgba(6,78,59,0.45)] backdrop-blur-xl";
+  "rounded-[28px] border border-[#EADFC4] bg-white/95 shadow-[0_24px_60px_-34px_rgba(6,78,59,0.45)]";
 
 const headingClass =
   "font-serif text-[clamp(34px,4.6vw,56px)] font-normal leading-[1.08] tracking-[-0.01em] text-[#064E3B] [text-wrap:balance]";
 
 const goldText =
-  "pt-shine bg-gradient-to-r from-[#86600F] via-[#B8893A] to-[#86600F] bg-clip-text text-transparent";
+  "text-[#9A6E1A]";
 
 const METHODS = [
   { id: "cashapp", name: "Cash App" },
@@ -154,7 +154,7 @@ function PhoneExample() {
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className="block text-[10.5px] font-bold leading-tight">{name}</span>
-                    <span className="block truncate text-[9px] text-[#4B6358]">{detail}</span>
+                    <span className="block truncate text-[9px] text-[#2F4A3E]">{detail}</span>
                   </span>
                   <Action className="h-2.5 w-2.5 flex-none text-[#064E3B]" />
                 </div>
@@ -180,7 +180,7 @@ function PhoneExample() {
               </span>
               <span className="min-w-0">
                 <span className="block text-[17px] font-bold leading-tight text-[#0B1F18]">{step.title}</span>
-                <span className="mt-0.5 block text-[14px] font-medium leading-snug text-[#0F2419]">{step.body}</span>
+                <span className="mt-0.5 block text-[14px] font-semibold leading-snug text-[#0F2419]">{step.body}</span>
               </span>
             </li>
           ))}
@@ -194,7 +194,7 @@ export default function HomePage() {
   const trialCta = `Start your ${TRIAL_DAYS}-day free trial`;
 
   return (
-    <div className="relative min-h-screen overflow-x-clip bg-[#FAF5EA] text-[19px] leading-[1.6] text-[#0B1F18]">
+    <div className="relative min-h-screen overflow-x-clip [text-rendering:optimizeLegibility] bg-[#FAF5EA] text-[19px] leading-[1.6] text-[#0B1F18]">
       <AppleBackdrop />
 
       <div className="relative z-10">
@@ -228,10 +228,10 @@ export default function HomePage() {
         <section className="mx-auto grid max-w-[1180px] items-center gap-14 px-5 pb-20 pt-0 sm:px-6 lg:grid-cols-[1.15fr_1fr] lg:pt-20">
           <div className="flex min-w-0 flex-col items-center gap-6 text-center lg:items-start lg:text-left">
             <div className="flex min-h-[calc(100svh-76px)] w-full flex-col items-center justify-center gap-5 pt-10 lg:min-h-0 lg:items-start lg:justify-start lg:pt-0">
-            <h1 className="font-serif text-[clamp(46px,11vw,92px)] font-normal uppercase leading-[1.03] tracking-[0.01em] text-[#064E3B] [-webkit-text-stroke:1.5px_#064E3B] [text-wrap:balance]">
+            <h1 className="font-serif text-[clamp(46px,11vw,92px)] font-normal uppercase leading-[1.03] tracking-[0.01em] text-[#064E3B] [text-wrap:balance]">
               All your payment methods.
               <br />
-              <span className={`${goldText} [-webkit-text-stroke:1.5px_#9A6E1A]`}>In one link.</span>
+              <span className={`${goldText}`}>In one link.</span>
             </h1>
             <p className="max-w-[560px] text-[22px] leading-[1.4] font-bold text-[#0B1F18] sm:text-[24px]">
               Make it easier &amp; faster for your customers to pay you.
@@ -262,13 +262,13 @@ export default function HomePage() {
           </div>
 
           <div id="example" className="flex scroll-mt-24 flex-col items-center gap-5">
-            <p className="text-[13px] font-bold uppercase tracking-[0.14em] text-[#4B6358]">Example</p>
+            <p className="text-[13px] font-bold uppercase tracking-[0.14em] text-[#2F4A3E]">Example</p>
             <PhoneExample />
           </div>
         </section>
 
         {/* Moving strip of payment methods */}
-        <section aria-label="Supported payment methods" className="border-y border-white/70 bg-white/40 py-5 backdrop-blur-md">
+        <section aria-label="Supported payment methods" className="border-y border-[#EADFC4] bg-white/85 py-5">
           <div className="overflow-hidden [mask-image:linear-gradient(90deg,transparent,black_10%,black_90%,transparent)]">
             <ul className="pt-marquee flex w-max gap-3">
               {[...METHODS, ...METHODS].map((m, i) => (
@@ -307,7 +307,7 @@ export default function HomePage() {
                         <Icon className="h-[18px] w-[18px]" strokeWidth={2.2} />
                       </span>
                       <h3 className="text-[18px] font-extrabold leading-tight text-[#0B1F18]">{title}</h3>
-                      <p className="text-[16px] leading-snug font-medium text-[#0F2419]">{body}</p>
+                      <p className="text-[16px] leading-snug font-semibold text-[#0F2419]">{body}</p>
                     </div>
                   </Reveal>
                 ))}
@@ -316,7 +316,7 @@ export default function HomePage() {
                     <span aria-hidden="true" className="text-[40px] leading-none">🍎</span>
                     <div className="flex flex-col gap-1">
                       <h3 className="text-[18px] font-extrabold leading-tight text-[#0B1F18]">Apple basket</h3>
-                      <p className="text-[16px] leading-snug font-medium text-[#0F2419]">
+                      <p className="text-[16px] leading-snug font-semibold text-[#0F2419]">
                         Share your link. Every friend who joins PayTree and pays drops an apple in your basket, worth $0.25. On January 1, 2027, we buy all your apples and pay you.
                       </p>
                     </div>
@@ -332,7 +332,7 @@ export default function HomePage() {
               <Reveal className="flex max-w-[640px] flex-col items-center gap-3 text-center">
                 <span className="text-sm font-bold tracking-[0.14em] text-[#9A6E1A]">PRICING</span>
                 <h2 className={headingClass}>Try everything free for {TRIAL_DAYS} days</h2>
-                <p className="text-[21px] font-medium text-[#0F2419]">No card needed. One simple plan with every feature after that.</p>
+                <p className="text-[21px] font-semibold text-[#0F2419]">No card needed. One simple plan with every feature after that.</p>
               </Reveal>
               <Reveal className="w-full">
                 <Pricing />
@@ -345,12 +345,12 @@ export default function HomePage() {
             <Reveal className={`mx-auto flex max-w-[860px] flex-col gap-4 p-7 sm:p-12 ${glass}`}>
               <span className="text-sm font-bold tracking-[0.14em] text-[#9A6E1A]">ABOUT US</span>
               <h2 className={headingClass}>Built for the question every business hears</h2>
-              <p className="text-[21px] leading-[1.75] font-medium text-[#0F2419]">
+              <p className="text-[21px] leading-[1.75] font-semibold text-[#0F2419]">
                 <em>&ldquo;Do you take Zelle, Venmo or Cash App?&rdquo;</em> PayTree answers it with one simple link.
                 We built a calm, elegant page that brings all your payment methods together, so your customers can
                 pay you in seconds, and you can focus on your work.
               </p>
-              <p className="text-[21px] leading-[1.75] font-medium text-[#0F2419]">
+              <p className="text-[21px] leading-[1.75] font-semibold text-[#0F2419]">
                 <strong className="text-[#064E3B]">We never touch your money.</strong> Payments go straight from
                 your customers to your own accounts. Our mission is simple: make getting paid effortless for
                 businesses and professionals everywhere.
@@ -377,7 +377,7 @@ export default function HomePage() {
                           +
                         </span>
                       </summary>
-                      <p className="pb-5 text-[19px] leading-[1.7] font-medium text-[#0F2419]">{a}</p>
+                      <p className="pb-5 text-[19px] leading-[1.7] font-semibold text-[#0F2419]">{a}</p>
                     </details>
                   </Reveal>
                 ))}
@@ -387,12 +387,12 @@ export default function HomePage() {
 
           {/* Final call to action */}
           <section id="signup" className="px-5 pb-16 sm:px-6">
-            <Reveal className="relative mx-auto max-w-[1180px] overflow-hidden rounded-[36px] border-2 border-[#E2C27A] bg-gradient-to-br from-white/85 via-[#FBF3DF]/85 to-[#F4E3B8]/85 px-7 py-14 text-[#064E3B] shadow-[0_40px_80px_-40px_rgba(154,110,26,0.55)] backdrop-blur-xl sm:px-14">
+            <Reveal className="relative mx-auto max-w-[1180px] overflow-hidden rounded-[36px] border-2 border-[#E2C27A] bg-gradient-to-br from-white via-[#FBF3DF] to-[#F4E3B8] px-7 py-14 text-[#064E3B] shadow-[0_40px_80px_-40px_rgba(154,110,26,0.55)] sm:px-14">
               <div className="relative z-10 flex flex-col items-start gap-5">
                 <h2 className="font-serif text-[clamp(36px,5vw,64px)] font-normal leading-[1.05] [text-wrap:balance]">
                   Ready to get paid?
                 </h2>
-                <p className="max-w-[520px] text-[21px] font-medium text-[#0F2419]">
+                <p className="max-w-[520px] text-[21px] font-semibold text-[#0F2419]">
                   Build your payment page in two minutes. {TRIAL_DAYS} days free, no card needed.
                 </p>
                 <Cta variant="emerald" className="min-w-[260px] shadow-[0_18px_40px_-18px_rgba(6,78,59,0.8)]">
@@ -406,7 +406,7 @@ export default function HomePage() {
         </main>
 
         <footer className="px-5 pb-10 sm:px-6">
-          <div className={`mx-auto flex max-w-[1180px] flex-wrap items-center justify-between gap-4 px-6 py-5 text-[15px] font-medium text-[#0F2419] ${glass}`}>
+          <div className={`mx-auto flex max-w-[1180px] flex-wrap items-center justify-between gap-4 px-6 py-5 text-[15px] font-semibold text-[#0F2419] ${glass}`}>
             <span>&copy; {new Date().getFullYear()} PayTree. All rights reserved.</span>
             <nav aria-label="Legal" className="flex flex-wrap gap-6">
               <a href="#about" className="inline-flex min-h-11 items-center hover:text-[#064E3B]">About</a>
