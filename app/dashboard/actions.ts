@@ -5,9 +5,12 @@
 // signed-in user, so Row Level Security only lets people change their own row.
 
 import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
+import { notifyOwner } from "@/lib/notify";
 import { normalizeUsername } from "@/lib/profiles";
+import { cleanRef } from "@/lib/referrals";
 import { cancelSubscription } from "@/lib/stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
@@ -32,6 +35,26 @@ async function requireUser() {
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
   return { supabase, user };
+}
+
+/**
+ * If this person arrived through a friend's link (?ref=name, saved in the
+ * pt_ref cookie), remember who invited them. Never blocks sign-up.
+ */
+async function rememberReferrer(newUserId: string, newUsername: string): Promise<void> {
+  try {
+    const jar = await cookies();
+    const ref = cleanRef(jar.get("pt_ref")?.value ? decodeURIComponent(jar.get("pt_ref")!.value) : null);
+    if (!ref || ref === newUsername) return;
+    const admin = createAdminClient();
+    if (!admin) return;
+    const { data } = await admin.from("profiles").select("id").eq("username", ref).maybeSingle();
+    const referrerId = (data as { id?: string } | null)?.id;
+    if (!referrerId || referrerId === newUserId) return;
+    await admin.from("referral_links").insert({ referred_id: newUserId, referrer_id: referrerId });
+  } catch {
+    // Referral tracking must never get in the way of creating a page.
+  }
 }
 
 export async function claimPage(formData: FormData): Promise<void> {
@@ -60,6 +83,15 @@ export async function claimPage(formData: FormData): Promise<void> {
     if (error.message.includes("username_reserved")) redirect(`/onboarding?error=reserved&${keep}`);
     redirect(`/onboarding?error=save&${keep}`);
   }
+
+  await rememberReferrer(user.id, username);
+
+  await notifyOwner(`New PayTree sign-up: ${displayName}`, [
+    "Someone just created a PayTree page.",
+    `Name: ${displayName}`,
+    `Email: ${user.email ?? "unknown"}`,
+    `Page: paytree.to/${username}`,
+  ]);
 
   redirect("/dashboard?notice=welcome");
 }
