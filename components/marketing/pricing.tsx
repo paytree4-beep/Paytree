@@ -4,6 +4,7 @@
 // Prices come from lib/site.ts so they can never drift from the rest of the site.
 
 import { Cta } from "@/components/marketing/cta";
+import { HarvestCard } from "@/components/marketing/harvest-card";
 import { PRICING, TRIAL_DAYS } from "@/lib/site";
 
 const PLAN_FEATURES = [
@@ -17,6 +18,7 @@ const PLAN_FEATURES = [
   "Monthly bills reminder (rent, phone, subscriptions)",
   "Your money tree, to keep or share",
   "Private visitor statistics",
+  "Apple basket: earn $0.25 for every friend who joins, paid on January 1, 2027",
   `${TRIAL_DAYS} days free, no card needed`,
   "Cancel any time",
 ];
@@ -57,6 +59,7 @@ export function Pricing() {
         </ul>
 
         <Cta variant="emerald">{info.cta}</Cta>
+        <HarvestCard />
       </div>
     </div>
   );
