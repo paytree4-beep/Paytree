@@ -9,7 +9,6 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { normalizeUsername } from "@/lib/profiles";
-import { cleanRef } from "@/lib/referrals";
 import { cancelSubscription } from "@/lib/stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
@@ -40,6 +39,13 @@ async function requireUser() {
  * If this person arrived through a friend's link (?ref=name, saved in the
  * pt_ref cookie), remember who invited them. Never blocks sign-up.
  */
+/** Reads a saved ?ref= value safely: a valid link name, else null. */
+function cleanRef(raw: string | null | undefined): string | null {
+  if (!raw) return null;
+  const v = raw.trim().toLowerCase();
+  return /^[a-z0-9][a-z0-9_.-]{2,29}$/.test(v) ? v : null;
+}
+
 async function rememberReferrer(newUserId: string, newUsername: string): Promise<void> {
   try {
     const jar = await cookies();
