@@ -18,6 +18,7 @@ import { QrCard } from "@/app/[username]/qr-card";
 import { param, type SearchParams } from "@/lib/auth";
 import { avatarUrl } from "@/lib/avatar";
 import { PRICING, SITE_HOST, SITE_URL } from "@/lib/site";
+import { ADMIN_EMAIL, daysUntilHarvest } from "@/lib/referrals";
 import { createClient } from "@/lib/supabase/server";
 import { deleteAccount, setPageMode, setPublished, updateProfile } from "./actions";
 import { ShareCardMaker } from "@/components/dashboard/share-card";
@@ -159,6 +160,16 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
     { icon: "👤", title: "Profile", detail: "Photo, name & bio", href: "/dashboard/profile" },
   ];
   const toolTiles: Tile[] = [
+    {
+      icon: "🍎",
+      title: "Apple Basket",
+      detail: "Share your link, earn apples",
+      href: "/dashboard/apples",
+      chip: `${daysUntilHarvest(Date.now())} days to harvest`,
+    },
+    ...((user.email ?? "").toLowerCase() === ADMIN_EMAIL
+      ? [{ icon: "🧺", title: "Harvest (admin)", detail: "Apples PayTree owes", href: "/dashboard/harvest" }]
+      : []),
     { icon: "📸", title: "Pay Me / Tip Me", detail: "Photo & video for Instagram & TikTok", href: "/dashboard/share" },
     {
       icon: "🧾",
@@ -276,8 +287,8 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
                 >
                   <span className="text-[30px] leading-none" aria-hidden="true">{t.icon}</span>
                   <span className="flex-1">
-                    <span className="block text-[17px] font-bold leading-tight text-[#064E3B]">{t.title}</span>
-                    <span className="mt-0.5 block text-[13.5px] leading-snug text-[#4B6358]">{t.detail}</span>
+                    <span className="block text-[19px] font-bold leading-tight text-[#064E3B]">{t.title}</span>
+                    <span className="mt-0.5 block text-[14.5px] font-medium leading-snug text-[#1B3A2D]">{t.detail}</span>
                   </span>
                   <span className="font-bold text-[#064E3B] sm:hidden" aria-hidden="true">›</span>
                   {t.badge ? (
@@ -295,8 +306,8 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
                   className="relative flex min-h-[140px] flex-col items-center justify-center gap-1.5 rounded-[22px] border border-white/90 bg-white/85 p-4 text-center shadow-[0_14px_30px_-22px_rgba(6,78,59,0.55)] backdrop-blur-xl active:scale-[0.98]"
                 >
                   <span className="text-[30px] leading-none" aria-hidden="true">{t.icon}</span>
-                  <span className="block text-[17px] font-bold leading-tight text-[#064E3B]">{t.title}</span>
-                  <span className="block text-[14px] leading-snug text-[#4B6358]">{t.detail}</span>
+                  <span className="block text-[19px] font-bold leading-tight text-[#064E3B]">{t.title}</span>
+                  <span className="block text-[14.5px] font-medium leading-snug text-[#1B3A2D]">{t.detail}</span>
                   {t.chip ? (
                     <span className="inline-block rounded-full bg-[#E3F0EA] px-2.5 py-0.5 text-[12px] font-semibold text-[#064E3B]">{t.chip}</span>
                   ) : null}
