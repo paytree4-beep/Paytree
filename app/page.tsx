@@ -1,4 +1,4 @@
-// app/page.tsx  ->  paytree.to
+to
 //
 // Landing page. Cream background with slowly floating apples (the fruit of
 // the PayTree), frosted-glass cards and gentle motion. Copy sticks to what
