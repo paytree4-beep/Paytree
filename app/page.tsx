@@ -1,4 +1,4 @@
-
+// app/page.tsx  ->  paytree.to
 //
 // Landing page. Cream background with slowly floating apples (the fruit of
 // the PayTree), frosted-glass cards and gentle motion. Copy sticks to what
@@ -10,7 +10,6 @@ import {
   BarChart3,
   Copy,
   DollarSign,
-  Link2,
   Mail,
   QrCode,
   ShieldCheck,
@@ -228,38 +227,37 @@ export default function HomePage() {
         {/* Hero */}
         <section className="mx-auto grid max-w-[1180px] items-center gap-14 px-5 pb-20 pt-0 sm:px-6 lg:grid-cols-[1.15fr_1fr] lg:pt-20">
           <div className="flex min-w-0 flex-col items-center gap-6 text-center lg:items-start lg:text-left">
-            <div className="flex min-h-[calc(100svh-76px)] w-full flex-col items-center justify-center gap-6 lg:min-h-0 lg:items-start lg:justify-start">
+            <div className="flex min-h-[calc(100svh-76px)] w-full flex-col items-center justify-center gap-5 pt-10 lg:min-h-0 lg:items-start lg:justify-start lg:pt-0">
             <h1 className="font-serif text-[clamp(46px,11vw,92px)] font-normal uppercase leading-[1.03] tracking-[0.01em] text-[#064E3B] [-webkit-text-stroke:1.5px_#064E3B] [text-wrap:balance]">
               All your payment methods.
               <br />
               <span className={`${goldText} [-webkit-text-stroke:1.5px_#9A6E1A]`}>In one link.</span>
             </h1>
-            <p className="max-w-[560px] text-[21px] leading-[1.65] font-medium text-[#0F2419] sm:text-[22px]">
-              Make it easier and faster for your customers to pay you.
+            <p className="max-w-[560px] text-[22px] leading-[1.4] font-bold text-[#0B1F18] sm:text-[24px]">
+              Make it easier &amp; faster for your customers to pay you.
             </p>
-            <div className="flex w-full flex-wrap justify-center gap-3 sm:w-auto lg:justify-start">
-              <Cta variant="emerald" className="w-full shadow-[0_18px_40px_-18px_rgba(6,78,59,0.8)] sm:w-auto sm:min-w-[260px]">
-                {trialCta}
-              </Cta>
-            </div>
-            <p className="text-[16px] font-bold text-[#064E3B]">No credit card required.</p>
-            <p className="inline-flex items-center gap-2 rounded-full bg-[#E3F0EA] px-4 py-2 text-[15px] font-semibold text-[#064E3B]">
+            <p className="max-w-[560px] text-[19px] leading-[1.45] font-extrabold text-[#064E3B] sm:text-[21px]">
+              Share your page link. Display your QR code. <span className="text-[#9A6E1A]">Get paid your way.</span>
+            </p>
+            <p className="inline-flex items-center gap-2 rounded-full bg-[#E3F0EA] px-4 py-2.5 text-[15px] font-bold leading-snug text-[#064E3B]">
               <ShieldCheck className="h-4 w-4 flex-none" aria-hidden="true" />
               We never touch your money. Customers pay you directly.
             </p>
-            <ul aria-label="Included" className="flex flex-wrap justify-center gap-2 lg:justify-start">
-              {[
-                { label: "Your link", Icon: Link2 },
-                { label: "QR code", Icon: QrCode },
-                { label: "Invoices", Icon: ReceiptText },
-                { label: "& more inside", Icon: null },
-              ].map(({ label, Icon }) => (
-                <li key={label} className={`inline-flex min-h-9 items-center gap-1.5 px-3 text-[13px] font-semibold text-[#064E3B] sm:min-h-10 sm:px-4 sm:text-[15px] ${glass} rounded-full`}>
-                  {Icon ? <Icon className="h-4 w-4 text-[#9A6E1A]" aria-hidden="true" /> : null}
-                  {label}
+            <ul aria-label="Payment methods" className="flex max-w-[460px] flex-wrap justify-center gap-1.5 lg:justify-start">
+              {METHODS.slice(0, 6).map((m) => (
+                <li key={m.id} className="inline-flex min-h-9 items-center gap-2 rounded-full border border-white/80 bg-white/75 px-3 text-[13px] font-bold text-[#0B1F18]">
+                  <MethodDot id={m.id} size={10} />
+                  {m.name}
                 </li>
               ))}
+              <li className="inline-flex min-h-9 items-center rounded-full bg-[#E3F0EA] px-3 text-[13px] font-bold text-[#064E3B]">+ more</li>
             </ul>
+            <div className="flex w-full flex-wrap justify-center gap-3 sm:w-auto lg:justify-start">
+              <Cta variant="emerald" className="w-full shadow-[0_18px_40px_-18px_rgba(6,78,59,0.8)] sm:w-auto sm:min-w-[260px]">
+                {`Try it free for ${TRIAL_DAYS} days`}
+              </Cta>
+            </div>
+            <p className="text-[16px] font-bold text-[#064E3B]">No credit card required &middot; Then {PRICING.monthly.price}/month</p>
             </div>
           </div>
 
