@@ -239,10 +239,15 @@ export default function HomePage() {
             <p className="max-w-[560px] text-[19px] leading-[1.45] font-extrabold text-[#064E3B] sm:text-[21px]">
               Share your page link. Display your QR code. <span className="text-[#9A6E1A]">Get paid your way.</span>
             </p>
-            <p className="inline-flex items-center gap-2 rounded-full bg-[#E3F0EA] px-4 py-2.5 text-[15px] font-bold leading-snug text-[#064E3B]">
-              <ShieldCheck className="h-4 w-4 flex-none" aria-hidden="true" />
-              We never touch your money. Customers pay you directly.
-            </p>
+            <div className="flex w-full max-w-[460px] items-center gap-3 rounded-[22px] border-[1.5px] border-[#E8C766] bg-white px-4 py-3 text-left shadow-[0_10px_20px_-14px_rgba(154,110,26,0.6)]">
+              <span aria-hidden="true" className="text-[34px] leading-none">🍎</span>
+              <div>
+                <p className="text-[16px] font-extrabold leading-snug text-[#064E3B]">The Apple Challenge</p>
+                <p className="mt-0.5 text-[14px] font-semibold leading-snug text-[#2F4A3E]">
+                  Invite friends. Each apple is worth $0.25. We buy them all on Harvest Day, Jan 1, 2027.
+                </p>
+              </div>
+            </div>
             <ul aria-label="Payment methods" className="flex max-w-[460px] flex-wrap justify-center gap-1.5 lg:justify-start">
               {METHODS.slice(0, 6).map((m) => (
                 <li key={m.id} className="inline-flex min-h-9 items-center gap-2 rounded-full border border-white/80 bg-white/75 px-3 text-[13px] font-bold text-[#0B1F18]">
@@ -258,6 +263,10 @@ export default function HomePage() {
               </Cta>
             </div>
             <p className="text-[16px] font-bold text-[#064E3B]">No credit card required &middot; Then {PRICING.monthly.price}/month</p>
+            <p className="inline-flex items-center gap-2 rounded-full bg-[#E3F0EA] px-4 py-2.5 text-[15px] font-bold leading-snug text-[#064E3B]">
+              <ShieldCheck className="h-4 w-4 flex-none" aria-hidden="true" />
+              We never touch your money. Customers pay you directly.
+            </p>
             </div>
           </div>
 
