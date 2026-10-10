@@ -195,6 +195,22 @@ export default function HomePage() {
 
   return (
     <div className="relative min-h-screen overflow-x-clip [text-rendering:optimizeLegibility] bg-[#FAF5EA] text-[19px] leading-[1.6] text-[#0B1F18]">
+      <style>{`
+        .pt-stroke { stroke-dasharray: 1; stroke-dashoffset: 1; animation: pt-draw 0.9s ease-out 0.5s forwards; }
+        .pt-stroke2 { animation-delay: 1.35s; }
+        @keyframes pt-draw { to { stroke-dashoffset: 0; } }
+        .pt-box { animation: pt-pulse 2.6s ease-in-out 2.2s infinite; }
+        @keyframes pt-pulse {
+          0%, 100% { box-shadow: 0 0 0 0 rgba(214,64,63,0), 0 10px 20px -14px rgba(214,64,63,0.55); }
+          50% { box-shadow: 0 0 0 7px rgba(214,64,63,0.14), 0 10px 20px -14px rgba(214,64,63,0.55); }
+        }
+        .pt-wig { display: inline-block; transform-origin: 50% 90%; animation: pt-wig 2.6s ease-in-out 2.4s infinite; }
+        @keyframes pt-wig { 0%, 14%, 100% { transform: rotate(0deg); } 4% { transform: rotate(-14deg); } 9% { transform: rotate(12deg); } }
+        @media (prefers-reduced-motion: reduce) {
+          .pt-stroke { animation: none; stroke-dashoffset: 0; }
+          .pt-box, .pt-wig { animation: none; }
+        }
+      `}</style>
       <AppleBackdrop />
 
       <div className="relative z-10">
@@ -233,14 +249,20 @@ export default function HomePage() {
               <br />
               <span className={`${goldText}`}>In one link.</span>
             </h1>
+            <svg viewBox="0 0 400 16" preserveAspectRatio="none" aria-hidden="true" className="h-[14px] w-[78%] max-w-[360px] lg:w-[300px]">
+              <path className="pt-stroke" pathLength={1} d="M4 9 C 60 3, 120 14, 190 7 S 310 12, 396 5" stroke="#D6403F" strokeWidth="4" fill="none" strokeLinecap="round" />
+            </svg>
             <p className="max-w-[560px] text-[22px] leading-[1.4] font-bold text-[#0B1F18] sm:text-[24px]">
               Make it easier &amp; faster for your customers to pay you.
             </p>
+            <svg viewBox="0 0 400 16" preserveAspectRatio="none" aria-hidden="true" className="h-[14px] w-[62%] max-w-[300px] lg:w-[240px]">
+              <path className="pt-stroke pt-stroke2" pathLength={1} d="M4 6 C 70 13, 140 3, 210 9 S 330 4, 396 10" stroke="#D6403F" strokeWidth="4" fill="none" strokeLinecap="round" />
+            </svg>
             <p className="max-w-[560px] text-[19px] leading-[1.45] font-extrabold text-[#064E3B] sm:text-[21px]">
               Share your page link. Display your QR code. <span className="text-[#9A6E1A]">Get paid your way.</span>
             </p>
-            <div className="flex w-full max-w-[460px] items-center gap-3 rounded-[22px] border-[1.5px] border-[#E8C766] bg-white px-4 py-3 text-left shadow-[0_10px_20px_-14px_rgba(154,110,26,0.6)]">
-              <span aria-hidden="true" className="text-[34px] leading-none">🍎</span>
+            <div className="pt-box flex w-full max-w-[460px] items-center gap-3 rounded-[22px] border-2 border-[#D6403F] bg-white px-4 py-3 text-left">
+              <span aria-hidden="true" className="pt-wig text-[34px] leading-none">🍎</span>
               <div>
                 <p className="text-[16px] font-extrabold leading-snug text-[#064E3B]">The Apple Challenge</p>
                 <p className="mt-0.5 text-[14px] font-semibold leading-snug text-[#2F4A3E]">
