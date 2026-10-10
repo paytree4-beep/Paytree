@@ -311,6 +311,17 @@ export default function HomePage() {
                     </div>
                   </Reveal>
                 ))}
+                <Reveal className="col-span-2 lg:col-span-4" delay={FEATURES.length * 60}>
+                  <div className={`flex items-start gap-4 border-[#E8C766] p-5 ${glass}`}>
+                    <span aria-hidden="true" className="text-[40px] leading-none">🍎</span>
+                    <div className="flex flex-col gap-1">
+                      <h3 className="text-[18px] font-extrabold leading-tight text-[#0B1F18]">Apple basket</h3>
+                      <p className="text-[16px] leading-snug font-medium text-[#0F2419]">
+                        Share your link. Every friend who joins PayTree and pays drops an apple in your basket, worth $0.25. On January 1, 2027, we buy all your apples and pay you.
+                      </p>
+                    </div>
+                  </div>
+                </Reveal>
               </div>
             </div>
           </section>
