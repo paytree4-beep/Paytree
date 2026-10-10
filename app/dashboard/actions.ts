@@ -8,7 +8,6 @@ import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-import { notifyOwner } from "@/lib/notify";
 import { normalizeUsername } from "@/lib/profiles";
 import { cleanRef } from "@/lib/referrals";
 import { cancelSubscription } from "@/lib/stripe";
@@ -85,13 +84,6 @@ export async function claimPage(formData: FormData): Promise<void> {
   }
 
   await rememberReferrer(user.id, username);
-
-  await notifyOwner(`New PayTree sign-up: ${displayName}`, [
-    "Someone just created a PayTree page.",
-    `Name: ${displayName}`,
-    `Email: ${user.email ?? "unknown"}`,
-    `Page: paytree.to/${username}`,
-  ]);
 
   redirect("/dashboard?notice=welcome");
 }
