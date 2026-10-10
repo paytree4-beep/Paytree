@@ -48,9 +48,9 @@ type Spot = {
 };
 
 const SPOTS: Spot[] = [
-  { color: "red", size: 64, top: "13%", left: "-2%", rot: -12, delay: 0, edge: true },
-  { color: "green", size: 54, top: "16%", left: "88%", rot: 14, delay: 1.5, edge: true },
-  { color: "yellow", size: 46, top: "38%", left: "92%", rot: -8, delay: 3, opacity: 0.85, edge: true },
+  { color: "red", size: 50, top: "26%", left: "-5%", rot: -12, delay: 0, edge: true },
+  { color: "green", size: 52, top: "30%", left: "86%", rot: 14, delay: 1.5, edge: true },
+  { color: "yellow", size: 46, top: "38%", left: "95%", rot: -8, delay: 3, opacity: 0.85, edge: true },
   { color: "yellow", size: 80, top: "46%", left: "-6%", rot: 10, delay: 2, blur: true, opacity: 0.45, edge: true },
   { color: "red", size: 40, top: "60%", left: "72%", rot: 18, delay: 4, opacity: 0.75 },
   { color: "green", size: 70, top: "74%", left: "-4%", rot: -16, delay: 1, blur: true, opacity: 0.5, edge: true },
@@ -85,6 +85,8 @@ export function AppleBackdrop() {
 
 /** A few apples arranged around a profile photo. Decorative only. */
 export function AppleHalo({ compact = false }: { compact?: boolean }) {
+  // Switched off: no apples around profile photos.
+  if (compact !== undefined) return null;
   // Same size for every apple, placed evenly: three on each side.
   const size = compact ? 16 : 34;
   const items: { color: AppleColor; size: number; style: CSSProperties; delay: number }[] = [
