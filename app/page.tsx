@@ -197,6 +197,12 @@ export default function HomePage() {
     <div className="relative min-h-screen overflow-x-clip [text-rendering:optimizeLegibility] bg-[#FAF5EA] text-[19px] leading-[1.6] text-[#0B1F18]">
       <style>{`
 /* Dark green theme (homepage only) */
+/* Logo style: gold accents */
+header > div{border:1.5px solid rgba(227,185,60,.5)!important}
+.pt-box.pt-box.pt-box{border:3px solid #E3B93C!important;box-shadow:0 14px 30px rgba(0,0,0,.35)}
+.pt-badge{width:170px;height:170px;border-radius:9999px;background:#FAF5EA;border:9px solid #B9A04A;display:flex;align-items:center;justify-content:center;box-shadow:0 0 70px rgba(227,185,60,.45);position:relative}
+.pt-badge img{width:140px;height:140px;object-fit:contain}
+.pt-rays{position:absolute;left:50%;top:50%;width:1100px;height:1100px;margin:-550px 0 0 -550px;pointer-events:none;background:repeating-conic-gradient(rgba(227,185,60,.10) 0 6deg,rgba(227,185,60,0) 6deg 18deg);-webkit-mask:radial-gradient(circle,#000 0,transparent 60%);mask:radial-gradient(circle,#000 0,transparent 60%)}
 [class*="bg-[#FAF5EA]"]:not(.pt-bob):not(.pt-bob *){background:linear-gradient(180deg,#25594A 0%,#1C4A3A 60%,#143A2E 100%)!important;color:#FFFFFF!important}
 /* dark text -> light */
 :is([class*="text-[#064E3B]"],[class*="text-[#0B1F18]"],[class*="text-[#0F2419]"],[class*="text-[#2F4A3E]"],[class*="text-[#053D2E]"],[class*="text-[#1A3326]"]):not(.pt-bob):not(.pt-bob *){color:#FFFFFF!important}
@@ -276,6 +282,13 @@ header,[class*="backdrop-blur"]{background-color:rgba(20,58,46,.6)!important}
         <section className="mx-auto grid max-w-[1180px] items-center gap-14 px-5 pb-20 pt-0 sm:px-6 lg:grid-cols-[1.15fr_1fr] lg:pt-20">
           <div className="flex min-w-0 flex-col items-center gap-6 text-center lg:items-start lg:text-left">
             <div className="flex min-h-[calc(100svh-76px)] w-full flex-col items-center justify-center gap-5 pt-10 lg:min-h-0 lg:items-start lg:justify-start lg:pt-0">
+            <div className="relative flex w-full justify-center lg:justify-start">
+              <div className="pt-rays" aria-hidden="true" />
+              <div className="pt-badge">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/logo-mark.png" alt="PayTree" />
+              </div>
+            </div>
             <h1 className="font-serif text-[clamp(46px,11vw,92px)] font-normal uppercase leading-[1.03] tracking-[0.01em] text-[#064E3B] [text-wrap:balance]">
               All your payment methods.
               <br />
