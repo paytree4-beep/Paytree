@@ -1,9 +1,3 @@
-app/dashboard/layout.tsx
-//
-// Logo-style look (dark green, cream cards, gold borders) for the dashboard
-// home only. The rules apply only when the home tiles are on the page
-// (the :has() check), so the other dashboard pages are not changed.
-
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="pt-dash">
