@@ -1,3 +1,4 @@
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // app/page.tsx  ->  paytree.to
 //
 // Landing page. Cream background with slowly floating apples (the fruit of
@@ -199,7 +200,7 @@ export default function HomePage() {
 /* Dark green theme (homepage only) */
 /* Logo style: gold accents */
 header > div{border:1.5px solid rgba(227,185,60,.5)!important}
-.pt-box.pt-box.pt-box{border:3px solid #E3B93C!important;box-shadow:0 14px 30px rgba(0,0,0,.35)}
+.pt-box.pt-box.pt-box{border:2.5px solid #E3B93C!important;box-shadow:0 14px 30px rgba(0,0,0,.35)}
 .pt-badge{width:140px;height:140px;border-radius:9999px;background:#FAF5EA;border:8px solid #B9A04A;display:flex;align-items:center;justify-content:center;box-shadow:0 0 70px rgba(227,185,60,.45);position:relative}
 h1{text-shadow:0 0 1px #fff,0 1px 6px rgba(0,0,0,.35)}
 h1 [class*="text-[#E3B93C"],h1 span{text-shadow:none}
@@ -231,8 +232,8 @@ header,[class*="backdrop-blur"]{background-color:rgba(20,58,46,.6)!important}
 .pt-bob{color:#0B1F18!important}
 .pt-bob,.pt-bob *{color:inherit}.pt-bob{color:#0B1F18!important}
 
-.pt-box.pt-box.pt-box p:first-child{color:#064E3B!important}
-.pt-box.pt-box.pt-box p+p{color:#2F4A3E!important}
+.pt-box.pt-box.pt-box p:first-child{color:#062A1E!important}
+.pt-box.pt-box.pt-box p+p{color:#0B1F18!important;font-weight:600!important}
 [class*="border-[#E8C766]"][class*="border-[#E8C766]"][class*="border-[#E8C766]"] p{color:#064E3B!important}
 [class*="border-[#E8C766]"][class*="border-[#E8C766]"][class*="border-[#E8C766]"] p+p{color:#2F4A3E!important}
 
@@ -304,12 +305,12 @@ header,[class*="backdrop-blur"]{background-color:rgba(20,58,46,.6)!important}
             <p className="max-w-[560px] text-[19px] leading-[1.45] font-extrabold text-[#064E3B] sm:text-[21px]">
               Share your page link. Display your QR code. <span className="text-[#9A6E1A]">Get paid your way.</span>
             </p>
-            <div className="pt-box flex w-full max-w-[460px] items-center gap-3 rounded-[22px] border-2 border-[#D6403F] bg-white px-4 py-3 text-left">
-              <span aria-hidden="true" className="pt-wig text-[34px] leading-none">🍎</span>
+            <div className="pt-box flex w-full max-w-[318px] items-center gap-2.5 rounded-[20px] border-2 border-[#D6403F] bg-white px-[13px] py-[9px] text-left">
+              <span aria-hidden="true" className="pt-wig text-[27px] leading-none">🍎</span>
               <div>
-                <p className="text-[16px] font-extrabold leading-snug text-[#064E3B]">The Apple Challenge</p>
-                <p className="mt-0.5 text-[14px] font-semibold leading-snug text-[#2F4A3E]">
-                  Invite friends. Each apple is worth $0.25. We buy them all on Harvest Day, Jan 1, 2027.
+                <p className="text-[14.3px] font-extrabold leading-snug text-[#064E3B]">The Apple Challenge</p>
+                <p className="mt-0.5 text-[12px] font-semibold leading-[1.28] text-[#2F4A3E]">
+                  Invite friends. Each apple = $0.25. On Harvest Day, Jan 1, 2027, swap your apples for cash.
                 </p>
               </div>
             </div>
