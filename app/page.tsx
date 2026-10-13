@@ -200,8 +200,10 @@ export default function HomePage() {
 /* Logo style: gold accents */
 header > div{border:1.5px solid rgba(227,185,60,.5)!important}
 .pt-box.pt-box.pt-box{border:3px solid #E3B93C!important;box-shadow:0 14px 30px rgba(0,0,0,.35)}
-.pt-badge{width:170px;height:170px;border-radius:9999px;background:#FAF5EA;border:9px solid #B9A04A;display:flex;align-items:center;justify-content:center;box-shadow:0 0 70px rgba(227,185,60,.45);position:relative}
-.pt-badge img{width:140px;height:140px;object-fit:contain}
+.pt-badge{width:140px;height:140px;border-radius:9999px;background:#FAF5EA;border:8px solid #B9A04A;display:flex;align-items:center;justify-content:center;box-shadow:0 0 70px rgba(227,185,60,.45);position:relative}
+h1{text-shadow:0 0 1px #fff,0 1px 6px rgba(0,0,0,.35)}
+h1 [class*="text-[#E3B93C"],h1 span{text-shadow:none}
+.pt-badge img{width:114px;height:114px;object-fit:contain}
 .pt-rays{position:absolute;left:50%;top:50%;width:1100px;height:1100px;margin:-550px 0 0 -550px;pointer-events:none;background:repeating-conic-gradient(rgba(227,185,60,.10) 0 6deg,rgba(227,185,60,0) 6deg 18deg);-webkit-mask:radial-gradient(circle,#000 0,transparent 60%);mask:radial-gradient(circle,#000 0,transparent 60%)}
 [class*="bg-[#FAF5EA]"]:not(.pt-bob):not(.pt-bob *){background:linear-gradient(180deg,#25594A 0%,#1C4A3A 60%,#143A2E 100%)!important;color:#FFFFFF!important}
 /* dark text -> light */
@@ -281,7 +283,7 @@ header,[class*="backdrop-blur"]{background-color:rgba(20,58,46,.6)!important}
         {/* Hero */}
         <section className="mx-auto grid max-w-[1180px] items-center gap-14 px-5 pb-20 pt-0 sm:px-6 lg:grid-cols-[1.15fr_1fr] lg:pt-20">
           <div className="flex min-w-0 flex-col items-center gap-6 text-center lg:items-start lg:text-left">
-            <div className="flex min-h-[calc(100svh-76px)] w-full flex-col items-center justify-center gap-5 pt-10 lg:min-h-0 lg:items-start lg:justify-start lg:pt-0">
+            <div className="flex min-h-[calc(100svh-76px)] w-full flex-col items-center justify-start gap-3 pt-3 lg:min-h-0 lg:items-start lg:justify-start lg:pt-0">
             <div className="relative flex w-full justify-center lg:justify-start">
               <div className="pt-rays" aria-hidden="true" />
               <div className="pt-badge">
@@ -289,20 +291,16 @@ header,[class*="backdrop-blur"]{background-color:rgba(20,58,46,.6)!important}
                 <img src="/logo-mark.png" alt="PayTree" />
               </div>
             </div>
-            <h1 className="font-serif text-[clamp(46px,11vw,92px)] font-normal uppercase leading-[1.03] tracking-[0.01em] text-[#064E3B] [text-wrap:balance]">
+            <h1 className="font-serif text-[clamp(38px,10vw,92px)] font-normal uppercase leading-[1.03] tracking-[0.01em] text-[#064E3B] [text-wrap:balance]">
               All your payment methods.
               <br />
               <span className={`${goldText}`}>In one link.</span>
             </h1>
-            <svg viewBox="0 0 400 16" preserveAspectRatio="none" aria-hidden="true" className="h-[14px] w-[78%] max-w-[360px] lg:w-[300px]">
-              <path className="pt-stroke" pathLength={1} d="M4 9 C 60 3, 120 14, 190 7 S 310 12, 396 5" stroke="#D6403F" strokeWidth="4" fill="none" strokeLinecap="round" />
-            </svg>
+            <div aria-hidden="true" className="h-[4px] rounded-full bg-[#F2C94C] w-[78%] max-w-[360px] lg:w-[300px]" />
             <p className="max-w-[560px] text-[22px] leading-[1.4] font-bold text-[#0B1F18] sm:text-[24px]">
               Make it easier &amp; faster for your customers to pay you.
             </p>
-            <svg viewBox="0 0 400 16" preserveAspectRatio="none" aria-hidden="true" className="h-[14px] w-[62%] max-w-[300px] lg:w-[240px]">
-              <path className="pt-stroke pt-stroke2" pathLength={1} d="M4 6 C 70 13, 140 3, 210 9 S 330 4, 396 10" stroke="#D6403F" strokeWidth="4" fill="none" strokeLinecap="round" />
-            </svg>
+            <div aria-hidden="true" className="h-[4px] rounded-full bg-[#F2C94C] w-[62%] max-w-[300px] lg:w-[240px]" />
             <p className="max-w-[560px] text-[19px] leading-[1.45] font-extrabold text-[#064E3B] sm:text-[21px]">
               Share your page link. Display your QR code. <span className="text-[#9A6E1A]">Get paid your way.</span>
             </p>
