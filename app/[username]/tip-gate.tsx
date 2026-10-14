@@ -24,7 +24,7 @@ export function TipGate({ children }: { children: ReactNode }) {
         }
         @keyframes pt-tip-hand {
           0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(9px); }
+          50% { transform: translateY(6px); }
         }
         .pt-tip-badge { animation: pt-tip-wiggle 3.2s ease-in-out infinite; transform-origin: 50% 60%; }
         .pt-tip-hand { animation: pt-tip-hand 1s ease-in-out infinite; }
@@ -33,22 +33,22 @@ export function TipGate({ children }: { children: ReactNode }) {
         }
       `}</style>
 
-      <div className="mb-6 flex flex-col items-center">
+      <div className="mb-5 flex flex-col items-center">
         <p
-          className="pt-tip-badge inline-flex min-h-16 items-center justify-center rounded-full px-10 text-center font-sans text-[26px] font-bold leading-none"
+          className="pt-tip-badge inline-flex min-h-12 items-center justify-center rounded-[14px] px-8 text-center font-sans text-[20px] font-bold leading-none"
           style={{
             background: "#F4C029",
             color: "#06382B",
-            border: "3px solid #FFE68C",
-            boxShadow: "0 6px 0 #96700A, 0 0 28px rgba(255,214,70,0.55)",
+            border: "2px solid #FFE68C",
+            boxShadow: "0 4px 0 #96700A, 0 0 20px rgba(255,214,70,0.45)",
           }}
         >
           Send me a tip
         </p>
-        <span aria-hidden="true" className="pt-tip-hand mt-3 text-[40px] leading-none">
+        <span aria-hidden="true" className="pt-tip-hand mt-2 text-[28px] leading-none">
           👇
         </span>
-        <p className="mt-1 text-[15px] font-semibold" style={{ color: "#F4C029" }}>
+        <p className="text-[14px] font-semibold" style={{ color: "#F4C029" }}>
           Tap a method below
         </p>
       </div>
