@@ -238,6 +238,8 @@ header,[class*="backdrop-blur"]{background-color:rgba(20,58,46,.6)!important}
 /* moving strip of payment methods: white frame */
 .pt-strip.pt-strip.pt-strip{border-color:#FFFFFF!important}
 .pt-strip .pt-chip.pt-chip.pt-chip{border-color:#FFFFFF!important}
+/* yellow frame on every card, same yellow as the pricing card */
+[class*="border-[#EADFC4]"]:not(.pt-bob):not(.pt-bob *){border-color:#E3B93C!important;border-width:2px!important}
 /* check marks in the pricing list: gold so they show on dark green */
 #pricing li svg,#pricing li svg *{stroke:#E3B93C!important;color:#E3B93C!important}
 
