@@ -167,7 +167,7 @@ export default async function PublicPaymentPage({ params }: PageProps) {
             {SITE_HOST}/{profile.username}
           </p>
           {profile.bio ? (
-            <p className="max-w-[420px] text-[15px] text-[#3F574C]">{profile.bio}</p>
+            <p className="w-full max-w-[420px] px-5 text-center text-[20px] leading-snug text-[#3F574C]" style={{ overflowWrap: "anywhere", wordBreak: "break-word" }}>{profile.bio}</p>
           ) : null}
         </div>
       </header>
