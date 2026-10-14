@@ -106,7 +106,7 @@ export default async function PublicPaymentPage({ params }: PageProps) {
   return (
     <div className="flex min-h-screen flex-col bg-[#FAF5EA] font-sans text-[#0B1F18]">
       {/* Profile header */}
-      <header className="relative overflow-hidden bg-gradient-to-b from-[#E6F2EA] via-[#F1F6EE] to-[#FAF5EA] px-5 pb-8 pt-[72px] text-[#064E3B]">
+      <header className="relative overflow-hidden bg-gradient-to-b from-[#E6F2EA] via-[#F1F6EE] to-[#FAF5EA] px-5 pb-8 pt-[92px] text-[#064E3B]">
         <AppleHalo />
 
         {/* Top bar: PayTree logo on the left, owner-only Dashboard button on the right */}
@@ -167,7 +167,7 @@ export default async function PublicPaymentPage({ params }: PageProps) {
             {SITE_HOST}/{profile.username}
           </p>
           {profile.bio ? (
-            <p className="w-full max-w-[420px] px-5 text-center text-[20px] leading-snug text-[#3F574C]" style={{ overflowWrap: "anywhere", wordBreak: "break-word" }}>{profile.bio}</p>
+            <p className="w-full max-w-[420px] px-5 text-center text-[20px] leading-snug text-[#3F574C]" style={{ color: "#FFFFFF", fontWeight: 500, marginTop: 6, overflowWrap: "anywhere", wordBreak: "break-word" }}>{profile.bio}</p>
           ) : null}
         </div>
       </header>
