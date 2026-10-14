@@ -33,7 +33,7 @@ const ERRORS: Record<string, string> = {
 type SplitRow = { id: string; title: string; total_cents: number; people: number; created_at: string; event_date: string | null };
 
 const input =
-  "min-h-[52px] w-full rounded-xl border border-[#C9D6CE] bg-white px-4 text-base text-[#0B1F18] outline-none focus:border-[#064E3B]";
+  "min-h-[52px] w-full rounded-xl border border-[#C9D6CE] bg-white px-4 text-[17px] text-[#0B1F18] outline-none focus:border-[#064E3B]";
 
 export default async function SplitPage({ searchParams }: { searchParams: SearchParams }) {
   const supabase = await createClient();
@@ -89,7 +89,7 @@ export default async function SplitPage({ searchParams }: { searchParams: Search
       <main className="mx-auto flex max-w-[880px] flex-col gap-5 px-5 pb-20 pt-6">
         <div>
           <h1 className="font-serif text-[38px] leading-[1.05] text-[#064E3B]">Split the bill 🍕</h1>
-          <p className="mt-2 text-[15px] text-[#3F574C]">
+          <p className="mt-2 text-[18px] leading-snug text-[#1F3A2E]">
             Dinner, a gift, a trip: enter the total and the number of people. Send the link to the group. Everyone sees
             their share and pays you with the app they use.
           </p>
@@ -103,9 +103,9 @@ export default async function SplitPage({ searchParams }: { searchParams: Search
             <p className="text-[13px] font-bold uppercase tracking-[0.1em] text-[#7A5A12]">Your link is ready</p>
             <p className="mt-1 font-serif text-[26px] leading-tight text-[#064E3B]">{createdSplit.title}</p>
             {createdSplit.event_date ? (
-              <p className="text-[14px] font-semibold text-[#7A5A12]">📅 {formatEventDate(createdSplit.event_date)}</p>
+              <p className="text-[15px] font-semibold text-[#7A5A12]">📅 {formatEventDate(createdSplit.event_date)}</p>
             ) : null}
-            <p className="text-[15px] text-[#3F574C]">
+            <p className="text-[17px] text-[#1F3A2E]">
               {formatMoney(createdSplit.total_cents)} ÷ {createdSplit.people} ={" "}
               <strong>{formatMoney(shareCents(createdSplit.total_cents, createdSplit.people))} each</strong>
             </p>
@@ -116,26 +116,31 @@ export default async function SplitPage({ searchParams }: { searchParams: Search
         ) : null}
 
         <section className="rounded-2xl border border-[#DCE5DF] bg-white p-5">
-          <h2 className="text-sm font-bold uppercase tracking-[0.1em] text-[#4B6358]">New split</h2>
+          <h2 className="text-sm font-bold uppercase tracking-[0.1em] text-[#2C463A]">New split</h2>
           <form action={createSplit} className="mt-4 flex flex-col gap-4" noValidate>
-            <label className="flex flex-col gap-1.5">
-              <span className="text-sm font-semibold">What is it for?</span>
+            <label className="flex min-w-0 flex-col gap-1.5">
+              <span className="text-[16px] font-semibold">What is it for?</span>
               <input name="title" maxLength={60} placeholder="Friday dinner" className={input} />
             </label>
-            <label className="flex flex-col gap-1.5">
-              <span className="text-sm font-semibold">When? (optional)</span>
-              <input name="event_date" type="date" defaultValue={today} className={input} />
+            <label className="flex min-w-0 flex-col gap-1.5">
+              <span className="text-[16px] font-semibold">When? (optional)</span>
+              <input
+                name="event_date"
+                type="date"
+                defaultValue={today}
+                className={`${input} block min-w-0 max-w-full appearance-none text-left [&::-webkit-date-and-time-value]:text-left`}
+              />
             </label>
             <div className="grid grid-cols-2 gap-3">
-              <label className="flex flex-col gap-1.5">
-                <span className="text-sm font-semibold">Total</span>
+              <label className="flex min-w-0 flex-col gap-1.5">
+                <span className="text-[16px] font-semibold">Total</span>
                 <span className="flex min-h-[52px] items-center rounded-xl border border-[#C9D6CE] bg-white px-4 focus-within:border-[#064E3B]">
-                  <span className="text-[#4B6358]">$</span>
-                  <input name="total" inputMode="decimal" maxLength={12} placeholder="120" className="min-w-0 flex-1 bg-transparent py-3 pl-1 text-base outline-none" />
+                  <span className="text-[17px] text-[#1F3A2E]">$</span>
+                  <input name="total" inputMode="decimal" maxLength={12} placeholder="120" className="min-w-0 flex-1 bg-transparent py-3 pl-1 text-[17px] outline-none" />
                 </span>
               </label>
-              <label className="flex flex-col gap-1.5">
-                <span className="text-sm font-semibold">People</span>
+              <label className="flex min-w-0 flex-col gap-1.5">
+                <span className="text-[16px] font-semibold">People</span>
                 <input name="people" inputMode="numeric" maxLength={2} placeholder="4" className={input} />
               </label>
             </div>
@@ -144,9 +149,9 @@ export default async function SplitPage({ searchParams }: { searchParams: Search
         </section>
 
         <section className="rounded-2xl border border-[#DCE5DF] bg-white p-5">
-          <h2 className="text-sm font-bold uppercase tracking-[0.1em] text-[#4B6358]">Your splits</h2>
+          <h2 className="text-sm font-bold uppercase tracking-[0.1em] text-[#2C463A]">Your splits</h2>
           {splits.length === 0 ? (
-            <p className="mt-3 text-[15px] text-[#4B6358]">No splits yet.</p>
+            <p className="mt-3 text-[17px] text-[#1F3A2E]">No splits yet.</p>
           ) : (
             <ul className="mt-3 divide-y divide-[#EEF3F0]">
               {splits.map((s) => {
@@ -157,11 +162,11 @@ export default async function SplitPage({ searchParams }: { searchParams: Search
                   <li key={s.id} data-instant-row className="flex flex-col gap-2 py-3">
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                       <div>
-                        <p className="font-bold">{s.title}</p>
+                        <p className="text-[17px] font-bold">{s.title}</p>
                         {s.event_date ? (
-                          <p className="text-[13px] font-semibold text-[#7A5A12]">📅 {formatEventDate(s.event_date)}</p>
+                          <p className="text-[14px] font-semibold text-[#7A5A12]">📅 {formatEventDate(s.event_date)}</p>
                         ) : null}
-                        <p className="text-[13px] text-[#4B6358]">
+                        <p className="text-[15px] text-[#1F3A2E]">
                           {formatMoney(s.total_cents)} · {formatMoney(shareCents(s.total_cents, s.people))} each ·{" "}
                           <strong className={paid >= s.people ? "text-[#16A34A]" : ""}>
                             {paid} of {s.people} paid{paid >= s.people ? " 🎉" : ""}
@@ -180,7 +185,7 @@ export default async function SplitPage({ searchParams }: { searchParams: Search
                     </div>
                     {waiting.length > 0 ? (
                       <div className="rounded-xl border border-[#E2C27A] bg-[#FBF6EA] p-3">
-                        <p className="text-[13px] font-semibold text-[#7A5A12]">
+                        <p className="text-[14px] font-semibold text-[#7A5A12]">
                           Said they paid. Check your app, then confirm:
                         </p>
                         <ul className="mt-2 flex flex-col gap-2">
@@ -188,7 +193,7 @@ export default async function SplitPage({ searchParams }: { searchParams: Search
                             <li key={r.id} data-instant-row className="flex items-center justify-between gap-2">
                               <span className="font-semibold">
                                 ⏳ {r.name}
-                                {r.method ? <span className="block text-[12px] font-medium text-[#7A5A12]">via {methodLabel(r.method)}</span> : null}
+                                {r.method ? <span className="block text-[13px] font-medium text-[#7A5A12]">via {methodLabel(r.method)}</span> : null}
                               </span>
                               <ConfirmPair id={r.id} confirm={confirmSplitPaymentQuick} reject={removeSplitPaymentQuick} rejectLabel="Remove" />
                             </li>
