@@ -38,7 +38,7 @@ const NOTICES: Record<string, string> = {
 };
 
 const input =
-  "min-h-[52px] w-full rounded-xl border border-[#C9D6CE] bg-white px-4 text-base text-[#0B1F18] outline-none focus:border-[#064E3B]";
+  "min-h-[52px] w-full rounded-xl border border-[#C9D6CE] bg-white px-4 text-[17px] text-[#0B1F18] outline-none focus:border-[#064E3B]";
 
 const SOURCE_ICONS = { page: "🔗", invoice: "🧾", split: "🍕" } as const;
 
@@ -104,7 +104,7 @@ export default async function BudgetPage({ searchParams }: { searchParams: Searc
       <main className="mx-auto flex max-w-[880px] flex-col gap-5 px-5 pb-20 pt-6">
         <div>
           <h1 className="font-serif text-[38px] leading-[1.05] text-[#064E3B]">Income &amp; spending 💰</h1>
-          <p className="mt-2 text-[15px] text-[#3F574C]">
+          <p className="mt-2 text-[18px] leading-snug text-[#1F3A2E]">
             What came in and what you spent. Only you can see this page. PayTree never holds your money.
           </p>
         </div>
@@ -120,8 +120,8 @@ export default async function BudgetPage({ searchParams }: { searchParams: Searc
             <MoneyTree apples={b.tree.onTree} fallen={b.tree.fallen} id="mini-tree" seed={b.seed} />
           </span>
           <span className="flex-1">
-            <span className="block font-bold text-[#064E3B]">My money tree 🌳</span>
-            <span className="text-[13px] text-[#3F574C]">
+            <span className="block text-[17px] font-bold text-[#064E3B]">My money tree 🌳</span>
+            <span className="text-[15px] text-[#1F3A2E]">
               {b.tree.label} · {b.tree.onTree.length} {b.tree.onTree.length === 1 ? "apple" : "apples"} on the tree
             </span>
           </span>
@@ -131,15 +131,15 @@ export default async function BudgetPage({ searchParams }: { searchParams: Searc
         {/* Commitments */}
         <section id="commitments" className="scroll-mt-20 rounded-2xl border border-[#DCE5DF] bg-white p-5">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
-            <h2 className="text-sm font-bold uppercase tracking-[0.1em] text-[#4B6358]">Monthly bills</h2>
+            <h2 className="text-sm font-bold uppercase tracking-[0.1em] text-[#2C463A]">Monthly bills</h2>
             {b.commitments.length > 0 ? (
-              <p className="text-[13px] font-semibold text-[#3F574C]">
+              <p className="text-[15px] font-semibold text-[#1F3A2E]">
                 {formatMoney(commitmentsTotal)} a month · <span className="text-[#B42318]">{formatMoney(commitmentsLeft)} left to pay</span>
               </p>
             ) : null}
           </div>
           {b.commitments.length === 0 ? (
-            <p className="mt-2 text-[15px] text-[#4B6358]">Rent, phone, car, subscriptions: add them once and see what is due every month. Optional.</p>
+            <p className="mt-2 text-[17px] leading-snug text-[#1F3A2E]">Rent, phone, car, subscriptions: add them once and see what is due every month. Optional.</p>
           ) : (
             <ul className="mt-3 divide-y divide-[#EEF3F0]">
               {b.commitments.map((c) => {
@@ -147,11 +147,11 @@ export default async function BudgetPage({ searchParams }: { searchParams: Searc
                 return (
                   <li key={c.id} className="flex flex-wrap items-center justify-between gap-2 py-3">
                     <div>
-                      <p className="font-bold">
+                      <p className="text-[17px] font-bold">
                         {categoryOf(c.category).icon} {c.name} · {formatMoney(c.amount_cents)}
                       </p>
                       <p
-                        className={`text-[13px] font-semibold ${
+                        className={`text-[14px] font-semibold ${
                           state.status === "paid" ? "text-[#16A34A]" : state.status === "overdue" ? "text-[#B42318]" : "text-[#7A5A12]"
                         }`}
                       >
@@ -168,14 +168,14 @@ export default async function BudgetPage({ searchParams }: { searchParams: Searc
                       {state.status !== "paid" ? (
                         <form action={payCommitment}>
                           <input type="hidden" name="id" value={c.id} />
-                          <button type="submit" className="inline-flex min-h-10 items-center rounded-full bg-[#064E3B] px-4 text-[13px] font-bold text-white">
+                          <button type="submit" className="inline-flex min-h-10 items-center rounded-full bg-[#064E3B] px-4 text-[14px] font-bold text-white">
                             I paid it ✓
                           </button>
                         </form>
                       ) : null}
                       <form action={deleteCommitment}>
                         <input type="hidden" name="id" value={c.id} />
-                        <button type="submit" className="inline-flex min-h-10 items-center px-2 text-[13px] text-[#B42318] underline underline-offset-2">
+                        <button type="submit" className="inline-flex min-h-10 items-center px-2 text-[14px] text-[#B42318] underline underline-offset-2">
                           Remove
                         </button>
                       </form>
@@ -186,29 +186,29 @@ export default async function BudgetPage({ searchParams }: { searchParams: Searc
             </ul>
           )}
           <details className="mt-3 rounded-xl bg-[#F7FAF8] px-3 py-2" open={b.commitments.length === 0}>
-            <summary className="flex min-h-10 cursor-pointer list-none items-center font-bold text-[#064E3B] [&::-webkit-details-marker]:hidden">
+            <summary className="flex min-h-10 cursor-pointer list-none items-center text-[17px] font-bold text-[#064E3B] [&::-webkit-details-marker]:hidden">
               + Add a monthly bill
             </summary>
             <form action={addCommitment} className="flex flex-col gap-3 pb-2" noValidate>
-              <label className="flex flex-col gap-1.5">
-                <span className="text-sm font-semibold">Name</span>
+              <label className="flex min-w-0 flex-col gap-1.5">
+                <span className="text-[16px] font-semibold">Name</span>
                 <input name="name" maxLength={60} placeholder="Rent" className={input} />
               </label>
               <div className="grid grid-cols-2 gap-3">
-                <label className="flex flex-col gap-1.5">
-                  <span className="text-sm font-semibold">Amount a month</span>
+                <label className="flex min-w-0 flex-col gap-1.5">
+                  <span className="text-[16px] font-semibold">Amount a month</span>
                   <span className="flex min-h-[52px] items-center rounded-xl border border-[#C9D6CE] bg-white px-4 focus-within:border-[#064E3B]">
-                    <span className="text-[#4B6358]">$</span>
-                    <input name="amount" inputMode="decimal" maxLength={12} placeholder="1200" className="min-w-0 flex-1 bg-transparent py-3 pl-1 text-base outline-none" />
+                    <span className="text-[17px] text-[#1F3A2E]">$</span>
+                    <input name="amount" inputMode="decimal" maxLength={12} placeholder="1200" className="min-w-0 flex-1 bg-transparent py-3 pl-1 text-[17px] outline-none" />
                   </span>
                 </label>
-                <label className="flex flex-col gap-1.5">
-                  <span className="text-sm font-semibold">Due on day</span>
+                <label className="flex min-w-0 flex-col gap-1.5">
+                  <span className="text-[16px] font-semibold">Due on day</span>
                   <input name="due_day" inputMode="numeric" maxLength={2} placeholder="1" className={input} />
                 </label>
               </div>
-              <label className="flex flex-col gap-1.5">
-                <span className="text-sm font-semibold">Category</span>
+              <label className="flex min-w-0 flex-col gap-1.5">
+                <span className="text-[16px] font-semibold">Category</span>
                 <select name="category" defaultValue="bills" className={input}>
                   {CATEGORIES.map((c) => (
                     <option key={c.id} value={c.id}>
