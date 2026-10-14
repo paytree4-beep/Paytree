@@ -10,7 +10,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { LogoMark } from "@/components/brand/logo";
 import { LOGO_CIRCLE } from "@/lib/logo-circle";
 import { applyOrder, getProfileByUsername, resolveMethods } from "@/lib/profiles";
 import { SITE_HOST, SITE_URL } from "@/lib/site";
@@ -118,7 +117,8 @@ export default async function PublicPaymentPage({ params }: PageProps) {
             className="inline-flex items-center gap-2"
             style={{ minHeight: 44 }}
           >
-            <LogoMark size={44} />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={LOGO_CIRCLE} alt="" width={48} height={48} style={{ width: 48, height: 48, minWidth: 48, maxWidth: 48, borderRadius: "50%", display: "block", flex: "none" }} />
             <span style={{ color: "#FAF5EA", fontSize: 17, fontWeight: 700, letterSpacing: "-0.01em" }}>PayTree</span>
           </Link>
           {isOwner ? (
