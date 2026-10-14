@@ -10,9 +10,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { LogoMark } from "@/components/brand/logo";
 import { LOGO_CIRCLE } from "@/lib/logo-circle";
 import { applyOrder, getProfileByUsername, resolveMethods } from "@/lib/profiles";
 import { SITE_HOST, SITE_URL } from "@/lib/site";
+import { createClient } from "@/lib/supabase/server";
+import { getPageUser } from "@/lib/supabase/user";
 import { PaymentMethods } from "./payment-methods";
 import { QrCard } from "./qr-card";
 import { TipGate } from "./tip-gate";
@@ -87,11 +90,58 @@ export default async function PublicPaymentPage({ params }: PageProps) {
   const methods = applyOrder(resolveMethods(profile.payments), profile.order);
   const initial = profile.displayName.trim().charAt(0).toUpperCase() || "P";
 
+  // Is the person looking at this page its owner? Only then the small
+  // "Dashboard" button shows. Visitors never see it. Any problem = no button.
+  let isOwner = false;
+  try {
+    const supabase = await createClient();
+    const viewer = await getPageUser(supabase);
+    if (viewer) {
+      const { data: mine } = await supabase.from("profiles").select("username").eq("id", viewer.id).maybeSingle();
+      isOwner = (mine as { username?: string } | null)?.username === profile.username;
+    }
+  } catch {
+    isOwner = false;
+  }
+
   return (
     <div className="flex min-h-screen flex-col bg-[#FAF5EA] font-sans text-[#0B1F18]">
       {/* Profile header */}
-      <header className="relative overflow-hidden bg-gradient-to-b from-[#E6F2EA] via-[#F1F6EE] to-[#FAF5EA] px-5 pb-8 pt-10 text-[#064E3B]">
+      <header className="relative overflow-hidden bg-gradient-to-b from-[#E6F2EA] via-[#F1F6EE] to-[#FAF5EA] px-5 pb-8 pt-[72px] text-[#064E3B]">
         <AppleHalo />
+
+        {/* Top bar: PayTree logo on the left, owner-only Dashboard button on the right */}
+        <div className="absolute left-3 right-3 top-3 z-20 flex items-center justify-between gap-3">
+          <Link
+            href="/"
+            aria-label="PayTree home"
+            className="inline-flex items-center gap-2"
+            style={{ minHeight: 44 }}
+          >
+            <LogoMark size={44} />
+            <span style={{ color: "#FAF5EA", fontSize: 17, fontWeight: 700, letterSpacing: "-0.01em" }}>PayTree</span>
+          </Link>
+          {isOwner ? (
+            <Link
+              href="/dashboard"
+              className="inline-flex items-center gap-1.5 rounded-full"
+              style={{
+                minHeight: 40,
+                padding: "0 16px 0 12px",
+                background: "#F4C029",
+                color: "#06382B",
+                border: "2px solid #FFE68C",
+                boxShadow: "0 3px 0 #96700A",
+                fontSize: 15,
+                fontWeight: 700,
+              }}
+            >
+              <span aria-hidden="true" style={{ fontSize: 22, lineHeight: 1, marginTop: -2 }}>&lsaquo;</span>
+              Dashboard
+            </Link>
+          ) : null}
+        </div>
+
         <div className="relative mx-auto flex max-w-[560px] flex-col items-center gap-1.5 text-center">
           {profile.avatarUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
