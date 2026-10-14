@@ -41,7 +41,7 @@ const NOTICES: Record<string, string> = {
   password: "Your new password is saved.",
   subscribed: "Thank you! Your membership is active and your page is live. It can take a few seconds to update.",
   "checkout-cancelled": "Checkout was cancelled. You have not been charged.",
-  "tip-on": "Tip me is on. Your page now says \u201cSend me a tip\u201d.",
+  "tip-on": "Tip me is on. Your page now says “Send me a tip”.",
   "tip-off": "Your page is back to a regular payment page.",
 };
 
@@ -230,7 +230,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
             <h1 className="font-serif text-[36px] font-normal leading-[1.05] tracking-[-0.01em] text-[#064E3B]">
               Hello, {profile.display_name}
             </h1>
-            <p className="mt-1 text-[14px] text-[#4B6358]">{user.email}</p>
+            <p className="mt-1 text-[16px] text-[#1F3A2E]">{user.email}</p>
             <Link
               href={pagePath}
               className="mt-4 flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full bg-[#064E3B] px-6 font-bold text-[#FBFBFB] shadow-[0_14px_30px_-16px_rgba(6,78,59,0.8)] sm:w-auto"
@@ -297,7 +297,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
                 </Link>
               ))}
             </div>
-            <h2 className="-mb-2 mt-1 text-[12px] font-bold uppercase tracking-[0.1em] text-[#6B7F75]">More tools</h2>
+            <h2 className="-mb-2 mt-1 text-[13px] font-bold uppercase tracking-[0.1em] text-[#2C463A]">More tools</h2>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
               {toolTiles.map((t) => (
                 <Link
@@ -333,10 +333,10 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
               isMember ? "border-[#DCE5DF] bg-white" : "border-[#D9B873] bg-[#FBF6EA]"
             }`}
           >
-            <h2 className="text-sm font-bold uppercase tracking-[0.1em] text-[#4B6358]">Membership</h2>
+            <h2 className="text-sm font-bold uppercase tracking-[0.1em] text-[#2C463A]">Membership</h2>
             {isMember && subscription ? (
               <>
-                <p className="mt-2 text-[15px] text-[#0B1F18]">
+                <p className="mt-2 text-[17px] leading-snug text-[#0B1F18]">
                   {subscription.provider === "comp"
                     ? "Your membership is active."
                     : subscription.status === "past_due"
@@ -355,7 +355,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
               </>
             ) : (
               <>
-                <p className="mt-2 text-[15px] text-[#0B1F18]">
+                <p className="mt-2 text-[17px] leading-snug text-[#0B1F18]">
                   {access.reason === "trial" ? (
                     <>
                       <strong>Free trial:</strong> {access.trialDaysLeft} days left, with every feature. Subscribe
@@ -373,7 +373,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
                     {`Subscribe · ${PRICING.monthly.price} a month`}
                   </SubmitButton>
                 </form>
-                <p className="mt-3 text-[13px] text-[#4B6358]">
+                <p className="mt-3 text-[15px] leading-snug text-[#1F3A2E]">
                   Every feature included. Cancel any time. Secure checkout by Stripe. Pay with Apple Pay, Google Pay or card.
                 </p>
                 {subscription?.provider === "stripe" && subscription.provider_customer_id ? (
@@ -393,7 +393,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
         {view === "link" ? (
           <>
         <section className="rounded-2xl border border-[#DCE5DF] bg-white p-5 sm:p-6">
-          <h2 className="text-sm font-bold uppercase tracking-[0.1em] text-[#4B6358]">Your link</h2>
+          <h2 className="text-sm font-bold uppercase tracking-[0.1em] text-[#2C463A]">Your link</h2>
           <p className="mt-2 break-all font-serif text-[28px] leading-tight text-[#064E3B]">
             {SITE_HOST}/{profile.username}
           </p>
@@ -424,7 +424,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
         {view === "profile" ? (
           <>
         <section className="rounded-2xl border border-[#DCE5DF] bg-white p-5 sm:p-6">
-          <h2 className="mb-5 text-sm font-bold uppercase tracking-[0.1em] text-[#4B6358]">Profile</h2>
+          <h2 className="mb-5 text-sm font-bold uppercase tracking-[0.1em] text-[#2C463A]">Profile</h2>
           <div className="mb-6">
             <AvatarUploader
               currentUrl={avatarUrl(profile.avatar_path)}
@@ -459,8 +459,8 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
         {view === "settings" ? (
           <>
         <section className="rounded-2xl border border-[#DCE5DF] bg-white p-5 sm:p-6">
-          <h2 className="text-sm font-bold uppercase tracking-[0.1em] text-[#4B6358]">Visibility</h2>
-          <p className="mt-2 text-[15px] text-[#4B6358]">
+          <h2 className="text-sm font-bold uppercase tracking-[0.1em] text-[#2C463A]">Visibility</h2>
+          <p className="mt-2 text-[17px] leading-snug text-[#1F3A2E]">
             {profile.is_published
               ? "Anyone with your link can see your page."
               : "Your page is hidden. Visitors see a not-found page."}
@@ -479,7 +479,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
           <h2 className="text-sm font-bold uppercase tracking-[0.1em] text-[#7A271A]">
             Delete account
           </h2>
-          <p className="mt-2 text-[15px] text-[#4B6358]">
+          <p className="mt-2 text-[17px] leading-snug text-[#1F3A2E]">
             This permanently deletes your account, your page and your payment methods. Your link
             stops working right away. This cannot be undone.
           </p>
@@ -507,11 +507,11 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
         ) : null}
         {(view === "share" || view === "settings") && modeReady ? (
           <section className="rounded-2xl border border-[#DCE5DF] bg-white p-5 sm:p-6">
-            <h2 className="text-sm font-bold uppercase tracking-[0.1em] text-[#4B6358]">Tip me</h2>
-            <p className="mt-2 text-[15px] text-[#4B6358]">
+            <h2 className="text-sm font-bold uppercase tracking-[0.1em] text-[#2C463A]">Tip me</h2>
+            <p className="mt-2 text-[17px] leading-snug text-[#1F3A2E]">
               {tipMode
-                ? "On. Your page says \u201cSend me a tip\u201d. Great for creators, musicians and streamers."
-                : "Are you a creator, musician or streamer? Turn this on and your page says \u201cSend me a tip\u201d. Then share your page with the Tip me card below."}
+                ? "On. Your page says “Send me a tip”. Great for creators, musicians and streamers."
+                : "Are you a creator, musician or streamer? Turn this on and your page says “Send me a tip”. Then share your page with the Tip me card below."}
             </p>
             <form action={setPageMode} className="mt-4 sm:max-w-[260px]">
               <input type="hidden" name="mode" value={tipMode ? "pay" : "tip"} />
