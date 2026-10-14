@@ -56,9 +56,9 @@ export default async function TreePage() {
       </header>
 
       <main className="mx-auto flex max-w-[560px] flex-col items-center gap-4 px-5 pb-20 pt-6 text-center">
-        <p className="text-[13px] font-bold uppercase tracking-[0.14em] text-[#9A6E1A]">My money tree · {b.monthName}</p>
+        <p className="text-[14px] font-bold uppercase tracking-[0.14em] text-[#7A5A12]">My money tree · {b.monthName}</p>
         <h1 className="font-serif text-[40px] leading-[1.05] text-[#064E3B]">{tree.label}</h1>
-        <p className="max-w-[420px] text-[15px] text-[#3F574C]">{TIPS[tree.mood]}</p>
+        <p className="max-w-[420px] text-[19px] leading-snug text-[#1F3A2E]">{TIPS[tree.mood]}</p>
 
         <div className="w-full max-w-[420px]">
           <MoneyTree apples={tree.onTree} fallen={tree.fallen} seed={b.seed} />
@@ -66,24 +66,24 @@ export default async function TreePage() {
 
         <div className="grid w-full grid-cols-2 gap-2">
           <div className="rounded-2xl border border-white/90 bg-white/85 p-3">
-            <p className="text-[12px] font-bold uppercase tracking-[0.06em] text-[#3F574C]">🍎 On the tree</p>
+            <p className="text-[14px] font-bold uppercase tracking-[0.06em] text-[#1F3A2E]">🍎 On the tree</p>
             <p className="mt-1 text-[18px] font-bold">
               {kept.gold > 0 ? `🌟 ${kept.gold} · ` : ""}🍎 {kept.red} · 🍏 {kept.green} · 🍋 {kept.yellow}
             </p>
-            <p className="mt-1 text-[12px] text-[#4B6358]">
+            <p className="mt-1 text-[14px] text-[#1F3A2E]">
               Kept {formatMoney(Math.max(0, summary.left))} of {formatMoney(summary.income)}
             </p>
           </div>
           <div className="rounded-2xl border border-white/90 bg-white/85 p-3">
-            <p className="text-[12px] font-bold uppercase tracking-[0.06em] text-[#3F574C]">🍂 Fell</p>
+            <p className="text-[14px] font-bold uppercase tracking-[0.06em] text-[#1F3A2E]">🍂 Fell</p>
             <p className="mt-1 text-[18px] font-bold">
               {fell.gold > 0 ? `🌟 ${fell.gold} · ` : ""}🍎 {fell.red} · 🍏 {fell.green} · 🍋 {fell.yellow}
             </p>
-            <p className="mt-1 text-[12px] text-[#4B6358]">Spent {formatMoney(summary.spent)}</p>
+            <p className="mt-1 text-[14px] text-[#1F3A2E]">Spent {formatMoney(summary.spent)}</p>
           </div>
         </div>
 
-        <div className="flex w-full flex-wrap justify-center gap-2 text-[13px] font-semibold text-[#3F574C]">
+        <div className="flex w-full flex-wrap justify-center gap-2 text-[15px] font-semibold text-[#1F3A2E]">
           <span className="rounded-full bg-white/85 px-3 py-1">🌟 Gold = {formatMoney(APPLE_VALUES.gold).replace(".00", "")}</span>
           <span className="rounded-full bg-white/85 px-3 py-1">🍎 Red = {formatMoney(APPLE_VALUES.red).replace(".00", "")}</span>
           <span className="rounded-full bg-white/85 px-3 py-1">🍏 Green = {formatMoney(APPLE_VALUES.green).replace(".00", "")}</span>
@@ -92,7 +92,7 @@ export default async function TreePage() {
 
         <TreeShare svgId="money-tree" month={b.monthName} label={tree.label} onTree={tree.onTree.length} />
 
-        <p className="mt-2 max-w-[420px] text-[13px] text-[#4B6358]">
+        <p className="mt-2 max-w-[420px] text-[16px] leading-snug text-[#1F3A2E]">
           How it works: what you keep this month hangs on your tree as apples, and what you spend falls to the grass. A shiny gold
           apple is $10,000, a red one $1,000, a green one $100 and a yellow one $10, so the more you keep, the fuller and redder your tree. A new
           tree grows every month.
@@ -100,7 +100,7 @@ export default async function TreePage() {
         {b.months.length > 1 ? (
           <section className="mt-4 w-full">
             <h2 className="font-serif text-[30px] text-[#064E3B]">My year 🌳</h2>
-            <p className="text-[14px] text-[#3F574C]">Every month grows a new tree. Tap one to see that month.</p>
+            <p className="text-[16px] text-[#1F3A2E]">Every month grows a new tree. Tap one to see that month.</p>
             <ul className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-4">
               {b.months.map((m) => (
                 <li key={m.month}>
@@ -111,8 +111,8 @@ export default async function TreePage() {
                     }`}
                   >
                     <MoneyTree apples={m.tree.onTree} fallen={m.tree.fallen} id={`year-${m.month}`} seed={m.seed} />
-                    <span className="text-[14px] font-bold text-[#064E3B]">{m.name}</span>
-                    <span className="text-[11px] text-[#4B6358]">{m.tree.mood === "empty" ? "—" : m.tree.label}</span>
+                    <span className="text-[15px] font-bold text-[#064E3B]">{m.name}</span>
+                    <span className="text-[13px] text-[#1F3A2E]">{m.tree.mood === "empty" ? "—" : m.tree.label}</span>
                   </Link>
                 </li>
               ))}
