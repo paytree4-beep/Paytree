@@ -23,20 +23,16 @@ const PLAN_FEATURES = [
   "Cancel any time",
 ];
 
-// One colored apple per feature: g = green, r = red, y = yellow.
-const APPLE_ORDER = ["g", "r", "r", "y", "g", "y", "r", "g", "y", "r", "g", "r", "y"];
+// One colored apple per feature, repeating: green, red, yellow.
+const APPLE_ORDER = ["g", "r", "y"];
 
 function Apple({ kind }: { kind: string }) {
-  // The red apple emoji is tinted to make green and yellow ones.
-  const emoji = kind === "g" ? "\u{1F34F}" : "\u{1F34E}";
-  const filter = kind === "y" ? "hue-rotate(48deg) saturate(1.5) brightness(1.1)" : undefined;
+  // Red and green are the normal emoji. Yellow is the green one, re-tinted.
+  const emoji = kind === "r" ? "\u{1F34E}" : "\u{1F34F}";
+  const filter = kind === "y" ? "hue-rotate(-52deg) saturate(1.7) brightness(1.3)" : undefined;
   return (
-    <span
-      aria-hidden="true"
-      className="mt-[1px] flex h-7 w-7 flex-none items-center justify-center rounded-full"
-      style={{ border: "2px solid #E3B93C", background: "rgba(227,185,60,0.10)" }}
-    >
-      <span style={{ fontSize: 14, lineHeight: 1, filter }}>{emoji}</span>
+    <span aria-hidden="true" className="mt-[1px] flex w-7 flex-none items-center justify-center">
+      <span style={{ fontSize: 24, lineHeight: 1, filter }}>{emoji}</span>
     </span>
   );
 }
@@ -65,7 +61,12 @@ export function Pricing() {
 
         <ul className="grid gap-3 sm:grid-cols-2 sm:gap-x-6">
           {PLAN_FEATURES.map((text, i) => (
-            <li key={text} className="flex items-start gap-3 text-[16px] font-semibold text-[#0B1F18]">
+            <li
+              key={text}
+              className={`flex items-start gap-3 text-[16px] font-semibold text-[#0B1F18] ${
+                i === 0 ? "" : i === 1 ? "border-t border-[#E3B93C] pt-3 sm:border-t-0 sm:pt-0" : "border-t border-[#E3B93C] pt-3"
+              }`}
+            >
               <Apple kind={APPLE_ORDER[i % APPLE_ORDER.length]} />
               <span>{text}</span>
             </li>
