@@ -117,8 +117,15 @@ function MethodDot({ id, size = 10 }: { id: string; size?: number }) {
   );
 }
 
+// Same look as a real PayTree page: dark green with gold rays, gold-ringed avatar,
+// cream cards with gold frames. Cream phone body, thin black line inside, gold outline.
 const PHONE =
-  "pt-bob w-full overflow-hidden rounded-[30px] border-[7px] border-[#0B1F18] bg-[#FAF5EA] shadow-[0_30px_60px_-28px_rgba(6,78,59,0.6)]";
+  "pt-bob w-full overflow-hidden rounded-[30px] border-[7px] shadow-[inset_0_0_0_2px_#0B1F18,0_0_0_3px_#E3B93C,0_30px_60px_-28px_rgba(0,0,0,0.6)]";
+
+const PHONE_BG =
+  "repeating-conic-gradient(from 0deg at 50% 20%, rgba(227,185,60,0.14) 0 7deg, rgba(227,185,60,0) 7deg 20deg), radial-gradient(circle at 50% 18%, #34705C 0, #1C4A3A 55%, #143A2E 100%)";
+
+const CARD_STYLE = { background: "#FAF5EA", border: "2px solid #E3B93C" } as const;
 
 /** Two small phones side by side: a payment page and its statistics. */
 function PhoneExample() {
@@ -130,22 +137,25 @@ function PhoneExample() {
           role="img"
           aria-label="Example PayTree page for Cedar Coffee Co. with Cash App, Venmo, Zelle, Apple Cash and a QR code"
           className={PHONE}
-          style={{ animationDuration: "7s" }}
+          style={{ animationDuration: "7s", background: PHONE_BG, borderColor: "#FAF5EA" }}
         >
-          <div className="relative flex flex-col items-center gap-0.5 overflow-hidden bg-gradient-to-b from-[#E6F2EA] to-[#FAF5EA] px-2 pb-2.5 pt-4 text-center text-[#064E3B]">
+          <div className="relative flex flex-col items-center gap-0.5 overflow-hidden px-2 pb-2.5 pt-4 text-center">
             <AppleHalo compact />
-            <span className="relative mb-0.5">
+            <span
+              className="relative mb-0.5 rounded-full"
+              style={{ boxShadow: "0 0 0 3px #E3B93C, 0 0 18px rgba(227,185,60,0.45)" }}
+            >
               <ExampleAvatar size={50} />
             </span>
-            <span className="relative font-serif text-[21px] leading-tight text-[#053D2E]">Cedar Coffee Co.</span>
-            <span className="relative text-[11.5px] font-semibold text-[#1A3326]">{SITE_HOST}/cedarcoffee</span>
+            <span className="relative font-serif text-[21px] leading-tight" style={{ color: "#FFFFFF" }}>Cedar Coffee Co.</span>
+            <span className="relative text-[11.5px] font-semibold" style={{ color: "#E3B93C" }}>{SITE_HOST}/cedarcoffee</span>
           </div>
           <div className="flex flex-col gap-1.5 p-2">
             {EXAMPLE.map(({ id, name, detail, Icon, copy }) => {
               const c = badgeColor(id);
               const Action = copy ? Copy : ArrowUpRight;
               return (
-                <div key={id} className="flex items-center gap-1.5 rounded-[9px] border border-[#DCE5DF] bg-white px-2 py-1.5">
+                <div key={id} className="flex items-center gap-1.5 rounded-[9px] px-2 py-1.5" style={CARD_STYLE}>
                   <span
                     className="flex h-5 w-5 flex-none items-center justify-center rounded-full"
                     style={{ backgroundColor: c.bg, color: c.fg }}
@@ -160,7 +170,7 @@ function PhoneExample() {
                 </div>
               );
             })}
-            <div className="flex items-center gap-1.5 rounded-[10px] border border-[#CFE3D6] bg-[#E6F2EA] px-2 py-1.5 text-[#064E3B]">
+            <div className="flex items-center gap-1.5 rounded-[10px] px-2 py-1.5 text-[#064E3B]" style={CARD_STYLE}>
               <ExampleQr url={SITE_URL} size={26} />
               <span className="text-[10.5px] font-semibold">Scan to pay</span>
             </div>
