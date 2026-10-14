@@ -230,7 +230,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
             <h1 className="font-serif text-[36px] font-normal leading-[1.05] tracking-[-0.01em] text-[#064E3B]">
               Hello, {profile.display_name}
             </h1>
-            <p className="mt-1 text-[16px] text-[#1F3A2E]">{user.email}</p>
+            <p className="mt-1 text-[16px] font-medium" style={{ color: "#F2D77A" }}>{user.email}</p>
             <Link
               href={pagePath}
               className="mt-4 flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full bg-[#064E3B] px-6 font-bold text-[#FBFBFB] shadow-[0_14px_30px_-16px_rgba(6,78,59,0.8)] sm:w-auto"
@@ -297,7 +297,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
                 </Link>
               ))}
             </div>
-            <h2 className="-mb-2 mt-1 text-[13px] font-bold uppercase tracking-[0.1em] text-[#2C463A]">More tools</h2>
+            <h2 className="-mb-2 mt-1 text-[14px] font-bold uppercase tracking-[0.12em]" style={{ color: "#F2D77A" }}>More tools</h2>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
               {toolTiles.map((t) => (
                 <Link
