@@ -1,4 +1,3 @@
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 "use client";
 // components/dashboard/share-card.tsx
 //
@@ -474,7 +473,7 @@ export function ShareCardMaker({
         <h1 className="font-serif text-[34px] leading-[1.05] text-[#064E3B]">
           {mode === "tip" ? "Tip me card" : "Pay me here card 📸"}
         </h1>
-        <p className="mt-1 text-[15px] text-[#3F574C]">
+        <p className="mt-1 text-[18px] leading-snug text-[#1F3A2E]">
           Made for Instagram Stories, Reels and TikTok. The video is about 16 seconds with our own music. Tip: on TikTok you
           can also add a trending sound.
         </p>
@@ -493,7 +492,7 @@ export function ShareCardMaker({
               setVideoFile(null);
               setStatus("");
             }}
-            className={`inline-flex min-h-10 items-center rounded-full px-4 text-[14px] font-bold ${
+            className={`inline-flex min-h-11 items-center rounded-full px-5 text-[16px] font-bold ${
               mode === m ? "bg-[#064E3B] text-[#FBFBFB]" : "border border-[#DCE5DF] bg-white text-[#064E3B]"
             }`}
           >
@@ -515,7 +514,7 @@ export function ShareCardMaker({
           type="button"
           onClick={saveImage}
           disabled={!ready || busy !== ""}
-          className="inline-flex min-h-[52px] items-center justify-center rounded-full bg-[#064E3B] px-4 font-bold text-[#FBFBFB] disabled:opacity-60"
+          className="inline-flex min-h-[52px] items-center justify-center rounded-full bg-[#064E3B] px-4 text-[16px] font-bold text-[#FBFBFB] disabled:opacity-60"
         >
           {busy === "image" ? "Preparing…" : imageFile ? "Share image 📤" : "Make image"}
         </button>
@@ -525,7 +524,7 @@ export function ShareCardMaker({
               type="button"
               onClick={() => shareFile(videoFile)}
               disabled={busy !== ""}
-              className="inline-flex min-h-[52px] items-center justify-center rounded-full bg-[#E5484D] px-4 font-bold text-white disabled:opacity-60"
+              className="inline-flex min-h-[52px] items-center justify-center rounded-full bg-[#E5484D] px-4 text-[16px] font-bold text-white disabled:opacity-60"
             >
               Share video 📤
             </button>
@@ -534,7 +533,7 @@ export function ShareCardMaker({
               type="button"
               onClick={() => play(true)}
               disabled={!ready || busy !== ""}
-              className="inline-flex min-h-[52px] items-center justify-center rounded-full border-2 border-[#064E3B] bg-white px-4 font-bold text-[#064E3B] disabled:opacity-60"
+              className="inline-flex min-h-[52px] items-center justify-center rounded-full border-2 border-[#064E3B] bg-white px-4 text-[16px] font-bold text-[#064E3B] disabled:opacity-60"
             >
               {busy === "video" ? "Recording…" : "Make video 🎬"}
             </button>
@@ -542,7 +541,7 @@ export function ShareCardMaker({
         ) : null}
       </div>
       {imageFile || videoFile ? (
-        <p className="rounded-xl bg-[#ECF7F0] px-4 py-3 text-[14px] leading-snug text-[#064E3B]">
+        <p className="rounded-xl bg-[#ECF7F0] px-4 py-3 text-[16px] leading-snug text-[#064E3B]">
           In the share menu, tap <strong>Instagram</strong> or <strong>TikTok</strong> to post it, or{" "}
           <strong>Save</strong> to keep it in your Photos. Don&rsquo;t see them? Tap <strong>More</strong> at the end of the
           app row.
@@ -563,11 +562,11 @@ export function ShareCardMaker({
         type="button"
         onClick={() => play(false)}
         disabled={!ready || busy !== ""}
-        className="mx-auto inline-flex min-h-11 items-center gap-2 rounded-full px-4 text-[15px] font-bold text-[#064E3B] underline underline-offset-4 disabled:opacity-60"
+        className="mx-auto inline-flex min-h-11 items-center gap-2 rounded-full px-4 text-[16px] font-bold text-[#064E3B] underline underline-offset-4 disabled:opacity-60"
       >
         {busy === "preview" ? "Playing…" : "▶ Watch with music 🎵"}
       </button>
-      <p role="status" aria-live="polite" className="min-h-5 text-center text-[13px] font-semibold text-[#064E3B]">
+      <p role="status" aria-live="polite" className="min-h-5 text-center text-[15px] font-semibold text-[#064E3B]">
         {status}
       </p>
 
