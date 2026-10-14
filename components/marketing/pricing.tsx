@@ -23,6 +23,24 @@ const PLAN_FEATURES = [
   "Cancel any time",
 ];
 
+// One colored apple per feature: g = green, r = red, y = yellow.
+const APPLE_ORDER = ["g", "r", "r", "y", "g", "y", "r", "g", "y", "r", "g", "r", "y"];
+
+function Apple({ kind }: { kind: string }) {
+  // The red apple emoji is tinted to make green and yellow ones.
+  const emoji = kind === "g" ? "\u{1F34F}" : "\u{1F34E}";
+  const filter = kind === "y" ? "hue-rotate(48deg) saturate(1.5) brightness(1.1)" : undefined;
+  return (
+    <span
+      aria-hidden="true"
+      className="mt-[1px] flex h-7 w-7 flex-none items-center justify-center rounded-full"
+      style={{ border: "2px solid #E3B93C", background: "rgba(227,185,60,0.10)" }}
+    >
+      <span style={{ fontSize: 14, lineHeight: 1, filter }}>{emoji}</span>
+    </span>
+  );
+}
+
 export function Pricing() {
   const info = PRICING.monthly;
   return (
@@ -46,13 +64,9 @@ export function Pricing() {
         <div className="h-px bg-[#064E3B]/10" />
 
         <ul className="grid gap-3 sm:grid-cols-2 sm:gap-x-6">
-          {PLAN_FEATURES.map((text) => (
+          {PLAN_FEATURES.map((text, i) => (
             <li key={text} className="flex items-start gap-3 text-[16px] font-semibold text-[#0B1F18]">
-              <span className="mt-[2px] flex h-5 w-5 flex-none items-center justify-center rounded-full bg-[#E3F0EA]">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#064E3B" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <path d="M5 12.5l4.5 4.5L19 7.5" />
-                </svg>
-              </span>
+              <Apple kind={APPLE_ORDER[i % APPLE_ORDER.length]} />
               <span>{text}</span>
             </li>
           ))}
