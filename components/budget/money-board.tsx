@@ -4,8 +4,8 @@
 // The one money page: what came in and what you spent, for today, this month
 // and this year. Everything is already on the page, so the buttons react at
 // once; saving happens quietly in the background (and is rolled back with a
-// message if it ever fails). Money from confirmed invoices and split bills
-// shows up by itself under "Came in".
+// message if it ever fails). Money from confirmed invoices shows up by itself
+// under "Came in".
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -40,7 +40,7 @@ const ERRORS: Record<string, string> = {
 };
 
 const input =
-  "min-h-[52px] w-full rounded-xl border border-[#C9D6CE] bg-white px-4 text-base text-[#0B1F18] outline-none focus:border-[#064E3B]";
+  "min-h-[52px] w-full rounded-xl border border-[#228B5A] bg-white px-4 text-[17px] text-[#0B1F18] outline-none focus:border-[#064E3B]";
 
 function shortDate(day: string): string {
   return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", timeZone: "UTC" }).format(new Date(`${day}T12:00:00Z`));
@@ -220,7 +220,7 @@ export function MoneyBoard({
       aria-selected={period === id}
       onClick={() => pickPeriod(id)}
       className={`inline-flex min-h-10 flex-1 items-center justify-center rounded-full px-3 text-[14px] font-bold ${
-        period === id ? "bg-[#064E3B] text-white" : "border border-[#DCE5DF] bg-white text-[#064E3B]"
+        period === id ? "bg-[#064E3B] text-white" : "border border-[#228B5A] bg-white text-[#064E3B]"
       }`}
     >
       {label}
@@ -230,7 +230,7 @@ export function MoneyBoard({
   return (
     <div className="flex flex-col gap-5">
       {/* Came in / Spent */}
-      <section className="rounded-2xl border border-[#DCE5DF] bg-white p-5">
+      <section className="rounded-2xl border border-[#228B5A] bg-white p-5">
         <div className="flex gap-2" role="tablist" aria-label="Period">
           {tab("today", "Today")}
           {tab("month", "Month")}
@@ -244,23 +244,23 @@ export function MoneyBoard({
               aria-label="Previous month"
               disabled={month <= firstMonth}
               onClick={() => setMonth(shiftMonth(month, -1))}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#DCE5DF] text-[18px] font-bold text-[#064E3B] disabled:opacity-30"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#228B5A] text-[18px] font-bold text-[#064E3B] disabled:opacity-30"
             >
               ‹
             </button>
-            <p className="text-[15px] font-bold uppercase tracking-[0.1em] text-[#4B6358]">{monthTitle(month)}</p>
+            <p className="text-[15px] font-bold uppercase tracking-[0.1em] text-[#2C463A]">{monthTitle(month)}</p>
             <button
               type="button"
               aria-label="Next month"
               disabled={month >= currentMonth}
               onClick={() => setMonth(shiftMonth(month, 1))}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#DCE5DF] text-[18px] font-bold text-[#064E3B] disabled:opacity-30"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#228B5A] text-[18px] font-bold text-[#064E3B] disabled:opacity-30"
             >
               ›
             </button>
           </div>
         ) : (
-          <p className="mt-3 text-center text-[15px] font-bold uppercase tracking-[0.1em] text-[#4B6358]">{periodName}</p>
+          <p className="mt-3 text-center text-[15px] font-bold uppercase tracking-[0.1em] text-[#2C463A]">{periodName}</p>
         )}
 
         <div className="mt-3 grid grid-cols-2 gap-2" role="tablist" aria-label="Came in or spent">
@@ -271,7 +271,7 @@ export function MoneyBoard({
             onClick={() => setKind("in")}
             className={`rounded-2xl border-2 p-3 text-left ${kind === "in" ? "border-[#16A34A] bg-[#ECF7F0]" : "border-[#E2E8E4] bg-white"}`}
           >
-            <span className="block text-[12px] font-bold uppercase tracking-[0.06em] text-[#3F574C]">💵 Came in</span>
+            <span className="block text-[14px] font-bold uppercase tracking-[0.06em] text-[#1F3A2E]">💵 Came in</span>
             <span className="mt-1 block font-serif text-[28px] leading-none text-[#16A34A]">{formatMoney(cameIn)}</span>
           </button>
           <button
@@ -281,11 +281,11 @@ export function MoneyBoard({
             onClick={() => setKind("out")}
             className={`rounded-2xl border-2 p-3 text-left ${kind === "out" ? "border-[#B42318] bg-[#FEF3F2]" : "border-[#E2E8E4] bg-white"}`}
           >
-            <span className="block text-[12px] font-bold uppercase tracking-[0.06em] text-[#3F574C]">🛒 Spent</span>
+            <span className="block text-[14px] font-bold uppercase tracking-[0.06em] text-[#1F3A2E]">🛒 Spent</span>
             <span className="mt-1 block font-serif text-[28px] leading-none text-[#B42318]">{formatMoney(spent)}</span>
           </button>
         </div>
-        <p className="mt-3 text-center text-[14px] text-[#3F574C]">
+        <p className="mt-3 text-center text-[17px] text-[#1F3A2E]">
           Left:{" "}
           <strong className={left < 0 ? "text-[#B42318]" : "text-[#064E3B]"}>
             {left < 0 ? "−" : ""}
@@ -295,32 +295,32 @@ export function MoneyBoard({
       </section>
 
       {/* Add */}
-      <section className="rounded-2xl border border-[#DCE5DF] bg-white p-5">
-        <h2 className="text-sm font-bold uppercase tracking-[0.1em] text-[#4B6358]">
+      <section className="rounded-2xl border border-[#228B5A] bg-white p-5">
+        <h2 className="text-[15px] font-bold uppercase tracking-[0.1em] text-[#2C463A]">
           {kind === "in" ? "Add money that came in" : "Add something you spent"}
         </h2>
         <form ref={formRef} onSubmit={onAdd} className="mt-3 flex flex-col gap-3" noValidate>
           <div className="grid grid-cols-2 gap-3">
             <label className="flex min-w-0 flex-col gap-1.5">
-              <span className="text-sm font-semibold">Amount</span>
-              <span className="flex min-h-[52px] items-center rounded-xl border border-[#C9D6CE] bg-white px-4 focus-within:border-[#064E3B]">
-                <span className="text-[#4B6358]">$</span>
-                <input name="amount" inputMode="decimal" maxLength={12} placeholder="Type amount" className="min-w-0 flex-1 bg-transparent py-3 pl-1 text-base outline-none" />
+              <span className="text-[16px] font-semibold">Amount</span>
+              <span className="flex min-h-[52px] items-center rounded-xl border border-[#228B5A] bg-white px-4 focus-within:border-[#064E3B]">
+                <span className="text-[#2C463A]">$</span>
+                <input name="amount" inputMode="decimal" maxLength={12} placeholder="Type amount" className="min-w-0 flex-1 bg-transparent py-3 pl-1 text-[17px] outline-none" />
               </span>
             </label>
             <label className="flex min-w-0 flex-col gap-1.5">
-              <span className="text-sm font-semibold">Date</span>
-              <input name="on_date" type="date" defaultValue={today} max={today} className={`${input} min-w-0 max-w-full appearance-none`} />
+              <span className="text-[16px] font-semibold">Date</span>
+              <input name="on_date" type="date" defaultValue={today} max={today} className={`${input} block min-w-0 max-w-full appearance-none text-left [&::-webkit-date-and-time-value]:text-left`} />
             </label>
           </div>
           {kind === "out" ? (
             <fieldset>
-              <legend className="mb-1.5 text-sm font-semibold">Category</legend>
+              <legend className="mb-1.5 text-[16px] font-semibold">Category</legend>
               <div className="flex flex-wrap gap-2">
                 {CATEGORIES.map((c, i) => (
                   <label
                     key={c.id}
-                    className="inline-flex min-h-10 cursor-pointer items-center gap-1 rounded-full border border-[#DCE5DF] bg-white px-3 text-[14px] font-semibold has-[:checked]:border-[#064E3B] has-[:checked]:bg-[#064E3B] has-[:checked]:text-white"
+                    className="inline-flex min-h-10 cursor-pointer items-center gap-1 rounded-full border border-[#228B5A] bg-white px-3 text-[16px] font-semibold has-[:checked]:border-[#064E3B] has-[:checked]:bg-[#064E3B] has-[:checked]:text-white"
                   >
                     <input type="radio" name="category" value={c.id} defaultChecked={i === 0} className="sr-only" />
                     {c.icon} {c.label}
@@ -330,11 +330,11 @@ export function MoneyBoard({
             </fieldset>
           ) : null}
           <label className="flex flex-col gap-1.5">
-            <span className="text-sm font-semibold">{kind === "in" ? "From whom or for what (optional)" : "Note (optional)"}</span>
+            <span className="text-[16px] font-semibold">{kind === "in" ? "From whom or for what (optional)" : "Note (optional)"}</span>
             <input name="note" maxLength={80} placeholder={kind === "in" ? "Sara, haircut" : "Lunch with Sara"} className={input} />
           </label>
           {error ? (
-            <p role="alert" className="rounded-xl bg-[#FEF3F2] px-3 py-2 text-[14px] text-[#7A271A]">
+            <p role="alert" className="rounded-xl bg-[#FEF3F2] px-3 py-2 text-[16px] text-[#7A271A]">
               {error}
             </p>
           ) : null}
@@ -348,9 +348,9 @@ export function MoneyBoard({
       </section>
 
       {/* The list */}
-      <section className="rounded-2xl border border-[#DCE5DF] bg-white p-5">
+      <section className="rounded-2xl border border-[#228B5A] bg-white p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="text-sm font-bold uppercase tracking-[0.1em] text-[#4B6358]">
+          <h2 className="text-[15px] font-bold uppercase tracking-[0.1em] text-[#2C463A]">
             {kind === "in" ? "Came in" : "Spent"} · {periodName}
           </h2>
           {entries.length > 0 ? (
@@ -359,7 +359,7 @@ export function MoneyBoard({
             <a
               href="/dashboard/money/export"
               download
-              className="inline-flex min-h-10 items-center gap-2 rounded-full border border-[#064E3B]/40 px-4 text-[13px] font-bold text-[#064E3B]"
+              className="inline-flex min-h-10 items-center gap-2 rounded-full border border-[#064E3B]/40 px-4 text-[15px] font-bold text-[#064E3B]"
             >
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <path d="M12 3v12 M7 10l5 5 5-5 M5 21h14" />
@@ -372,7 +372,7 @@ export function MoneyBoard({
         {categories.length > 1 ? (
           <ul className="mt-3 flex flex-wrap gap-2">
             {categories.map(([id, cents]) => (
-              <li key={id} className="rounded-full bg-[#F4F8F6] px-3 py-1 text-[13px] font-semibold text-[#3F574C]">
+              <li key={id} className="rounded-full bg-[#F4F8F6] px-3 py-1 text-[15px] font-semibold text-[#1F3A2E]">
                 {categoryOf(id).icon} {categoryOf(id).label} · {formatMoney(cents)}
               </li>
             ))}
@@ -380,7 +380,7 @@ export function MoneyBoard({
         ) : null}
 
         {list.length === 0 ? (
-          <p className="mt-3 text-[15px] text-[#4B6358]">
+          <p className="mt-3 text-[17px] text-[#1F3A2E]">
             {kind === "in" ? "Nothing came in for this period yet." : "Nothing spent for this period yet."}
           </p>
         ) : (
@@ -391,7 +391,7 @@ export function MoneyBoard({
                   <p className="truncate font-semibold">
                     {e.icon} {e.title}
                   </p>
-                  <p className="truncate text-[12px] text-[#6B7F75]">
+                  <p className="truncate text-[14px] text-[#2C463A]">
                     {shortDate(e.date)} · {e.sub}
                   </p>
                 </div>
@@ -405,7 +405,7 @@ export function MoneyBoard({
                       type="button"
                       aria-label="Delete"
                       onClick={() => onDelete(e)}
-                      className="inline-flex h-9 w-9 items-center justify-center rounded-full text-[#6B7F75] hover:bg-[#FEF3F2] hover:text-[#B42318]"
+                      className="inline-flex h-9 w-9 items-center justify-center rounded-full text-[#2C463A] hover:bg-[#FEF3F2] hover:text-[#B42318]"
                     >
                       ✕
                     </button>
@@ -422,9 +422,9 @@ export function MoneyBoard({
           </ul>
         )}
         {kind === "in" ? (
-          <p className="mt-3 text-[12px] text-[#4B6358]">
-            Invoices and split bills you confirm as paid are added here by themselves. Money paid straight to your apps is not
-            seen by PayTree, so add it yourself.
+          <p className="mt-3 text-[15px] leading-snug text-[#2C463A]">
+            Invoices you choose to add (from the Invoices section) show here once they are paid. Money paid
+            straight to your apps is not seen by PayTree, so add it yourself.
           </p>
         ) : null}
       </section>
