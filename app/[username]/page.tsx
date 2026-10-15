@@ -126,13 +126,12 @@ export default async function PublicPaymentPage({ params }: PageProps) {
               href="/dashboard"
               className="inline-flex items-center gap-1.5 rounded-full"
               style={{
-                minHeight: 40,
-                padding: "0 16px 0 12px",
-                background: "#F4C029",
-                color: "#06382B",
-                border: "2px solid #FFE68C",
-                boxShadow: "0 3px 0 #96700A",
-                fontSize: 15,
+                minHeight: 38,
+                padding: "0 14px 0 10px",
+                background: "rgba(255,255,255,0.08)",
+                color: "#F4C029",
+                border: "2px solid #F4C029",
+                fontSize: 14,
                 fontWeight: 700,
               }}
             >
