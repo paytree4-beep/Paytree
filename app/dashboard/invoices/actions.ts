@@ -32,6 +32,8 @@ export async function createInvoice(formData: FormData): Promise<void> {
   const parsed = parseInvoice((name) => formData.get(name));
   if ("error" in parsed) redirect(`${HERE}?error=${parsed.error}`);
   const invoice = parsed as Exclude<typeof parsed, { error: unknown }>;
+  // The box "Add to my income when paid": checked sends "on", unchecked sends nothing.
+  const countIncome = formData.get("count_income") === "on";
 
   for (let attempt = 0; attempt < 3; attempt++) {
     const id = newSplitId();
@@ -43,6 +45,7 @@ export async function createInvoice(formData: FormData): Promise<void> {
       amount_cents: invoice.amountCents,
       due_date: invoice.dueDate,
       note: invoice.note,
+      count_income: countIncome,
     });
     if (!error) {
       revalidatePath(HERE);
