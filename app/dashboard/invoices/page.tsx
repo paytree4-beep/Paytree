@@ -278,7 +278,7 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Sea
                 </span>
               </label>
               <label className="flex min-w-0 flex-col gap-1.5">
-                <span className="text-[16px] font-semibold">Due date (optional)</span>
+                <span className="whitespace-nowrap text-[16px] font-semibold">Due date <span className="text-[13px] font-medium text-[#2C463A]">(optional)</span></span>
                 <input name="due_date" type="date" min={today} className={`${input} block min-w-0 max-w-full appearance-none text-left [&::-webkit-date-and-time-value]:text-left`} />
               </label>
             </div>
