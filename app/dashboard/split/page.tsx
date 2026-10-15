@@ -183,6 +183,11 @@ export default async function SplitPage({ searchParams }: { searchParams: Search
                         <InstantDelete id={s.id} action={deleteSplitQuick} />
                       </div>
                     </div>
+                    {paid < s.people ? (
+                      <div className="mt-1">
+                        <ShareLink url={`${SITE_URL}/bill/${s.id}`} name={name} />
+                      </div>
+                    ) : null}
                     {waiting.length > 0 ? (
                       <div className="rounded-xl border border-[#E2C27A] bg-[#FBF6EA] p-3">
                         <p className="text-[14px] font-semibold text-[#7A5A12]">
