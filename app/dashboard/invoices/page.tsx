@@ -286,6 +286,15 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Sea
               <span className="text-[16px] font-semibold">Note (optional)</span>
               <input name="note" maxLength={200} placeholder="Thank you for your business!" className={input} />
             </label>
+            <label className="flex items-center gap-3 text-[16px] font-semibold text-[#1F3A2E]">
+              <input
+                type="checkbox"
+                name="count_income"
+                defaultChecked
+                style={{ width: 22, height: 22, accentColor: "#064E3B" }}
+              />
+              Add to my income when paid
+            </label>
             <SubmitButton pendingText="Creating…">Create invoice</SubmitButton>
           </form>
         </section>
