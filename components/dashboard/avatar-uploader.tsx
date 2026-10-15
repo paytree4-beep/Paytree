@@ -156,12 +156,12 @@ export function AvatarUploader({
       {message ? (
         <p
           role={message.tone === "error" ? "alert" : "status"}
-          className={`text-[15px] ${message.tone === "error" ? "text-[#B42318]" : "text-[#064E3B]"}`}
+          className={`text-[16px] font-medium ${message.tone === "error" ? "text-[#B42318]" : "text-[#064E3B]"}`}
         >
           {message.text}
         </p>
       ) : (
-        <p className="text-[13px] text-[#4B6358]">A square photo or logo works best. It is cropped to a circle.</p>
+        <p className="text-[16px] leading-snug text-[#2C463A]">A square photo or logo works best. It is cropped to a circle.</p>
       )}
     </div>
   );
