@@ -305,12 +305,12 @@ export function MoneyBoard({
               <span className="text-[16px] font-semibold">Amount</span>
               <span className="flex min-h-[52px] items-center rounded-xl border border-[#228B5A] bg-white px-4 focus-within:border-[#064E3B]">
                 <span className="text-[#2C463A]">$</span>
-                <input name="amount" inputMode="decimal" maxLength={12} placeholder="Type amount" className="min-w-0 flex-1 bg-transparent py-3 pl-1 text-[17px] outline-none" />
+                <input name="amount" inputMode="decimal" maxLength={12} placeholder="Amount" className="min-w-0 flex-1 bg-transparent py-3 pl-1 text-[17px] outline-none" />
               </span>
             </label>
             <label className="flex min-w-0 flex-col gap-1.5">
               <span className="text-[16px] font-semibold">Date</span>
-              <input name="on_date" type="date" defaultValue={today} max={today} className={`${input} block min-w-0 max-w-full appearance-none text-left [&::-webkit-date-and-time-value]:text-left`} />
+              <input name="on_date" type="date" defaultValue={today} max={today} className={`${input} block min-w-0 max-w-full appearance-none py-0 text-left [&::-webkit-date-and-time-value]:text-left`} style={{ height: 52, lineHeight: "52px" }} />
             </label>
           </div>
           {kind === "out" ? (
