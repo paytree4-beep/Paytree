@@ -23,7 +23,7 @@ export function CharCounter({ targetId, max, initial }: { targetId: string; max:
   return (
     <div className="flex items-center justify-between gap-3" aria-live="polite">
       <span className="text-[15px] font-semibold" style={{ color: full ? "#B42318" : "transparent" }}>
-        {full ? `Limit reached: ${max} characters max` : "."}
+        {full ? "Max reached" : "."}
       </span>
       <span className="text-[15px] font-bold" style={{ color: full ? "#B42318" : "#2C463A" }}>
         {count}/{max}
