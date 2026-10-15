@@ -1,8 +1,9 @@
 // app/[username]/qr-card.tsx
 //
-// "Scan to pay" card. Draws a QR code that opens this page, and lets the owner
-// or a visitor save or share it as a branded picture (with the link and
-// paytree.to on it) for print or social media.
+// "Scan to pay" card. Draws a QR code that opens this page. The owner (on the
+// dashboard) can save or share it as a branded picture (with the link and
+// paytree.to on it) for print or social media. On the public page the buttons
+// are hidden (showActions={false}), so visitors only see the code.
 // Requires:  npm install qrcode.react
 
 "use client";
@@ -20,6 +21,8 @@ type QrCardProps = {
   label: string;
   /** The page owner's name, printed on the shared picture. */
   name?: string;
+  /** Show the Share QR and Save buttons. Default true (dashboard). */
+  showActions?: boolean;
 };
 
 function loadImage(src: string): Promise<HTMLImageElement | null> {
@@ -138,7 +141,7 @@ async function svgToPng(svg: SVGSVGElement, label: string, name?: string): Promi
   return new Promise((resolve) => canvas.toBlob((blob) => resolve(blob), "image/png"));
 }
 
-export function QrCard({ url, label, name }: QrCardProps) {
+export function QrCard({ url, label, name, showActions = true }: QrCardProps) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const [file, setFile] = useState<File | null>(null);
   const [hint, setHint] = useState("");
@@ -157,6 +160,7 @@ export function QrCard({ url, label, name }: QrCardProps) {
   // Prepare the PNG ahead of time, so the tap can open the share sheet
   // straight away (iPhones only allow it right after a tap).
   useEffect(() => {
+    if (!showActions) return;
     const svg = wrapRef.current?.querySelector("svg");
     if (!svg) return;
     let cancelled = false;
@@ -166,7 +170,7 @@ export function QrCard({ url, label, name }: QrCardProps) {
     return () => {
       cancelled = true;
     };
-  }, [url, fileName, label, name]);
+  }, [url, fileName, label, name, showActions]);
 
   async function sharePng() {
     if (!file) {
@@ -227,12 +231,12 @@ export function QrCard({ url, label, name }: QrCardProps) {
   return (
     <section
       aria-labelledby="h-qr"
-      className="mt-8 flex items-center gap-[18px] rounded-[18px] border border-[#DCE5DF] bg-white p-[18px]"
+      className="mt-8 flex items-center gap-5 rounded-[18px] border border-[#DCE5DF] bg-white p-5"
     >
       <div ref={wrapRef} className="shrink-0 rounded-lg bg-white">
         <QRCodeSVG
           value={url}
-          size={112}
+          size={140}
           level="M"
           marginSize={2}
           fgColor="#064E3B"
@@ -242,47 +246,53 @@ export function QrCard({ url, label, name }: QrCardProps) {
       </div>
 
       <div className="min-w-0">
-        <h2 id="h-qr" className="text-[13px] font-bold tracking-[0.12em] text-[#064E3B]">
+        <h2 id="h-qr" className="text-[15px] font-bold tracking-[0.12em] text-[#064E3B]">
           SCAN TO PAY
         </h2>
-        <p className="mt-1 text-sm text-[#4B6358]">
+        <p className="mt-1.5 text-[16px] leading-snug text-[#4B6358]">
           Point your phone camera at the code to open this page, or share it in person and in
           print.
         </p>
-        <p className="mt-1.5 text-[13px] font-semibold">{label}</p>
-        <div className="mt-2 flex flex-wrap gap-2">
-          <button
-            type="button"
-            onClick={sharePng}
-            className="inline-flex min-h-11 items-center gap-1.5 rounded-full bg-[#064E3B] px-4 text-sm font-semibold text-[#FBFBFB] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D9B873]"
-          >
-            <Share2 className="h-4 w-4" aria-hidden="true" />
-            Share QR
-          </button>
-          <button
-            type="button"
-            onClick={downloadPng}
-            className={`inline-flex min-h-11 items-center gap-1.5 rounded-full px-4 text-sm font-semibold transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D9B873] ${
-              saved ? "bg-[#16A34A] text-white" : "bg-[#E3F0EA] text-[#064E3B] hover:bg-[#D3E7DD]"
-            }`}
-          >
-            {saved ? (
-              <>
-                <Check className="h-4 w-4" aria-hidden="true" />
-                Saved
-              </>
-            ) : (
-              <>
-                <Download className="h-4 w-4" aria-hidden="true" />
-                Save
-              </>
-            )}
-          </button>
-        </div>
-        {hint ? (
-          <p role="status" aria-live="polite" className="mt-1.5 text-[13px] font-semibold text-[#064E3B]">
-            {hint}
-          </p>
+        <p className="mt-2 text-[16px] font-semibold" style={{ color: "#064E3B" }}>
+          {label}
+        </p>
+        {showActions ? (
+          <>
+            <div className="mt-2 flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={sharePng}
+                className="inline-flex min-h-11 items-center gap-1.5 rounded-full bg-[#064E3B] px-4 text-sm font-semibold text-[#FBFBFB] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D9B873]"
+              >
+                <Share2 className="h-4 w-4" aria-hidden="true" />
+                Share QR
+              </button>
+              <button
+                type="button"
+                onClick={downloadPng}
+                className={`inline-flex min-h-11 items-center gap-1.5 rounded-full px-4 text-sm font-semibold transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D9B873] ${
+                  saved ? "bg-[#16A34A] text-white" : "bg-[#E3F0EA] text-[#064E3B] hover:bg-[#D3E7DD]"
+                }`}
+              >
+                {saved ? (
+                  <>
+                    <Check className="h-4 w-4" aria-hidden="true" />
+                    Saved
+                  </>
+                ) : (
+                  <>
+                    <Download className="h-4 w-4" aria-hidden="true" />
+                    Save
+                  </>
+                )}
+              </button>
+            </div>
+            {hint ? (
+              <p role="status" aria-live="polite" className="mt-1.5 text-[13px] font-semibold text-[#064E3B]">
+                {hint}
+              </p>
+            ) : null}
+          </>
         ) : null}
       </div>
     </section>
