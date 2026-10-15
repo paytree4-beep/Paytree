@@ -11,6 +11,7 @@ import { notFound } from "next/navigation";
 import { PaymentMethods } from "@/app/[username]/payment-methods";
 import { SubmitButton } from "@/components/auth/submit-button";
 import { OpenedMethodField, PaidGate, PayFirstNote } from "@/components/payments/paid-gate";
+import { HideIfPaid, MyStatusBanner, RememberNameInput } from "@/components/payments/my-split-status";
 import { AppleCelebration } from "@/components/marketing/apple-celebration";
 import { AppleHalo } from "@/components/marketing/apples";
 import { param, type SearchParams } from "@/lib/auth";
@@ -87,6 +88,7 @@ export default async function BillPage({ params, searchParams }: Props) {
   const methods = applyOrder(resolveMethods(profile.payments), profile.order);
   const scope = `bill:${split.id}`;
   const labels: Record<string, string> = Object.fromEntries(methods.map((m) => [m.id, methodLabel(m.id)]));
+  const rows = paid.map((p) => ({ name: p.name, confirmed: Boolean(p.confirmed_at) }));
 
   return (
     <div className="flex min-h-screen flex-col bg-[#FAF5EA] font-sans text-[#0B1F18]">
@@ -138,44 +140,49 @@ export default async function BillPage({ params, searchParams }: Props) {
           ) : null}
         </section>
 
+        <MyStatusBanner splitId={split.id} rows={rows} ownerName={profile.displayName} />
+
         <div className="mt-6">
           <PaymentMethods username={profile.username} displayName={profile.displayName} methods={methods} scope={scope} />
         </div>
 
         {!done ? (
-          <section id="paid" className="mt-6 scroll-mt-6 rounded-2xl border border-white/80 bg-white/80 p-4">
-            {justPaid ? (
-              <p className="text-center font-bold text-[#064E3B]">
-                Thank you! {profile.displayName} will confirm once your payment arrives.
-              </p>
-            ) : (
-              <PaidGate
-                scope={scope}
-                allowed={methods.map((m) => m.id)}
-                locked={<PayFirstNote text={`Pay your ${formatMoney(each)} with one of the options above first. Then tap "I've paid" here.`} />}
-              >
-              <form action={markSplitPaid} className="flex flex-col gap-3" noValidate>
-                <p className="font-bold text-[#064E3B]">Paid your {formatMoney(each)}? Let everyone know.</p>
-                {error && ERRORS[error] ? (
-                  <p role="alert" className="rounded-xl bg-[#FEF3F2] px-3 py-2 text-[14px] text-[#7A271A]">{ERRORS[error]}</p>
-                ) : null}
-                <input type="hidden" name="id" value={split.id} />
-                <div aria-hidden="true" className="absolute left-[-9999px] h-px w-px overflow-hidden">
-                  <input type="text" name="website" tabIndex={-1} autoComplete="off" />
-                </div>
-                <input
-                  name="name"
-                  maxLength={40}
-                  autoComplete="given-name"
-                  placeholder="Your name"
-                  className="min-h-[52px] w-full rounded-xl border border-[#C9D6CE] bg-white px-4 text-base outline-none focus:border-[#064E3B]"
-                />
-                <OpenedMethodField scope={scope} labels={labels} />
-                <SubmitButton pendingText="Saving…">I&rsquo;ve paid ✓</SubmitButton>
-              </form>
-              </PaidGate>
-            )}
-          </section>
+          <HideIfPaid splitId={split.id} rows={rows}>
+            <section id="paid" className="mt-6 scroll-mt-6 rounded-2xl border border-white/80 bg-white/80 p-4">
+              {justPaid ? (
+                <p className="text-center font-bold text-[#064E3B]">
+                  Thank you! {profile.displayName} will confirm once your payment arrives.
+                </p>
+              ) : (
+                <PaidGate
+                  scope={scope}
+                  allowed={methods.map((m) => m.id)}
+                  locked={<PayFirstNote text={`Pay your ${formatMoney(each)} with one of the options above first. Then tap "I've paid" here.`} />}
+                >
+                <form action={markSplitPaid} className="flex flex-col gap-3" noValidate>
+                  <p className="font-bold text-[#064E3B]">Paid your {formatMoney(each)}? Let everyone know.</p>
+                  {error && ERRORS[error] ? (
+                    <p role="alert" className="rounded-xl bg-[#FEF3F2] px-3 py-2 text-[14px] text-[#7A271A]">{ERRORS[error]}</p>
+                  ) : null}
+                  <input type="hidden" name="id" value={split.id} />
+                  <div aria-hidden="true" className="absolute left-[-9999px] h-px w-px overflow-hidden">
+                    <input type="text" name="website" tabIndex={-1} autoComplete="off" />
+                  </div>
+                  <RememberNameInput
+                    splitId={split.id}
+                    name="name"
+                    maxLength={40}
+                    autoComplete="given-name"
+                    placeholder="Your name"
+                    className="min-h-[52px] w-full rounded-xl border border-[#C9D6CE] bg-white px-4 text-base outline-none focus:border-[#064E3B]"
+                  />
+                  <OpenedMethodField scope={scope} labels={labels} />
+                  <SubmitButton pendingText="Saving…">I&rsquo;ve paid ✓</SubmitButton>
+                </form>
+                </PaidGate>
+              )}
+            </section>
+          </HideIfPaid>
         ) : null}
       </main>
 
