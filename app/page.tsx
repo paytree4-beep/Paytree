@@ -311,7 +311,15 @@ header,[class*="backdrop-blur"]{background-color:rgba(20,58,46,.6)!important}
             <h1 className="font-serif text-[clamp(38px,10vw,92px)] font-normal uppercase leading-[1.03] tracking-[0.01em] text-[#064E3B] [text-wrap:balance]">
               All your payment methods.
               <br />
-              <span className={`${goldText}`}>In one link.</span>
+            <span className="pt-onelink">In one link.</span>
+<style>{`
+.pt-onelink{display:inline-block;margin-top:4px;color:transparent;-webkit-text-fill-color:transparent;background:linear-gradient(100deg,#F4C029 0%,#FFE680 25%,#FFFFFF 40%,#FFE680 55%,#F4C029 75%,#F4C029 100%);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;animation:pt-ol-shine 2.8s linear infinite,pt-ol-glow 1.8s ease-in-out infinite,pt-ol-beat 1.8s ease-in-out infinite}
+@keyframes pt-ol-shine{from{background-position:120% 0}to{background-position:-120% 0}}
+@keyframes pt-ol-glow{0%,100%{filter:drop-shadow(0 0 8px rgba(255,214,70,.45))}50%{filter:drop-shadow(0 0 22px rgba(255,224,100,.95))}}
+@keyframes pt-ol-beat{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+@media (prefers-reduced-motion:reduce){.pt-onelink{animation:none;-webkit-text-fill-color:#F4C029;color:#F4C029;background:none}}
+`}</style>
+
             </h1>
             <div aria-hidden="true" className="h-[4px] rounded-full bg-[#F2C94C] w-[78%] max-w-[360px] lg:w-[300px]" />
             <p className="max-w-[560px] text-[22px] leading-[1.4] font-bold text-[#0B1F18] sm:text-[24px]">
