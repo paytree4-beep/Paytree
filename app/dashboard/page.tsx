@@ -445,8 +445,8 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
               label="Short bio (optional)"
               name="bio"
               defaultValue={profile.bio ?? ""}
-              maxLength={140}
-              hint="Up to 140 characters, shown under your name."
+              maxLength={70}
+              hint="Up to 70 characters, shown under your name."
             />
             <div className="sm:max-w-[240px]">
               <SubmitButton pendingText="Saving…">Save changes</SubmitButton>
