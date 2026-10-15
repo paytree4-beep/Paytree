@@ -4,6 +4,7 @@
 // forms posting to Server Actions, so they work even before JavaScript loads.
 
 import type { ReactNode } from "react";
+import { CharCounter } from "@/components/auth/char-counter";
 
 export function Field({
   label,
@@ -36,11 +37,11 @@ export function Field({
   const hintId = hint ? `${id}-hint` : undefined;
   return (
     <div className="flex flex-col gap-1.5">
-      <label htmlFor={id} className="text-sm font-semibold text-[#0B1F18]">
+      <label htmlFor={id} className="text-[16px] font-semibold text-[#0B1F18]">
         {label}
       </label>
       <div className="flex min-h-[52px] items-center rounded-xl border border-[#C9D6CE] bg-white px-4 focus-within:border-[#064E3B]">
-        {prefix ? <span className="shrink-0 text-[#4B6358]">{prefix}</span> : null}
+        {prefix ? <span className="shrink-0 text-[#2C463A]">{prefix}</span> : null}
         <input
           id={id}
           name={name}
@@ -58,7 +59,7 @@ export function Field({
         />
       </div>
       {hint ? (
-        <p id={hintId} className="text-[13px] text-[#4B6358]">
+        <p id={hintId} className="text-[15px] leading-snug text-[#2C463A]">
           {hint}
         </p>
       ) : null}
@@ -82,7 +83,7 @@ export function TextArea({
   const id = `field-${name}`;
   return (
     <div className="flex flex-col gap-1.5">
-      <label htmlFor={id} className="text-sm font-semibold text-[#0B1F18]">
+      <label htmlFor={id} className="text-[16px] font-semibold text-[#0B1F18]">
         {label}
       </label>
       <textarea
@@ -93,7 +94,8 @@ export function TextArea({
         rows={3}
         className="rounded-xl border border-[#C9D6CE] bg-white px-4 py-3 text-base text-[#0B1F18] outline-none focus:border-[#064E3B]"
       />
-      {hint ? <p className="text-[13px] text-[#4B6358]">{hint}</p> : null}
+      {maxLength ? <CharCounter targetId={id} max={maxLength} initial={defaultValue?.length ?? 0} /> : null}
+      {hint ? <p className="text-[15px] leading-snug text-[#2C463A]">{hint}</p> : null}
     </div>
   );
 }
