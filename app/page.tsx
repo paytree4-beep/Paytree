@@ -328,30 +328,55 @@ header,[class*="backdrop-blur"]{background-color:rgba(20,58,46,.6)!important}
             <p className="max-w-[560px] text-[19px] leading-[1.45] font-extrabold text-[#064E3B] sm:text-[21px]">
               Share your page link. Display your QR code. <span className="text-[#9A6E1A]">Get paid your way.</span>
             </p>
-            {/* Money note: cream card, gold frame, colors set inline so the dark theme above leaves it alone */}
-            <div
-              className="flex w-full max-w-[318px] items-center gap-3 rounded-[20px] px-[14px] py-3 text-left"
-              style={{ background: "#FAF5EA", border: "2px solid #E3B93C", boxShadow: "0 14px 30px rgba(0,0,0,.35)" }}
-            >
-              <ShieldCheck className="h-8 w-8 flex-none" strokeWidth={2} aria-hidden="true" style={{ color: "#064E3B" }} />
-              <div>
-                <p style={{ color: "#064E3B", fontSize: 15.5, fontWeight: 800, lineHeight: 1.2 }}>
-                  PayTree never touches your money.
-                </p>
-                <p style={{ color: "#2C463A", fontSize: 12.5, fontWeight: 600, lineHeight: 1.3, marginTop: 4 }}>
-                  Clients pay you directly. We only link to your own accounts.
-                </p>
+            {/* Two compact tap-to-open boxes (plain class names so the dark theme above leaves them alone) */}
+            <style>{`
+.pt-hb.pt-hb.pt-hb{width:100%;max-width:318px;box-sizing:border-box;border:2.5px solid #E3B93C!important;border-radius:16px;box-shadow:0 10px 22px rgba(0,0,0,.35);text-align:left;background:#FAF5EA}
+.pt-hb-apple.pt-hb-apple.pt-hb-apple{background:#FFFFFF}
+.pt-hb summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:9px;padding:7px 12px;min-height:44px;-webkit-tap-highlight-color:transparent}
+.pt-hb summary::-webkit-details-marker{display:none}
+.pt-hb-ic{flex:none;width:24px;height:24px;color:#064E3B}
+.pt-hb-ap{flex:none;font-size:23px;line-height:1}
+.pt-hb-t{flex:1;font-weight:800;font-size:14.5px;line-height:1.2;color:#064E3B}
+.pt-hb-t small{display:block;margin-top:2px;font-size:12px;font-weight:600;line-height:1.25;color:#2F4A3E}
+.pt-hb-plus{flex:none;width:24px;height:24px;border-radius:9999px;background:#E3B93C;color:#17402F;font-weight:800;font-size:18px;display:flex;align-items:center;justify-content:center;transition:transform .2s}
+.pt-hb[open] .pt-hb-plus{transform:rotate(45deg)}
+.pt-hb-body{padding:0 12px 12px;font-size:13px;line-height:1.4;font-weight:600;color:#2F4A3E}
+.pt-hb-body b{color:#064E3B}
+.pt-hb-st{margin:0 0 8px;padding-left:18px}
+.pt-hb-st li{margin-bottom:4px}
+.pt-hb-go{display:block;margin-top:9px;text-align:center;background:#E3B93C;color:#17402F;font-weight:800;border-radius:9999px;padding:9px;text-decoration:none;font-size:14.5px}
+            `}</style>
+            <details className="pt-hb">
+              <summary>
+                <ShieldCheck className="pt-hb-ic" strokeWidth={2} aria-hidden="true" />
+                <span className="pt-hb-t">PayTree never touches your money.</span>
+                <span className="pt-hb-plus" aria-hidden="true">+</span>
+              </summary>
+              <div className="pt-hb-body">Clients pay you directly. We only link to your own accounts.</div>
+            </details>
+            <details className="pt-hb pt-hb-apple">
+              <summary>
+                <span aria-hidden="true" className="pt-wig pt-hb-ap">🍎</span>
+                <span className="pt-hb-t">
+                  Earn $0.25 per friend
+                  <small>Free to join. An apple for every friend who subscribes</small>
+                </span>
+                <span className="pt-hb-plus" aria-hidden="true">+</span>
+              </summary>
+              <div className="pt-hb-body">
+                <ol className="pt-hb-st">
+                  <li><b>Sign up free</b> (7-day free trial, no credit card required). Your own invite link is ready in your dashboard.</li>
+                  <li><b>Share it</b> with your friends. It keeps working until Dec 31, 2026, even if you don&apos;t subscribe.</li>
+                  <li>Every friend who <b>subscribes</b> drops an apple in your basket, worth <b>$0.25</b>.</li>
+                </ol>
+                On Harvest Day, <b>Jan 1, 2027</b>, swap your apples for cash.
+                {SIGNUPS_OPEN ? (
+                  <Link href="/signup" className="pt-hb-go">
+                    Start free
+                  </Link>
+                ) : null}
               </div>
-            </div>
-            <div className="pt-box flex w-full max-w-[318px] items-center gap-2.5 rounded-[20px] border-2 border-[#D6403F] bg-white px-[13px] py-[9px] text-left">
-              <span aria-hidden="true" className="pt-wig text-[27px] leading-none">🍎</span>
-              <div>
-                <p className="text-[14.3px] font-extrabold leading-snug text-[#064E3B]">The Apple Challenge</p>
-                <p className="mt-0.5 text-[12px] font-semibold leading-[1.28] text-[#2F4A3E]">
-                  Invite friends. Each apple = $0.25. On Harvest Day, Jan 1, 2027, swap your apples for cash.
-                </p>
-              </div>
-            </div>
+            </details>
             {/* Moving strip of payment methods (full width on phones) */}
             <section
               aria-label="Supported payment methods"
