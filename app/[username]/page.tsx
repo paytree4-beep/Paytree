@@ -195,6 +195,7 @@ export default async function PublicPaymentPage({ params }: PageProps) {
           url={`${SITE_URL}/${profile.username}`}
           label={`${SITE_HOST}/${profile.username}`}
           name={profile.displayName}
+          showActions={false}
         />
 
         <p className="mt-8 text-center text-[13px] text-[#4B6358]">
