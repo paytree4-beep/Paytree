@@ -231,8 +231,9 @@ export function QrCard({ url, label, name, showActions = true }: QrCardProps) {
   return (
     <section
       aria-labelledby="h-qr"
-      className="mt-8 flex items-center gap-5 rounded-[18px] border border-[#DCE5DF] bg-white p-5"
+      className="mt-8 overflow-hidden rounded-[18px] border border-[#DCE5DF] bg-white"
     >
+      <div className="flex items-center gap-5 p-5">
       <div ref={wrapRef} className="shrink-0 rounded-lg bg-white">
         <QRCodeSVG
           value={url}
@@ -252,9 +253,6 @@ export function QrCard({ url, label, name, showActions = true }: QrCardProps) {
         <p className="mt-1.5 text-[16px] leading-snug text-[#4B6358]">
           Point your phone camera at the code to open this page, or share it in person and in
           print.
-        </p>
-        <p className="mt-2 text-[16px] font-semibold" style={{ color: "#064E3B" }}>
-          {label}
         </p>
         {showActions ? (
           <>
@@ -295,6 +293,15 @@ export function QrCard({ url, label, name, showActions = true }: QrCardProps) {
           </>
         ) : null}
       </div>
+      </div>
+
+      {/* The person's link, on a bar along the bottom of the card. */}
+      <p
+        className="px-4 py-3 text-center text-[17px] font-bold"
+        style={{ background: "#064E3B", color: "#F4C029", overflowWrap: "anywhere" }}
+      >
+        {label}
+      </p>
     </section>
   );
 }
