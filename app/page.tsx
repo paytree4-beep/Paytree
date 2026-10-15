@@ -211,7 +211,7 @@ export default function HomePage() {
 header > div{border:1.5px solid rgba(227,185,60,.5)!important}
 .pt-box.pt-box.pt-box{border:2.5px solid #E3B93C!important;box-shadow:0 14px 30px rgba(0,0,0,.35)}
 .pt-badge{width:140px;height:140px;border-radius:9999px;background:#FAF5EA;border:8px solid #B9A04A;display:flex;align-items:center;justify-content:center;box-shadow:0 0 70px rgba(227,185,60,.45);position:relative}
-h1{-webkit-font-smoothing:antialiased;text-rendering:geometricPrecision;text-shadow:0 2px 3px rgba(0,0,0,.28)}
+h1{text-shadow:0 0 1px #fff,0 1px 6px rgba(0,0,0,.35)}
 h1 [class*="text-[#E3B93C"],h1 span{text-shadow:none}
 .pt-badge img{width:114px;height:114px;object-fit:contain}
 .pt-rays{position:absolute;left:50%;top:50%;width:1100px;height:1100px;margin:-550px 0 0 -550px;pointer-events:none;background:repeating-conic-gradient(rgba(227,185,60,.10) 0 6deg,rgba(227,185,60,0) 6deg 18deg);-webkit-mask:radial-gradient(circle,#000 0,transparent 60%);mask:radial-gradient(circle,#000 0,transparent 60%)}
@@ -311,11 +311,13 @@ header,[class*="backdrop-blur"]{background-color:rgba(20,58,46,.6)!important}
             <h1 className="font-serif text-[clamp(38px,10vw,92px)] font-normal uppercase leading-[1.03] tracking-[0.01em] text-[#064E3B] [text-wrap:balance]">
               All your payment methods.
               <br />
-              <span className="pt-onelink">In one link.</span>
+              <span className="pt-onelink" data-t="In one link.">In one link.</span>
               <style>{`
-.pt-onelink{display:inline-block;white-space:nowrap;font-size:1.05em;line-height:1.05;margin-top:6px;color:#F2C94C;text-shadow:0 2px 3px rgba(0,0,0,.35);animation:pt-ol-glow 2.4s ease-in-out infinite}
+.pt-onelink{position:relative;display:inline-block;white-space:nowrap;font-size:1.05em;line-height:1.05;margin-top:6px;color:#F2C94C;-webkit-text-stroke:.9px #F2C94C;text-shadow:0 2px 3px rgba(0,0,0,.35);animation:pt-ol-glow 2.4s ease-in-out infinite}
+.pt-onelink::after{content:attr(data-t);position:absolute;left:0;top:0;width:100%;white-space:nowrap;color:transparent;-webkit-text-fill-color:transparent;-webkit-text-stroke:.9px transparent;text-shadow:none;background:linear-gradient(100deg,transparent 38%,rgba(255,252,210,.95) 50%,transparent 62%);background-size:250% 100%;background-repeat:no-repeat;-webkit-background-clip:text;background-clip:text;animation:pt-ol-shine 2.6s linear infinite}
+@keyframes pt-ol-shine{from{background-position:130% 0}to{background-position:-130% 0}}
 @keyframes pt-ol-glow{0%,100%{text-shadow:0 2px 3px rgba(0,0,0,.35),0 0 0 rgba(242,201,76,0)}50%{text-shadow:0 2px 3px rgba(0,0,0,.35),0 0 12px rgba(242,201,76,.4)}}
-@media (prefers-reduced-motion:reduce){.pt-onelink{animation:none}}
+@media (prefers-reduced-motion:reduce){.pt-onelink,.pt-onelink::after{animation:none}}
               `}</style>
             </h1>
             <div aria-hidden="true" className="h-[4px] rounded-full bg-[#F2C94C] w-[78%] max-w-[360px] lg:w-[300px]" />
