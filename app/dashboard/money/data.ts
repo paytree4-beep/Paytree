@@ -3,6 +3,9 @@
 // Loads every confirmed payment for the signed-in owner from the payment log,
 // invoices and split bills (Row Level Security limits it to their rows).
 // Each source is read on its own, so one missing table never breaks the rest.
+//
+// Invoices are included only when the owner left "Add to my income when paid"
+// on (count_income = true).
 
 import type { MoneyEntry } from "@/lib/money";
 import { shareCents } from "@/lib/splits";
@@ -15,11 +18,12 @@ export async function loadMoneyEntries(supabase: Client, userId: string): Promis
 
   // The two sources are independent, so they are read together.
   const [{ data: invoices }, { data: splits }] = await Promise.all([
-    // 2. Invoices the owner confirmed.
+    // 2. Invoices the owner confirmed and chose to count as income.
     supabase
       .from("invoices")
       .select("id, customer, title, amount_cents, claimed_method, claimed_at, confirmed_at")
       .eq("owner_id", userId)
+      .eq("count_income", true)
       .not("confirmed_at", "is", null)
       .limit(5000),
     // 3. Split bills (their confirmed shares are read next).
