@@ -35,7 +35,7 @@ export function TipGate({ children }: { children: ReactNode }) {
 
       <div className="mb-5 flex flex-col items-center">
         <p
-          className="pt-tip-badge inline-flex min-h-12 items-center justify-center rounded-[14px] px-8 text-center font-sans text-[20px] font-bold leading-none"
+          className="pt-tip-badge inline-flex min-h-[42px] items-center justify-center rounded-[14px] px-8 text-center font-sans text-[20px] font-bold leading-none"
           style={{
             background: "#F4C029",
             color: "#06382B",
