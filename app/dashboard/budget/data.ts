@@ -3,6 +3,9 @@
 // Loads the owner's budget: spending and income they added, their monthly
 // commitments, and the PayTree payments they confirmed (they count as money
 // in). Gives totals for today, any month (current by default) and its year.
+//
+// Split-the-bill payments are NOT counted as income: that money is a shared
+// bill being paid back, not earnings. Pages and invoices still count.
 
 import { cookies } from "next/headers";
 
@@ -29,7 +32,7 @@ export async function loadBudget(supabase: Client, userId: string, opts: { month
   const from = `${year < today.slice(0, 4) ? year : today.slice(0, 4)}-01-01`;
 
   // The three reads are independent, so they run together.
-  const [{ data: moveData, error: movesError }, { data: commitmentData }, autoEntries] = await Promise.all([
+  const [{ data: moveData, error: movesError }, { data: commitmentData }, allAutoEntries] = await Promise.all([
     supabase
       .from("money_moves")
       .select("id, kind, amount_cents, category, note, on_date, commitment_id")
@@ -45,6 +48,8 @@ export async function loadBudget(supabase: Client, userId: string, opts: { month
       .order("due_day", { ascending: true }),
     loadMoneyEntries(supabase, userId),
   ]);
+  // Split-the-bill payments are shared costs, not income, so they are left out.
+  const autoEntries = allAutoEntries.filter((e) => e.source !== "split");
   const moves = (moveData ?? []) as MoveRow[];
   const commitments = (commitmentData ?? []) as CommitmentRow[];
   const paidIds = new Set(
