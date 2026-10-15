@@ -12,6 +12,7 @@ import { Notice } from "@/components/auth/fields";
 import { SubmitButton } from "@/components/auth/submit-button";
 import { Logo } from "@/components/brand/logo";
 import { ShareLink } from "@/components/dashboard/share-link";
+import { CopyButton, ShareButton } from "@/components/dashboard/share-button";
 import { param, type SearchParams } from "@/lib/auth";
 import { formatMoney, methodLabel } from "@/lib/payment-log";
 import { SITE_URL } from "@/lib/site";
@@ -173,21 +174,23 @@ export default async function SplitPage({ searchParams }: { searchParams: Search
                           </strong>
                         </p>
                       </div>
-                      <div className="flex gap-2">
+                      <div className="flex flex-wrap gap-2">
                         <Link
                           href={`/bill/${s.id}`}
                           className="inline-flex min-h-10 items-center rounded-full border border-[#064E3B]/40 px-4 text-[14px] font-bold text-[#064E3B]"
                         >
                           Open
                         </Link>
+                        {paid >= s.people ? (
+                          <span className="inline-flex min-h-10 items-center rounded-full bg-[#E3F5E9] px-4 text-[14px] font-bold text-[#16A34A]">
+                            Completed ✓
+                          </span>
+                        ) : null}
+                        <ShareButton url={`${SITE_URL}/bill/${s.id}`} text={`${name} split "${s.title}": ${formatMoney(shareCents(s.total_cents, s.people))} each`} />
+                        <CopyButton url={`${SITE_URL}/bill/${s.id}`} />
                         <InstantDelete id={s.id} action={deleteSplitQuick} />
                       </div>
                     </div>
-                    {paid < s.people ? (
-                      <div className="mt-1">
-                        <ShareLink url={`${SITE_URL}/bill/${s.id}`} name={name} />
-                      </div>
-                    ) : null}
                     {waiting.length > 0 ? (
                       <div className="rounded-xl border border-[#E2C27A] bg-[#FBF6EA] p-3">
                         <p className="text-[14px] font-semibold text-[#7A5A12]">
