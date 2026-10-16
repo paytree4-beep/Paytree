@@ -39,8 +39,14 @@ const BADGE_COLORS: Partial<Record<MethodId, { bg: string; fg: string }>> = {
 };
 const DEFAULT_BADGE = { bg: "#E3F0EA", fg: "#064E3B" };
 
-/** `color` is only used by "Other payment method" (id "local"). */
+/** "Other payment method" has three slots: local, local2, local3. */
+export const LOCAL_IDS = ["local", "local2", "local3"] as const;
+export function isLocalId(id: string): boolean {
+  return (LOCAL_IDS as readonly string[]).includes(id);
+}
+
+/** `color` is only used by "Other payment method" (ids local, local2, local3). */
 export function badgeColor(id: string, color?: string): { bg: string; fg: string } {
-  if (id === "local") return LOCAL_BADGES[LOCAL_COLORS.find((c) => c === color) ?? "green"];
+  if (isLocalId(id)) return LOCAL_BADGES[LOCAL_COLORS.find((c) => c === color) ?? "green"];
   return BADGE_COLORS[id as MethodId] ?? DEFAULT_BADGE;
 }
