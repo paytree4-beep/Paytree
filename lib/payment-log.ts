@@ -36,6 +36,7 @@ const METHOD_LABELS: Record<ClaimMethod, string> = {
   wire: "Wire transfer",
   check: "Check",
   crypto: "Crypto",
+  local: "Other",
   cash: "Cash",
   other: "Other",
 };
