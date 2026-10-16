@@ -47,7 +47,10 @@ export async function savePaymentMethod(formData: FormData): Promise<void> {
     // Send the typed values back so the person does not have to retype them.
     const keep = new URLSearchParams({ error: "invalid", method: form.id });
     for (const field of form.fields) {
-      const value = formData.get(field.name);
+      const value =
+        field.kind === "lines"
+          ? formData.getAll(field.name).filter((v): v is string => typeof v === "string" && v !== "").join("\n")
+          : formData.get(field.name);
       if (typeof value === "string" && value) keep.set(`v_${field.name}`, value.slice(0, field.maxLength));
     }
     redirect(`/dashboard/payments?${keep}#${form.id}`);

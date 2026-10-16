@@ -71,7 +71,7 @@ const LOCAL_FORMS: MethodForm[] = (["local", "local2", "local3"] as const).map((
     {
       name: "list",
       label: "Where to send the money",
-      hint: `One per line: phone number, email, or account name. Up to ${LOCAL_MAX_ACCOUNTS}.`,
+      hint: `Phone number, email, or account name. Up to ${LOCAL_MAX_ACCOUNTS} accounts, one per box.`,
       maxLength: 600,
       required: true,
       kind: "lines" as const,
@@ -157,7 +157,15 @@ function str(formData: FormData, name: string): string {
 export function configFromForm(form: MethodForm, formData: FormData): Record<string, string> | null {
   const config: Record<string, string> = {};
   for (const field of form.fields) {
-    const raw = str(formData, field.name);
+    // A "lines" field can arrive as several boxes with the same name (one account each).
+    const raw =
+      field.kind === "lines"
+        ? formData
+            .getAll(field.name)
+            .map((v) => (typeof v === "string" ? v.trim() : ""))
+            .filter(Boolean)
+            .join("\n")
+        : str(formData, field.name);
     // A long multi-line box is rejected, never cut, so an account can not be saved half-typed.
     if (field.kind === "lines" && raw.length > field.maxLength) return null;
     const value = raw.slice(0, field.maxLength);
