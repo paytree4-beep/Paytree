@@ -6,6 +6,7 @@
 // bad or malicious value stored in the database can never become a link.
 
 import { avatarUrl } from "./avatar";
+import { LOCAL_COLORS, type LocalColor } from "./payment-colors";
 
 export const METHOD_IDS = [
   "cashapp",
@@ -91,9 +92,9 @@ export interface CustomLink {
   url: string;
 }
 
-/** Colors the owner can pick for an "Other payment method" (see lib/payment-colors.ts). */
-export const LOCAL_COLORS = ["green", "blue", "purple", "orange", "red", "pink", "gold", "black"] as const;
-export type LocalColor = (typeof LOCAL_COLORS)[number];
+/** The colors an owner can pick for an "Other payment method" live in lib/payment-colors.ts. */
+export { LOCAL_COLORS };
+export type { LocalColor };
 
 /** Most accounts one "Other payment method" can hold. */
 export const LOCAL_MAX_ACCOUNTS = 5;
