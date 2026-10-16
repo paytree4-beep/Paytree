@@ -9,6 +9,7 @@
 // encrypted first (payment_method_secrets), which is its own phase.
 
 import { LOCAL_COLORS, LOCAL_MAX_ACCOUNTS, resolveMethods, type PaymentSettings } from "./profiles";
+import { isLocalId } from "./payment-colors";
 
 export type EditableMethod =
   | "cashapp"
@@ -23,7 +24,9 @@ export type EditableMethod =
   | "chime"
   | "check"
   | "crypto"
-  | "local";
+  | "local"
+  | "local2"
+  | "local3";
 
 export interface FormField {
   name: string;
@@ -58,6 +61,25 @@ const one = (label: string, hint: string, maxLength = 120): FormField[] => [
 ];
 
 /** Same order as the public page. */
+/** "Other payment method": three separate slots, each with its own name, color and accounts. */
+const LOCAL_FORMS: MethodForm[] = (["local", "local2", "local3"] as const).map((id, i) => ({
+  id,
+  category: "other" as const,
+  title: `Other method ${i + 1}`,
+  fields: [
+    { name: "name", label: "Service name", hint: "The name your customer knows. It is shown in bold on your page.", maxLength: 30, required: true },
+    {
+      name: "list",
+      label: "Where to send the money",
+      hint: `One per line: phone number, email, or account name. Up to ${LOCAL_MAX_ACCOUNTS}.`,
+      maxLength: 600,
+      required: true,
+      kind: "lines" as const,
+    },
+    { name: "color", label: "Color", maxLength: 10, required: false, kind: "color" as const },
+  ],
+}));
+
 export const METHOD_FORMS: MethodForm[] = [
   { id: "cashapp", category: "apps", title: "Cash App", fields: one("Your $Cashtag", "For example $yourname.", 40) },
   { id: "venmo", category: "apps", title: "Venmo", fields: one("Your Venmo username", "For example @your-name.", 60) },
@@ -116,23 +138,7 @@ export const METHOD_FORMS: MethodForm[] = [
     title: "Crypto (USDT)",
     fields: one("USDT address on the Tron (TRC-20) network", "Starts with T, 34 characters. Double-check it: crypto sent to a wrong address cannot be recovered.", 34),
   },
-  {
-    id: "local",
-    category: "other",
-    title: "Other payment method",
-    fields: [
-      { name: "name", label: "Name", hint: "Name of the payment method.", maxLength: 30, required: true },
-      {
-        name: "list",
-        label: "Account details",
-        hint: `One account per line. Phone number, email, or account name. Up to ${LOCAL_MAX_ACCOUNTS}.`,
-        maxLength: 600,
-        required: true,
-        kind: "lines",
-      },
-      { name: "color", label: "Color", maxLength: 10, required: false, kind: "color" },
-    ],
-  },
+  ...LOCAL_FORMS,
 ];
 
 export function findMethodForm(id: unknown): MethodForm | null {
@@ -168,7 +174,9 @@ export function configFromForm(form: MethodForm, formData: FormData): Record<str
       settings.crypto = { address: config.value };
       break;
     case "local":
-      settings.local = { name: config.name, accounts: (config.list ?? "").split(/\r?\n/), color: config.color };
+    case "local2":
+    case "local3":
+      settings[form.id] = { name: config.name, accounts: (config.list ?? "").split(/\r?\n/), color: config.color };
       break;
     case "check":
       settings.check = {
@@ -186,7 +194,7 @@ export function configFromForm(form: MethodForm, formData: FormData): Record<str
 
   if (resolveMethods(settings).length === 0) return null;
 
-  if (form.id === "local") {
+  if (isLocalId(form.id)) {
     // Store clean lines (no blanks, no repeats) and a known color.
     const lines: string[] = [];
     for (const line of (config.list ?? "").split(/\r?\n/)) {
