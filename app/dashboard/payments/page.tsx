@@ -16,8 +16,9 @@ import { SubmitButton } from "@/components/auth/submit-button";
 import { Logo } from "@/components/brand/logo";
 import { ReorderList, type ReorderItem } from "@/components/dashboard/reorder-list";
 import { param, type SearchParams } from "@/lib/auth";
-import { badgeColor } from "@/lib/payment-colors";
+import { badgeColor, LOCAL_BADGES } from "@/lib/payment-colors";
 import { CATEGORIES, METHOD_FORMS, findMethodForm, formValues } from "@/lib/payment-forms";
+import { LOCAL_COLORS } from "@/lib/profiles";
 import { createClient } from "@/lib/supabase/server";
 import { removePaymentMethod, savePaymentMethod } from "./actions";
 
@@ -68,7 +69,15 @@ export default async function PaymentsPage({ searchParams }: { searchParams: Sea
   const orderItems: ReorderItem[] = ((data ?? []) as Row[])
     .map((row) => METHOD_FORMS.find((m) => m.id === row.method_id))
     .filter((m): m is (typeof METHOD_FORMS)[number] => Boolean(m))
-    .map((m) => ({ id: m.id, title: m.title, color: badgeColor(m.id).bg }));
+    .map((m) => {
+      // "Other payment method" shows the owner's own name and color in the list.
+      const cfg = stored.get(m.id);
+      const obj = typeof cfg === "object" && cfg !== null ? (cfg as Record<string, unknown>) : {};
+      const own = m.id === "local";
+      const title = own && typeof obj.name === "string" && obj.name ? obj.name : m.title;
+      const tone = own && typeof obj.color === "string" ? obj.color : undefined;
+      return { id: m.id, title, color: badgeColor(m.id, tone).bg };
+    });
 
   return (
     <div className="min-h-screen bg-[#FAF5EA] text-[#0B1F18]">
@@ -184,7 +193,7 @@ export default async function PaymentsPage({ searchParams }: { searchParams: Sea
                       if (typed !== undefined) values[field.name] = typed;
                     }
                   }
-                  const color = badgeColor(form.id);
+                  const color = badgeColor(form.id, values.color);
                   const open = hasError || saved?.id === form.id;
                   return (
                     <details
@@ -222,18 +231,60 @@ export default async function PaymentsPage({ searchParams }: { searchParams: Sea
 
                         <form action={savePaymentMethod} className="flex flex-col gap-4">
                           <input type="hidden" name="method" value={form.id} />
-                          {form.fields.map((field) => (
-                            <Field
-                              key={field.name}
-                              label={field.label}
-                              name={field.name}
-                              hint={field.hint}
-                              defaultValue={values[field.name]}
-                              required={field.required ?? true}
-                              maxLength={field.maxLength}
-                              inputMode={field.inputMode}
-                            />
-                          ))}
+                          {form.fields.map((field) =>
+                            field.kind === "lines" ? (
+                              <div key={field.name} className="flex flex-col gap-1.5">
+                                <label htmlFor={`field-${form.id}-${field.name}`} className="text-sm font-semibold text-[#0B1F18]">
+                                  {field.label}
+                                </label>
+                                <textarea
+                                  id={`field-${form.id}-${field.name}`}
+                                  name={field.name}
+                                  rows={5}
+                                  required={field.required ?? true}
+                                  maxLength={field.maxLength}
+                                  defaultValue={values[field.name]}
+                                  spellCheck={false}
+                                  autoCapitalize="none"
+                                  className="min-h-[140px] w-full rounded-xl border border-[#C9D6CE] bg-white px-4 py-3 text-[18px] font-medium leading-relaxed text-[#0B1F18] outline-none focus:border-[#064E3B]"
+                                />
+                                {field.hint ? <p className="text-[14px] text-[#2C463A]">{field.hint}</p> : null}
+                              </div>
+                            ) : field.kind === "color" ? (
+                              <fieldset key={field.name} className="flex flex-col gap-2">
+                                <legend className="text-sm font-semibold text-[#0B1F18]">{field.label}</legend>
+                                <div className="flex flex-wrap gap-3">
+                                  {LOCAL_COLORS.map((c) => (
+                                    <label key={c} className="cursor-pointer">
+                                      <input
+                                        type="radio"
+                                        name={field.name}
+                                        value={c}
+                                        defaultChecked={(values[field.name] ?? "green") === c}
+                                        className="peer sr-only"
+                                      />
+                                      <span
+                                        title={c}
+                                        style={{ backgroundColor: LOCAL_BADGES[c].bg }}
+                                        className="block h-11 w-11 rounded-full ring-offset-2 peer-checked:ring-4 peer-checked:ring-[#064E3B] peer-focus-visible:ring-4 peer-focus-visible:ring-[#D9B873]"
+                                      />
+                                    </label>
+                                  ))}
+                                </div>
+                              </fieldset>
+                            ) : (
+                              <Field
+                                key={field.name}
+                                label={field.label}
+                                name={field.name}
+                                hint={field.hint}
+                                defaultValue={values[field.name]}
+                                required={field.required ?? true}
+                                maxLength={field.maxLength}
+                                inputMode={field.inputMode}
+                              />
+                            ),
+                          )}
                           <div className="sm:max-w-[240px]">
                             <SubmitButton pendingText="Saving…">{isAdded ? "Save changes" : "Add to my page"}</SubmitButton>
                           </div>
