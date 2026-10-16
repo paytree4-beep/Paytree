@@ -18,7 +18,7 @@ import { ReorderList, type ReorderItem } from "@/components/dashboard/reorder-li
 import { param, type SearchParams } from "@/lib/auth";
 import { badgeColor, isLocalId, LOCAL_BADGES } from "@/lib/payment-colors";
 import { CATEGORIES, METHOD_FORMS, findMethodForm, formValues } from "@/lib/payment-forms";
-import { LOCAL_COLORS } from "@/lib/profiles";
+import { LOCAL_COLORS, LOCAL_MAX_ACCOUNTS } from "@/lib/profiles";
 import { createClient } from "@/lib/supabase/server";
 import { removePaymentMethod, savePaymentMethod } from "./actions";
 
@@ -237,17 +237,23 @@ export default async function PaymentsPage({ searchParams }: { searchParams: Sea
                                 <label htmlFor={`field-${form.id}-${field.name}`} className="text-sm font-semibold text-[#0B1F18]">
                                   {field.label}
                                 </label>
-                                <textarea
-                                  id={`field-${form.id}-${field.name}`}
-                                  name={field.name}
-                                  rows={5}
-                                  required={field.required ?? true}
-                                  maxLength={field.maxLength}
-                                  defaultValue={values[field.name]}
-                                  spellCheck={false}
-                                  autoCapitalize="none"
-                                  className="min-h-[140px] w-full rounded-xl border border-[#C9D6CE] bg-white px-4 py-3 text-[18px] font-medium leading-relaxed text-[#0B1F18] outline-none focus:border-[#064E3B]"
-                                />
+                                {Array.from({ length: LOCAL_MAX_ACCOUNTS }, (_, n) => (
+                                  <input
+                                    key={n}
+                                    type="text"
+                                    name={field.name}
+                                    id={n === 0 ? `field-${form.id}-${field.name}` : undefined}
+                                    aria-label={`Account ${n + 1}`}
+                                    placeholder={n === 0 ? "Account 1" : `Account ${n + 1} (optional)`}
+                                    required={n === 0 && (field.required ?? true)}
+                                    maxLength={120}
+                                    defaultValue={(values[field.name] ?? "").split("\n")[n] ?? ""}
+                                    spellCheck={false}
+                                    autoCapitalize="none"
+                                    dir="auto"
+                                    className="min-h-[52px] w-full rounded-xl border border-[#C9D6CE] bg-white px-4 text-[18px] font-medium text-[#0B1F18] outline-none placeholder:text-[#8AA095] focus:border-[#064E3B]"
+                                  />
+                                ))}
                                 {field.hint ? <p className="text-[14px] text-[#2C463A]">{field.hint}</p> : null}
                               </div>
                             ) : field.kind === "color" ? (
