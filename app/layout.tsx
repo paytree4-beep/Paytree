@@ -9,6 +9,7 @@ import Script from "next/script";
 import { Instrument_Serif, Plus_Jakarta_Sans } from "next/font/google";
 import type { ReactNode } from "react";
 
+import { RefCapture } from "@/components/ref-capture";
 import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 
@@ -66,6 +67,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="en" translate="no" className={`${sans.variable} ${serif.variable}`}>
       <body className="min-h-screen bg-[#FBFBFB] font-sans text-[#0B1F18] antialiased">
         {children}
+        {/* Remembers who sent the visitor (?ref=) so the referrer can earn an apple. */}
+        <RefCapture />
         {/* Vercel Analytics: counts visitors and page views. No package needed. */}
         <Script id="vercel-analytics-init" strategy="afterInteractive">
           {`window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };`}
