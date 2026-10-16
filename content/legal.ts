@@ -209,7 +209,7 @@ export const TERMS: LegalDocument = {
 export const PRIVACY: LegalDocument = {
   title: "Privacy Policy",
   summary: "What we collect, why, and the choices you have.",
-  lastUpdated: "October 13, 2026",
+  lastUpdated: "October 16, 2026",
   intro:
     "This Privacy Policy explains what ABUHIDAR LLC (“PayTree,” “we,” “us”) collects when you use PayTree, and how we use and protect it. It covers two groups of people: account holders who build pages, and visitors who view those pages.",
   sections: [
@@ -320,7 +320,7 @@ export const PRIVACY: LegalDocument = {
       id: "location",
       title: "Where information is processed",
       intro: [
-        "The Service is operated in the United States and is intended for people in the United States. Information is processed and stored in the United States.",
+        "The Service is operated from the United States and is available to people around the world. Information is processed and stored in the United States, so if you use PayTree from another country, your information will be transferred to and handled in the United States.",
       ],
     },
     {
