@@ -4,7 +4,13 @@
  * Each service's signature color behind a simple icon, so visitors spot the
  * one they use at a glance. Only colors, never the services' own logos.
  */
-import { LOCAL_COLORS, type LocalColor, type MethodId } from "./profiles";
+// This file is used by the browser, so it must not import anything from
+// ./profiles except types (profiles.ts pulls in server-only code).
+import type { MethodId } from "./profiles";
+
+/** Colors the owner can pick for an "Other payment method". */
+export const LOCAL_COLORS = ["green", "blue", "purple", "orange", "red", "pink", "gold", "black"] as const;
+export type LocalColor = (typeof LOCAL_COLORS)[number];
 
 /** The colors an owner can pick for an "Other payment method". */
 export const LOCAL_BADGES: Record<LocalColor, { bg: string; fg: string }> = {
