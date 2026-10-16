@@ -38,7 +38,7 @@ export const LEGAL_TEMPLATE_NOTICE = "";
 export const TERMS: LegalDocument = {
   title: "Terms of Service",
   summary: "The rules for using PayTree.",
-  lastUpdated: "October 13, 2026",
+  lastUpdated: "October 16, 2026",
   intro:
     "These Terms of Service (the “Terms”) govern your use of PayTree (the “Service”), operated by ABUHIDAR LLC (“PayTree,” “we,” “us”). By creating an account or using the Service, you agree to these Terms.",
   sections: [
