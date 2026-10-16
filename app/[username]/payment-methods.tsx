@@ -15,6 +15,7 @@ import {
   Bell,
   Building2,
   Check,
+  ChevronDown,
   CircleAlert,
   Coins,
   Copy,
@@ -136,6 +137,7 @@ export function PaymentMethods({ username, displayName, methods, extra, extraInd
   const openScope = scope ?? username;
   const [toast, setToast] = useState<ToastState | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [openId, setOpenId] = useState<string | null>(null);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const appTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const viewTracked = useRef(false);
@@ -173,6 +175,25 @@ export function PaymentMethods({ username, displayName, methods, extra, extraInd
         setCopiedId(method.id);
         rememberOpened(openScope, method.id);
         showToast(method.copyToast ?? `${method.label} copied to clipboard`);
+        track({ username, action: "copy", method: method.id });
+      } else {
+        showToast(
+          "Copying was blocked by your browser. Press and hold the details to copy them.",
+          "warning",
+        );
+      }
+    },
+    [showToast, username, openScope],
+  );
+
+  /** Copies one account of a method that holds several (Other payment method). */
+  const handleCopyAccount = useCallback(
+    async (method: ResolvedMethod, value: string) => {
+      const ok = await copyToClipboard(value);
+      if (ok) {
+        setCopiedId(`${method.id}:${value}`);
+        rememberOpened(openScope, method.id);
+        showToast(`${method.label} account copied to clipboard`);
         track({ username, action: "copy", method: method.id });
       } else {
         showToast(
@@ -241,6 +262,15 @@ export function PaymentMethods({ username, displayName, methods, extra, extraInd
                       key={method.id}
                       method={method}
                       onClick={(event) => handleLinkClick(event, method)}
+                    />
+                  ) : method.accounts && method.accounts.length > 1 ? (
+                    <MultiRow
+                      key={method.id}
+                      method={method}
+                      open={openId === method.id}
+                      onToggle={() => setOpenId(openId === method.id ? null : method.id)}
+                      copiedId={copiedId}
+                      onCopy={(value) => handleCopyAccount(method, value)}
                     />
                   ) : (
                     <CopyRow
@@ -319,9 +349,9 @@ const ROW_CLASSES =
 
 
 /** Round badge with the method's icon on its signature color. */
-function IconBadge({ icon, id }: { icon: MethodIcon; id: MethodId }) {
+function IconBadge({ icon, id, tone }: { icon: MethodIcon; id: MethodId; tone?: string }) {
   const Icon = ICONS[icon];
-  const color = badgeColor(id);
+  const color = badgeColor(id, tone);
   return (
     <span
       aria-hidden="true"
@@ -342,7 +372,16 @@ function RowText({ method }: { method: ResolvedMethod }) {
           <span className="text-[13px] font-medium text-[#4B6358]"> · {method.tag}</span>
         ) : null}
       </span>
-      <span className="block truncate text-[13px] tabular-nums text-[#4B6358]">{method.detail}</span>
+      <span
+        dir={method.id === "local" ? "auto" : undefined}
+        className={
+          method.id === "local"
+            ? "block truncate text-[16px] font-semibold tabular-nums text-[#0B1F18]"
+            : "block truncate text-[13px] tabular-nums text-[#4B6358]"
+        }
+      >
+        {method.detail}
+      </span>
     </span>
   );
 }
@@ -365,7 +404,7 @@ function LinkRow({
       {...(isWeb ? { target: "_blank", rel: "noopener noreferrer nofollow ugc" } : {})}
       className={ROW_CLASSES}
     >
-      <IconBadge icon={method.icon} id={method.id} />
+      <IconBadge icon={method.icon} id={method.id} tone={method.color} />
       <RowText method={method} />
       <ArrowUpRight className="h-5 w-5 flex-none text-[#064E3B]" strokeWidth={2} aria-hidden="true" />
     </a>
@@ -388,7 +427,7 @@ function CopyRow({
       aria-label={`Copy ${method.label} details`}
       className={ROW_CLASSES}
     >
-      <IconBadge icon={method.icon} id={method.id} />
+      <IconBadge icon={method.icon} id={method.id} tone={method.color} />
       <RowText method={method} />
       <span
         className={`inline-flex min-h-9 flex-none items-center gap-1.5 rounded-full px-3.5 text-sm font-semibold ${
@@ -403,5 +442,68 @@ function CopyRow({
         {copied ? "Copied" : "Copy"}
       </span>
     </button>
+  );
+}
+
+/** One method that holds several accounts: tap to open the list, each account has its own Copy button. */
+function MultiRow({
+  method,
+  open,
+  onToggle,
+  copiedId,
+  onCopy,
+}: {
+  method: ResolvedMethod;
+  open: boolean;
+  onToggle: () => void;
+  copiedId: string | null;
+  onCopy: (value: string) => void;
+}) {
+  return (
+    <div className="overflow-hidden rounded-[18px] border border-[#DCE5DF] bg-white text-[#0B1F18]">
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-expanded={open}
+        className="flex min-h-[72px] w-full items-center gap-3.5 px-[18px] py-3.5 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#D9B873]"
+      >
+        <IconBadge icon={method.icon} id={method.id} tone={method.color} />
+        <RowText method={method} />
+        <ChevronDown
+          className={`h-5 w-5 flex-none text-[#064E3B] transition-transform motion-reduce:transition-none ${open ? "rotate-180" : ""}`}
+          strokeWidth={2}
+          aria-hidden="true"
+        />
+      </button>
+      {open ? (
+        <ul className="border-t border-[#DCE5DF]">
+          {(method.accounts ?? []).map((account) => {
+            const copied = copiedId === `${method.id}:${account}`;
+            return (
+              <li key={account} className="flex items-center gap-3 border-b border-[#E6ECE8] px-[18px] py-3 last:border-b-0">
+                <span dir="auto" className="min-w-0 flex-1 break-all text-[17px] font-semibold text-[#0B1F18]">
+                  {account}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => onCopy(account)}
+                  aria-label={`Copy ${account}`}
+                  className={`inline-flex min-h-9 flex-none items-center gap-1.5 rounded-full px-3.5 text-sm font-semibold ${
+                    copied ? "bg-[#064E3B] text-[#FBFBFB]" : "bg-[#E3F0EA] text-[#064E3B]"
+                  }`}
+                >
+                  {copied ? (
+                    <Check className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
+                  ) : (
+                    <Copy className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
+                  )}
+                  {copied ? "Copied" : "Copy"}
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      ) : null}
+    </div>
   );
 }

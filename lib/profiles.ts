@@ -6,6 +6,7 @@
 // bad or malicious value stored in the database can never become a link.
 
 import { avatarUrl } from "./avatar";
+import { LOCAL_COLORS, type LocalColor } from "./payment-colors";
 
 export const METHOD_IDS = [
   "cashapp",
@@ -22,6 +23,7 @@ export const METHOD_IDS = [
   "wire",
   "check",
   "crypto",
+  "local",
 ] as const;
 
 export type MethodId = (typeof METHOD_IDS)[number];
@@ -90,6 +92,22 @@ export interface CustomLink {
   url: string;
 }
 
+/** The colors an owner can pick for an "Other payment method" live in lib/payment-colors.ts. */
+export { LOCAL_COLORS };
+export type { LocalColor };
+
+/** Most accounts one "Other payment method" can hold. */
+export const LOCAL_MAX_ACCOUNTS = 5;
+
+export interface LocalMethod {
+  /** Name of the service, for example "CliQ" or "Interac". */
+  name: string;
+  /** Phone numbers, emails or account names. Copied, never opened as links. */
+  accounts: string[];
+  /** One of LOCAL_COLORS. Anything else falls back to green. */
+  color?: string;
+}
+
 /**
  * What the user typed into the dashboard. Every field is optional: a method
  * the user left empty is simply never shown on the public page.
@@ -109,6 +127,7 @@ export interface PaymentSettings {
   wire?: WireAccount;
   check?: CheckAddress;
   custom?: CustomLink;
+  local?: LocalMethod; // "Other payment method": a name and up to 5 accounts to copy
 }
 
 export interface Profile {
@@ -153,6 +172,10 @@ export interface ResolvedMethod {
   copyValue?: string;
   /** kind === "copy": confirmation shown in the toast. */
   copyToast?: string;
+  /** kind === "copy" with several accounts (Other payment method): each one gets its own Copy button. */
+  accounts?: string[];
+  /** Badge color chosen by the owner (Other payment method only). */
+  color?: LocalColor;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -195,7 +218,15 @@ export function normalizeUsername(raw: string): string | null {
   } catch {
     return null;
   }
-  const value = decoded.trim().toLowerCase();
+  // Phone keyboards (Arabic ones especially) can slip invisible direction marks
+  // into a field. Strip those, plus a pasted "@" or site address, before checking.
+  const value = decoded
+    .replace(/[\u200B-\u200F\u202A-\u202E\u2066-\u2069\uFEFF]/g, "")
+    .trim()
+    .toLowerCase()
+    .replace(/^https?:\/\//, "")
+    .replace(/^(www\.)?paytree\.to\//, "")
+    .replace(/^@/, "");
   if (!USERNAME_RULE.test(value)) return null;
   if (isReservedUsername(value)) return null;
   return value;
@@ -437,6 +468,31 @@ function cleanCustom(raw: CustomLink | undefined) {
   return { label, href: `https://${host}${url.pathname}${url.search}`, host };
 }
 
+/**
+ * "Other payment method": any service that has no public link (Interac, CliQ,
+ * STC Pay, a mobile wallet...). The owner types a name and up to 5 accounts.
+ * Visitors can only copy them. They are never turned into links, and letters
+ * from any language are allowed.
+ */
+const LOCAL_NAME_RULE = /^[\p{L}\p{N}][\p{L}\p{N} .,'&!()+-]{0,29}$/u;
+const LOCAL_ACCOUNT_RULE = /^[\p{L}\p{N}+@#$][\p{L}\p{N} .,_@#$()+:/'&-]{1,59}$/u;
+
+function cleanLocal(raw: LocalMethod | undefined) {
+  if (!raw) return null;
+  const name = raw.name.trim().replace(/\s+/g, " ");
+  if (!LOCAL_NAME_RULE.test(name)) return null;
+  const accounts: string[] = [];
+  for (const line of raw.accounts) {
+    const value = line.trim().replace(/\s+/g, " ");
+    if (!value) continue;
+    if (!LOCAL_ACCOUNT_RULE.test(value) || value.includes("://")) return null; // links belong in "Custom link"
+    if (!accounts.includes(value)) accounts.push(value);
+  }
+  if (accounts.length === 0 || accounts.length > LOCAL_MAX_ACCOUNTS) return null;
+  const color: LocalColor = LOCAL_COLORS.find((c) => c === raw.color) ?? "green";
+  return { name, accounts, color };
+}
+
 /* -------------------------------------------------------------------------- */
 /* Resolver: settings in, safe buttons out                                    */
 /* -------------------------------------------------------------------------- */
@@ -655,6 +711,23 @@ export function resolveMethods(settings: PaymentSettings): ResolvedMethod[] {
     });
   }
 
+  const local = cleanLocal(settings.local);
+  if (local) {
+    const single = local.accounts.length === 1;
+    methods.push({
+      id: "local",
+      group: "bank",
+      label: local.name,
+      icon: "wallet",
+      kind: "copy",
+      detail: single ? local.accounts[0] : `${local.accounts.length} accounts`,
+      copyValue: single ? local.accounts[0] : undefined,
+      copyToast: `${local.name} copied to clipboard`,
+      accounts: single ? undefined : local.accounts,
+      color: local.color,
+    });
+  }
+
   const crypto = cleanCrypto(settings.crypto);
   if (crypto) {
     methods.push({
@@ -725,6 +798,7 @@ function text(value: unknown): string | undefined {
 /**
  * Turns payment_methods rows into PaymentSettings. public_config holds:
  *   text methods: { "value": "..." }        custom: { "label", "url" }
+ *   local: { "name", "list" (one account per line), "color" }
  *   crypto: { "address" }                    check: { "payableTo", "line1", "line2"?, "city", "state", "zip" }
  * ACH and wire need the encrypted bank details (payment_method_secrets), which
  * arrive with the bank-details phase, so they are skipped here.
@@ -749,6 +823,10 @@ export function settingsFromRows(rows: MethodRow[]): PaymentSettings {
       const label = text(config.label);
       const url = text(config.url);
       if (label && url) settings.custom = { label, url };
+    } else if (id === "local") {
+      const name = text(config.name);
+      const list = text(config.list);
+      if (name && list) settings.local = { name, accounts: list.split("\n"), color: text(config.color) };
     } else if (id === "crypto") {
       const address = text(config.address);
       if (address) settings.crypto = { address };
