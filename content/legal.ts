@@ -1,6 +1,6 @@
 // content/legal.ts
 //
-// Terms of Service and Privacy Policy for PayTree (United States).
+// Terms of Service and Privacy Policy for PayTree.
 //
 // THIS IS A TEMPLATE, NOT LEGAL ADVICE. Every [BRACKETED] item must be
 // replaced, and a licensed attorney should review both documents before
@@ -46,7 +46,7 @@ export const TERMS: LegalDocument = {
       id: "eligibility",
       title: "Who can use PayTree",
       intro: [
-        "You must be at least 18 years old and able to form a binding contract. The Service is intended for use in the United States.",
+        "You must be at least 18 years old and able to form a binding contract. PayTree is available to people around the world. You are responsible for following the laws that apply to you where you live and do business, including tax, consumer and payment rules.",
         "If you use the Service for a business, you confirm that you have authority to bind that business to these Terms.",
       ],
     },
