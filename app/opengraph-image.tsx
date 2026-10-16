@@ -52,12 +52,12 @@ export default function Image() {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={`${SITE_URL}/logo-mark.png`} width={150} height={150} alt="" />
           </div>
-          <span style={{ fontSize: 100, fontWeight: 800, color: "#FFFFFF", marginLeft: 24 }}>PayTree</span>
+          <span style={{ fontSize: 108, fontWeight: 800, color: "#FFFFFF", marginLeft: 24 }}>PayTree</span>
         </div>
-        <span style={{ fontSize: 66, fontWeight: 800, color: "#FFFFFF", marginTop: 40 }}>
+        <span style={{ fontSize: 74, fontWeight: 800, color: "#FFFFFF", marginTop: 36 }}>
           The Easiest Way to Get Paid.
         </span>
-        <span style={{ fontSize: 58, fontWeight: 800, color: "#E3B93C", marginTop: 14 }}>
+        <span style={{ fontSize: 64, fontWeight: 800, color: "#E3B93C", marginTop: 12 }}>
           One Link. Every Payment Method.
         </span>
       </div>
