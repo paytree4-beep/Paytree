@@ -32,7 +32,7 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
-import { badgeColor } from "@/lib/payment-colors";
+import { badgeColor, isLocalId } from "@/lib/payment-colors";
 import type { MethodGroup, MethodIcon, MethodId, ResolvedMethod } from "@/lib/profiles";
 import { rememberOpened } from "@/lib/pay-intent";
 import { track } from "./track";
@@ -373,9 +373,9 @@ function RowText({ method }: { method: ResolvedMethod }) {
         ) : null}
       </span>
       <span
-        dir={method.id === "local" ? "auto" : undefined}
+        dir={isLocalId(method.id) ? "auto" : undefined}
         className={
-          method.id === "local"
+          isLocalId(method.id)
             ? "block truncate text-[16px] font-semibold tabular-nums text-[#0B1F18]"
             : "block truncate text-[13px] tabular-nums text-[#4B6358]"
         }

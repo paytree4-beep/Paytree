@@ -6,7 +6,7 @@
 // bad or malicious value stored in the database can never become a link.
 
 import { avatarUrl } from "./avatar";
-import { LOCAL_COLORS, type LocalColor } from "./payment-colors";
+import { LOCAL_COLORS, LOCAL_IDS, type LocalColor } from "./payment-colors";
 
 export const METHOD_IDS = [
   "cashapp",
@@ -24,6 +24,8 @@ export const METHOD_IDS = [
   "check",
   "crypto",
   "local",
+  "local2",
+  "local3",
 ] as const;
 
 export type MethodId = (typeof METHOD_IDS)[number];
@@ -127,7 +129,9 @@ export interface PaymentSettings {
   wire?: WireAccount;
   check?: CheckAddress;
   custom?: CustomLink;
-  local?: LocalMethod; // "Other payment method": a name and up to 5 accounts to copy
+  local?: LocalMethod; // "Other payment method" (3 slots): a name and up to 5 accounts to copy
+  local2?: LocalMethod;
+  local3?: LocalMethod;
 }
 
 export interface Profile {
@@ -711,16 +715,17 @@ export function resolveMethods(settings: PaymentSettings): ResolvedMethod[] {
     });
   }
 
-  const local = cleanLocal(settings.local);
-  if (local) {
+  for (const slot of LOCAL_IDS) {
+    const local = cleanLocal(settings[slot]);
+    if (!local) continue;
     const single = local.accounts.length === 1;
     methods.push({
-      id: "local",
+      id: slot,
       group: "bank",
       label: local.name,
       icon: "wallet",
       kind: "copy",
-      detail: single ? local.accounts[0] : `${local.accounts.length} accounts`,
+      detail: single ? `Send to ${local.accounts[0]}` : `${local.accounts.length} accounts · tap to open`,
       copyValue: single ? local.accounts[0] : undefined,
       copyToast: `${local.name} copied to clipboard`,
       accounts: single ? undefined : local.accounts,
@@ -798,7 +803,7 @@ function text(value: unknown): string | undefined {
 /**
  * Turns payment_methods rows into PaymentSettings. public_config holds:
  *   text methods: { "value": "..." }        custom: { "label", "url" }
- *   local: { "name", "list" (one account per line), "color" }
+ *   local, local2, local3: { "name", "list" (one account per line), "color" }
  *   crypto: { "address" }                    check: { "payableTo", "line1", "line2"?, "city", "state", "zip" }
  * ACH and wire need the encrypted bank details (payment_method_secrets), which
  * arrive with the bank-details phase, so they are skipped here.
@@ -823,10 +828,10 @@ export function settingsFromRows(rows: MethodRow[]): PaymentSettings {
       const label = text(config.label);
       const url = text(config.url);
       if (label && url) settings.custom = { label, url };
-    } else if (id === "local") {
+    } else if (id === "local" || id === "local2" || id === "local3") {
       const name = text(config.name);
       const list = text(config.list);
-      if (name && list) settings.local = { name, accounts: list.split("\n"), color: text(config.color) };
+      if (name && list) settings[id] = { name, accounts: list.split("\n"), color: text(config.color) };
     } else if (id === "crypto") {
       const address = text(config.address);
       if (address) settings.crypto = { address };

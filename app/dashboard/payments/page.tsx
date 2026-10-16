@@ -16,7 +16,7 @@ import { SubmitButton } from "@/components/auth/submit-button";
 import { Logo } from "@/components/brand/logo";
 import { ReorderList, type ReorderItem } from "@/components/dashboard/reorder-list";
 import { param, type SearchParams } from "@/lib/auth";
-import { badgeColor, LOCAL_BADGES } from "@/lib/payment-colors";
+import { badgeColor, isLocalId, LOCAL_BADGES } from "@/lib/payment-colors";
 import { CATEGORIES, METHOD_FORMS, findMethodForm, formValues } from "@/lib/payment-forms";
 import { LOCAL_COLORS } from "@/lib/profiles";
 import { createClient } from "@/lib/supabase/server";
@@ -73,7 +73,7 @@ export default async function PaymentsPage({ searchParams }: { searchParams: Sea
       // "Other payment method" shows the owner's own name and color in the list.
       const cfg = stored.get(m.id);
       const obj = typeof cfg === "object" && cfg !== null ? (cfg as Record<string, unknown>) : {};
-      const own = m.id === "local";
+      const own = isLocalId(m.id);
       const title = own && typeof obj.name === "string" && obj.name ? obj.name : m.title;
       const tone = own && typeof obj.color === "string" ? obj.color : undefined;
       return { id: m.id, title, color: badgeColor(m.id, tone).bg };
@@ -203,20 +203,20 @@ export default async function PaymentsPage({ searchParams }: { searchParams: Sea
                       className="group scroll-mt-4 rounded-2xl border border-[#DCE5DF] bg-white"
                     >
                       <summary className="flex min-h-[60px] cursor-pointer list-none items-center justify-between gap-3 px-5 [&::-webkit-details-marker]:hidden">
-                        <span className="flex items-center gap-3 font-semibold">
+                        <span className="flex min-w-0 items-center gap-3 font-semibold">
                           <span
                             aria-hidden="true"
                             style={{ backgroundColor: color.bg }}
                             className="h-3.5 w-3.5 flex-none rounded-full"
                           />
-                          {form.title}
+                          <span className="min-w-0 truncate">{isLocalId(form.id) && isAdded && values.name ? values.name : form.title}</span>
                         </span>
                         <span
-                          className={`inline-flex min-h-8 items-center rounded-full px-3 text-[13px] font-semibold ${
+                          className={`inline-flex min-h-8 flex-none items-center rounded-full px-3 text-[13px] font-semibold ${
                             isAdded ? "bg-[#E3F0EA] text-[#064E3B]" : "bg-[#F1F4F2] text-[#4B6358]"
                           }`}
                         >
-                          {isAdded ? "Added" : "Add"}
+                          {isAdded ? "Edit" : "Add"}
                         </span>
                       </summary>
 
