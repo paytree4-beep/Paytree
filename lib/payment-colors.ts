@@ -4,7 +4,19 @@
  * Each service's signature color behind a simple icon, so visitors spot the
  * one they use at a glance. Only colors, never the services' own logos.
  */
-import type { MethodId } from "./profiles";
+import { LOCAL_COLORS, type LocalColor, type MethodId } from "./profiles";
+
+/** The colors an owner can pick for an "Other payment method". */
+export const LOCAL_BADGES: Record<LocalColor, { bg: string; fg: string }> = {
+  green: { bg: "#0A7D5A", fg: "#FFFFFF" },
+  blue: { bg: "#2563EB", fg: "#FFFFFF" },
+  purple: { bg: "#6D28D9", fg: "#FFFFFF" },
+  orange: { bg: "#D9730D", fg: "#FFFFFF" },
+  red: { bg: "#DC2626", fg: "#FFFFFF" },
+  pink: { bg: "#DB2777", fg: "#FFFFFF" },
+  gold: { bg: "#B7791F", fg: "#FFFFFF" },
+  black: { bg: "#1A1A1A", fg: "#FFFFFF" },
+};
 
 const BADGE_COLORS: Partial<Record<MethodId, { bg: string; fg: string }>> = {
   cashapp: { bg: "#00D632", fg: "#FFFFFF" },
@@ -21,6 +33,8 @@ const BADGE_COLORS: Partial<Record<MethodId, { bg: string; fg: string }>> = {
 };
 const DEFAULT_BADGE = { bg: "#E3F0EA", fg: "#064E3B" };
 
-export function badgeColor(id: string): { bg: string; fg: string } {
+/** `color` is only used by "Other payment method" (id "local"). */
+export function badgeColor(id: string, color?: string): { bg: string; fg: string } {
+  if (id === "local") return LOCAL_BADGES[LOCAL_COLORS.find((c) => c === color) ?? "green"];
   return BADGE_COLORS[id as MethodId] ?? DEFAULT_BADGE;
 }
