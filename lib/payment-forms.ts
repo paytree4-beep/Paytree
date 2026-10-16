@@ -8,7 +8,7 @@
 // ACH and wire transfer are not here on purpose: their account numbers must be
 // encrypted first (payment_method_secrets), which is its own phase.
 
-import { resolveMethods, type PaymentSettings } from "./profiles";
+import { LOCAL_COLORS, LOCAL_MAX_ACCOUNTS, resolveMethods, type PaymentSettings } from "./profiles";
 
 export type EditableMethod =
   | "cashapp"
@@ -22,7 +22,8 @@ export type EditableMethod =
   | "applecash"
   | "chime"
   | "check"
-  | "crypto";
+  | "crypto"
+  | "local";
 
 export interface FormField {
   name: string;
@@ -31,15 +32,18 @@ export interface FormField {
   required?: boolean;
   maxLength: number;
   inputMode?: "text" | "email";
+  /** "lines" = a multi-line box (one item per line), "color" = color picker. Default: one-line text. */
+  kind?: "text" | "lines" | "color";
 }
 
-export type MethodCategory = "apps" | "cards" | "bank" | "crypto";
+export type MethodCategory = "apps" | "cards" | "bank" | "crypto" | "other";
 
 export const CATEGORIES: { id: MethodCategory; title: string; hint: string }[] = [
   { id: "apps", title: "Payment apps", hint: "Cash App, Venmo, Zelle, PayPal and more" },
   { id: "cards", title: "Cards & online checkout", hint: "Stripe, Square and your own link" },
   { id: "bank", title: "Bank & international", hint: "Wise and check by mail" },
   { id: "crypto", title: "Crypto", hint: "USDT on the Tron network" },
+  { id: "other", title: "Other payment method", hint: "Add any payment method that is not listed." },
 ];
 
 export interface MethodForm {
@@ -112,6 +116,23 @@ export const METHOD_FORMS: MethodForm[] = [
     title: "Crypto (USDT)",
     fields: one("USDT address on the Tron (TRC-20) network", "Starts with T, 34 characters. Double-check it: crypto sent to a wrong address cannot be recovered.", 34),
   },
+  {
+    id: "local",
+    category: "other",
+    title: "Other payment method",
+    fields: [
+      { name: "name", label: "Name", hint: "Name of the payment method.", maxLength: 30, required: true },
+      {
+        name: "list",
+        label: "Account details",
+        hint: `One account per line. Phone number, email, or account name. Up to ${LOCAL_MAX_ACCOUNTS}.`,
+        maxLength: 600,
+        required: true,
+        kind: "lines",
+      },
+      { name: "color", label: "Color", maxLength: 10, required: false, kind: "color" },
+    ],
+  },
 ];
 
 export function findMethodForm(id: unknown): MethodForm | null {
@@ -130,7 +151,10 @@ function str(formData: FormData, name: string): string {
 export function configFromForm(form: MethodForm, formData: FormData): Record<string, string> | null {
   const config: Record<string, string> = {};
   for (const field of form.fields) {
-    const value = str(formData, field.name).slice(0, field.maxLength);
+    const raw = str(formData, field.name);
+    // A long multi-line box is rejected, never cut, so an account can not be saved half-typed.
+    if (field.kind === "lines" && raw.length > field.maxLength) return null;
+    const value = raw.slice(0, field.maxLength);
     if (value) config[field.name] = value;
     else if (field.required) return null;
   }
@@ -142,6 +166,9 @@ export function configFromForm(form: MethodForm, formData: FormData): Record<str
       break;
     case "crypto":
       settings.crypto = { address: config.value };
+      break;
+    case "local":
+      settings.local = { name: config.name, accounts: (config.list ?? "").split(/\r?\n/), color: config.color };
       break;
     case "check":
       settings.check = {
@@ -159,6 +186,16 @@ export function configFromForm(form: MethodForm, formData: FormData): Record<str
 
   if (resolveMethods(settings).length === 0) return null;
 
+  if (form.id === "local") {
+    // Store clean lines (no blanks, no repeats) and a known color.
+    const lines: string[] = [];
+    for (const line of (config.list ?? "").split(/\r?\n/)) {
+      const value = line.trim().replace(/\s+/g, " ");
+      if (value && !lines.includes(value)) lines.push(value);
+    }
+    const color = LOCAL_COLORS.find((c) => c === config.color) ?? "green";
+    return { name: config.name.replace(/\s+/g, " "), list: lines.join("\n"), color };
+  }
   // Store crypto as { address } to match settingsFromRows.
   if (form.id === "crypto") return { address: config.value };
   if (form.id === "check" && config.state) config.state = config.state.toUpperCase();
