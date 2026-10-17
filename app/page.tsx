@@ -8,10 +8,14 @@ import Link from "next/link";
 import {
   ArrowUpRight,
   BarChart3,
+  Bitcoin,
+  Banknote,
   Copy,
-  DollarSign,
-  Mail,
+  CreditCard,
+  Globe,
+  Landmark,
   QrCode,
+  Send,
   ShieldCheck,
   Smartphone,
   ClipboardCheck,
@@ -30,7 +34,6 @@ import { ExampleAvatar } from "@/components/marketing/example-avatar";
 import { ExampleQr } from "@/components/marketing/example-qr";
 import { Pricing } from "@/components/marketing/pricing";
 import { Reveal } from "@/components/marketing/reveal";
-import { badgeColor } from "@/lib/payment-colors";
 import { PRICING, SIGNUPS_OPEN, SITE_HOST, SITE_URL, TRIAL_DAYS } from "@/lib/site";
 
 const glass =
@@ -42,18 +45,15 @@ const headingClass =
 const goldText =
   "text-[#9A6E1A]";
 
-const METHODS = [
-  { id: "cashapp", name: "Cash App" },
-  { id: "venmo", name: "Venmo" },
-  { id: "zelle", name: "Zelle" },
-  { id: "paypal", name: "PayPal" },
-  { id: "applecash", name: "Apple Cash" },
-  { id: "chime", name: "Chime" },
-  { id: "stripe", name: "Cards by Stripe" },
-  { id: "square", name: "Square" },
-  { id: "wise", name: "Wise" },
-  { id: "crypto", name: "USDT" },
-  { id: "check", name: "Check by mail" },
+// General kinds of payment, shown as boxes in the moving strip (works in every country).
+const METHODS: { name: string; Icon: LucideIcon; tint: string }[] = [
+  { name: "Bank transfer", Icon: Landmark, tint: "#0A7D5A" },
+  { name: "Mobile wallet", Icon: Smartphone, tint: "#2563EB" },
+  { name: "Card payment", Icon: CreditCard, tint: "#635BFF" },
+  { name: "Payment apps", Icon: Send, tint: "#008CFF" },
+  { name: "Local apps", Icon: Globe, tint: "#B7791F" },
+  { name: "Crypto", Icon: Bitcoin, tint: "#26A17B" },
+  { name: "Cash", Icon: Banknote, tint: "#3FA34D" },
 ];
 
 const FEATURES: { title: string; body: string; Icon: LucideIcon; tint: string }[] = [
@@ -61,7 +61,7 @@ const FEATURES: { title: string; body: string; Icon: LucideIcon; tint: string }[
   { title: "Invoices", body: "Send a customer a bill. They pay with their app, you confirm it.", Icon: ReceiptText, tint: "#C9A048" },
   { title: "Pay me here card", body: "A ready card for Stories, plus a video with music for TikTok and Reels.", Icon: Clapperboard, tint: "#3FA34D" },
   { title: "Tip me card", body: "Creators and musicians: turn your page into a tip jar and share a ready Tip me card.", Icon: HandCoins, tint: "#E8AE1C" },
-  { title: "One link + QR", body: "Cash App, Venmo, Zelle and more in one link, plus a QR for your counter.", Icon: QrCode, tint: "#064E3B" },
+  { title: "One link + QR", body: "Bank, wallets, cards and any local app in one link, plus a QR for your counter.", Icon: QrCode, tint: "#064E3B" },
   { title: "My money", body: "See what came in and what you spent, by day, month and year. Download it to Excel.", Icon: ClipboardCheck, tint: "#6D1ED4" },
   { title: "Private stats", body: "Visits and taps. No cookies, no tracking.", Icon: BarChart3, tint: "#7BC86C" },
   { title: "Paid to you", body: "We never hold your money. It goes straight to your own accounts.", Icon: ShieldCheck, tint: "#008CFF" },
@@ -69,7 +69,7 @@ const FEATURES: { title: string; body: string; Icon: LucideIcon; tint: string }[
 
 const STEPS = [
   { n: "1", title: "Sign up", body: "Pick your link name." },
-  { n: "2", title: "Add your apps", body: "Cash App, Venmo, Zelle and more." },
+  { n: "2", title: "Add your apps", body: "Bank, wallets, PayPal and any local app." },
   { n: "3", title: "Share", body: "Send your link or show your QR code." },
 ];
 
@@ -101,21 +101,11 @@ const FAQ = [
 ];
 
 const EXAMPLE = [
-  { id: "cashapp", name: "Cash App", detail: "$cedarcoffee", Icon: DollarSign, copy: false },
-  { id: "venmo", name: "Venmo", detail: "@cedar-coffee-co", Icon: Wallet, copy: false },
-  { id: "zelle", name: "Zelle", detail: "pay@cedarcoffee.co", Icon: Mail, copy: true },
-  { id: "applecash", name: "Apple Cash", detail: "(555) 010-0142", Icon: Smartphone, copy: true },
+  { id: "bank", name: "Bank transfer", detail: "IBAN •••• 0142", Icon: Landmark, copy: true, bg: "#0A7D5A", fg: "#FFFFFF" },
+  { id: "wallet", name: "Mobile wallet", detail: "(555) 010-0142", Icon: Smartphone, copy: true, bg: "#2563EB", fg: "#FFFFFF" },
+  { id: "paypal", name: "PayPal", detail: "paypal.me/cedarcoffee", Icon: Wallet, copy: false, bg: "#003087", fg: "#FFFFFF" },
+  { id: "card", name: "Card", detail: "Visa · Mastercard", Icon: CreditCard, copy: false, bg: "#635BFF", fg: "#FFFFFF" },
 ] as const;
-
-function MethodDot({ id, size = 10 }: { id: string; size?: number }) {
-  return (
-    <span
-      aria-hidden="true"
-      className="flex-none rounded-full"
-      style={{ width: size, height: size, backgroundColor: badgeColor(id).bg }}
-    />
-  );
-}
 
 // Same look as a real PayTree page: dark green with gold rays, gold-ringed avatar,
 // cream cards with gold frames. Cream phone body, thin black line inside, gold outline.
@@ -135,7 +125,7 @@ function PhoneExample() {
       <div className="w-1/2 max-w-[220px] flex-none">
         <div
           role="img"
-          aria-label="Example PayTree page for Cedar Coffee Co. with Cash App, Venmo, Zelle, Apple Cash and a QR code"
+          aria-label="Example PayTree page for Cedar Coffee Co. with bank transfer, mobile wallet, PayPal, card and a QR code"
           className={PHONE}
           style={{ animationDuration: "7s", background: PHONE_BG, borderColor: "#FAF5EA" }}
         >
@@ -151,14 +141,13 @@ function PhoneExample() {
             <span className="relative text-[11.5px] font-semibold" style={{ color: "#E3B93C" }}>{SITE_HOST}/cedarcoffee</span>
           </div>
           <div className="flex flex-col gap-1.5 p-2">
-            {EXAMPLE.map(({ id, name, detail, Icon, copy }) => {
-              const c = badgeColor(id);
+            {EXAMPLE.map(({ id, name, detail, Icon, copy, bg, fg }) => {
               const Action = copy ? Copy : ArrowUpRight;
               return (
                 <div key={id} className="flex items-center gap-1.5 rounded-[9px] px-2 py-1.5" style={CARD_STYLE}>
                   <span
                     className="flex h-5 w-5 flex-none items-center justify-center rounded-full"
-                    style={{ backgroundColor: c.bg, color: c.fg }}
+                    style={{ backgroundColor: bg, color: fg }}
                   >
                     <Icon className="h-2.5 w-2.5" strokeWidth={2.4} />
                   </span>
@@ -247,7 +236,11 @@ header,[class*="backdrop-blur"]{background-color:rgba(20,58,46,.6)!important}
 [class*="border-[#E8C766]"][class*="border-[#E8C766]"][class*="border-[#E8C766]"] p+p{color:#2F4A3E!important}
 /* moving strip of payment methods: white frame */
 .pt-strip.pt-strip.pt-strip{border-color:#FFFFFF!important}
-.pt-strip .pt-chip.pt-chip.pt-chip{border-color:#FFFFFF!important}
+/* boxes in the moving strip (plain class names so the dark theme above leaves them alone) */
+.pt-pm.pt-pm.pt-pm{flex:none;width:128px;height:112px;box-sizing:border-box;border-radius:20px;background:#FAF5EA;border:2px solid #E3B93C;box-shadow:0 12px 24px rgba(0,0,0,.3);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:8px}
+.pt-pm-ic{width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center}
+.pt-pm-ic svg{width:24px;height:24px}
+.pt-pm-t{font-size:14px;font-weight:800;line-height:1.15;color:#064E3B;text-align:center}
 /* yellow frame on every card, same yellow as the pricing card */
 [class*="border-[#EADFC4]"]:not(.pt-bob):not(.pt-bob *){border-color:#E3B93C!important;border-width:2px!important}
 /* check marks in the pricing list: gold so they show on dark green */
@@ -309,12 +302,15 @@ header,[class*="backdrop-blur"]{background-color:rgba(20,58,46,.6)!important}
               </div>
             </div>
             <h1 className="font-serif text-[clamp(38px,10vw,92px)] font-normal uppercase leading-[1.03] tracking-[0.01em] text-[#064E3B] [text-wrap:balance]">
-              All your payment methods.
+              The easiest way
               <br />
-              <span className="pt-onelink" data-t="In one link.">In one link.</span>
+              <span className="pt-onelink" data-t="to get paid">to get paid</span>
+              <br />
+              <span className="pt-bycust">by your customers.</span>
               <style>{`
 .pt-onelink{position:relative;display:inline-block;white-space:nowrap;font-size:1.05em;line-height:1.05;margin-top:6px;color:#F2C94C;-webkit-text-stroke:.9px #F2C94C;text-shadow:0 2px 3px rgba(0,0,0,.35);animation:pt-ol-glow 2.4s ease-in-out infinite}
 .pt-onelink::after{content:attr(data-t);position:absolute;left:0;top:0;width:100%;white-space:nowrap;color:transparent;-webkit-text-fill-color:transparent;-webkit-text-stroke:.9px transparent;text-shadow:none;background:linear-gradient(100deg,transparent 38%,rgba(255,252,210,.95) 50%,transparent 62%);background-size:250% 100%;background-repeat:no-repeat;-webkit-background-clip:text;background-clip:text;animation:pt-ol-shine 2.6s linear infinite}
+.pt-bycust{display:inline-block;margin-top:8px;font-size:.5em;line-height:1.1;letter-spacing:.05em}
 @keyframes pt-ol-shine{from{background-position:130% 0}to{background-position:-130% 0}}
 @keyframes pt-ol-glow{0%,100%{text-shadow:0 2px 3px rgba(0,0,0,.35),0 0 0 rgba(242,201,76,0)}50%{text-shadow:0 2px 3px rgba(0,0,0,.35),0 0 12px rgba(242,201,76,.4)}}
 @media (prefers-reduced-motion:reduce){.pt-onelink,.pt-onelink::after{animation:none}}
@@ -322,11 +318,11 @@ header,[class*="backdrop-blur"]{background-color:rgba(20,58,46,.6)!important}
             </h1>
             <div aria-hidden="true" className="h-[4px] rounded-full bg-[#F2C94C] w-[78%] max-w-[360px] lg:w-[300px]" />
             <p className="max-w-[560px] text-[22px] leading-[1.4] font-bold text-[#0B1F18] sm:text-[24px]">
-              Make it easier &amp; faster for your customers to pay you.
+              Build your page.
             </p>
             <div aria-hidden="true" className="h-[4px] rounded-full bg-[#F2C94C] w-[62%] max-w-[300px] lg:w-[240px]" />
             <p className="max-w-[560px] text-[19px] leading-[1.45] font-extrabold text-[#064E3B] sm:text-[21px]">
-              Share your page link. Display your QR code. <span className="text-[#9A6E1A]">Get paid your way.</span>
+              Share your link &amp; QR. <span className="text-[#9A6E1A]">Get paid your way.</span>
             </p>
             {/* Two compact tap-to-open boxes (plain class names so the dark theme above leaves them alone) */}
             <style>{`
@@ -379,19 +375,21 @@ header,[class*="backdrop-blur"]{background-color:rgba(20,58,46,.6)!important}
             </details>
             {/* Moving strip of payment methods (full width on phones) */}
             <section
-              aria-label="Supported payment methods"
+              aria-label="Ways to get paid"
               className="pt-strip -mx-5 w-[calc(100%+2.5rem)] self-center border-y-[1.5px] border-white bg-white/85 py-5 sm:-mx-6 sm:w-[calc(100%+3rem)] lg:mx-0 lg:w-full"
             >
-              <div className="overflow-hidden [mask-image:linear-gradient(90deg,transparent,black_10%,black_90%,transparent)]">
-                <ul className="pt-marquee flex w-max gap-3">
-                  {[...METHODS, ...METHODS].map((m, i) => (
+              <div className="overflow-hidden [mask-image:linear-gradient(90deg,transparent,black_6%,black_94%,transparent)]">
+                <ul className="pt-marquee flex w-max gap-3 py-2">
+                  {[...METHODS, ...METHODS].map(({ name, Icon, tint }, i) => (
                     <li
-                      key={`${m.id}-${i}`}
+                      key={`${name}-${i}`}
                       aria-hidden={i >= METHODS.length ? "true" : undefined}
-                      className="pt-chip inline-flex min-h-11 items-center gap-2.5 rounded-full border-[1.5px] border-white/80 bg-white/70 px-5 text-[15px] font-semibold text-[#0B1F18]"
+                      className="pt-pm"
                     >
-                      <MethodDot id={m.id} size={12} />
-                      {m.name}
+                      <span className="pt-pm-ic" style={{ backgroundColor: `${tint}22`, color: tint }}>
+                        <Icon strokeWidth={2.2} aria-hidden="true" />
+                      </span>
+                      <span className="pt-pm-t">{name}</span>
                     </li>
                   ))}
                 </ul>
@@ -473,7 +471,7 @@ header,[class*="backdrop-blur"]{background-color:rgba(20,58,46,.6)!important}
               <span className="text-sm font-bold tracking-[0.14em] text-[#9A6E1A]">ABOUT US</span>
               <h2 className={headingClass}>Built for the question every business hears</h2>
               <p className="text-[21px] leading-[1.75] font-semibold text-[#0F2419]">
-                <em>&ldquo;Do you take Zelle, Venmo or Cash App?&rdquo;</em> PayTree answers it with one simple link.
+                <em>&ldquo;How can I pay you?&rdquo;</em> PayTree answers it with one simple link.
                 We built a calm, elegant page that brings all your payment methods together, so your customers can
                 pay you in seconds, and you can focus on your work.
               </p>
