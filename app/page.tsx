@@ -199,10 +199,10 @@ export default function HomePage() {
 /* Logo style: gold accents */
 header > div{border:1.5px solid rgba(227,185,60,.5)!important}
 .pt-box.pt-box.pt-box{border:2.5px solid #E3B93C!important;box-shadow:0 14px 30px rgba(0,0,0,.35)}
-.pt-badge{width:140px;height:140px;border-radius:9999px;background:#FAF5EA;border:8px solid #B9A04A;display:flex;align-items:center;justify-content:center;box-shadow:0 0 70px rgba(227,185,60,.45);position:relative}
+.pt-badge{width:96px;height:96px;border-radius:9999px;background:#FAF5EA;border:6px solid #B9A04A;display:flex;align-items:center;justify-content:center;box-shadow:0 0 70px rgba(227,185,60,.45);position:relative}
 h1{text-shadow:0 0 1px #fff,0 1px 6px rgba(0,0,0,.35)}
 h1 [class*="text-[#E3B93C"],h1 span{text-shadow:none}
-.pt-badge img{width:114px;height:114px;object-fit:contain}
+.pt-badge img{width:76px;height:76px;object-fit:contain}
 .pt-rays{position:absolute;left:50%;top:50%;width:1100px;height:1100px;margin:-550px 0 0 -550px;pointer-events:none;background:repeating-conic-gradient(rgba(227,185,60,.10) 0 6deg,rgba(227,185,60,0) 6deg 18deg);-webkit-mask:radial-gradient(circle,#000 0,transparent 60%);mask:radial-gradient(circle,#000 0,transparent 60%)}
 [class*="bg-[#FAF5EA]"]:not(.pt-bob):not(.pt-bob *){background:linear-gradient(180deg,#25594A 0%,#1C4A3A 60%,#143A2E 100%)!important;color:#FFFFFF!important}
 /* dark text -> light */
@@ -217,7 +217,8 @@ strong[class*="text-[#064E3B]"]{color:#FFFFFF!important}
 [class*="bg-[#064E3B]"]:not(.pt-bob):not(.pt-bob *) *{color:#17402F!important}
 /* yellow buttons: green frame, no glow */
 .pt-btn.pt-btn.pt-btn{border:2.5px solid #064E3B!important;outline:2px solid #E3B93C;outline-offset:2px;box-shadow:none!important}
-header .pt-btn.pt-btn.pt-btn{border-width:2px!important;outline-width:1.5px;outline-offset:1px}
+header .pt-btn.pt-btn.pt-btn{border-width:2px!important;outline:none}
+.pt-btn-hero.pt-btn-hero{padding-left:16px!important;padding-right:16px!important}
 /* gold CTA card */
 [class*="from-white"][class*="via-[#FBF3DF]"]{background:linear-gradient(135deg,#2C6755,#1E5444)!important;border-color:#E3B93C!important}
 :is(details,summary):not(.pt-bob):not(.pt-bob *){border-color:rgba(255,255,255,.18)!important}
@@ -323,12 +324,10 @@ header,[class*="backdrop-blur"]{background-color:rgba(20,58,46,.6)!important}
               `}</style>
             </h1>
             <div aria-hidden="true" className="h-[4px] rounded-full bg-[#F2C94C] w-[78%] max-w-[360px] lg:w-[300px]" />
-            <p className="max-w-[560px] text-[22px] leading-[1.4] font-bold text-[#0B1F18] sm:text-[24px]">
-              Build your page.
-            </p>
-            <div aria-hidden="true" className="h-[4px] rounded-full bg-[#F2C94C] w-[62%] max-w-[300px] lg:w-[240px]" />
             <p className="max-w-[560px] text-[19px] leading-[1.45] font-extrabold text-[#064E3B] sm:text-[21px]">
-              Share your link &amp; QR. <span className="text-[#9A6E1A]">Get paid your way.</span>
+              Build your page. Share your link &amp; QR.
+              <br />
+              <span className="text-[#9A6E1A]">Get paid your way.</span>
             </p>
             {/* Two compact tap-to-open boxes (plain class names so the dark theme above leaves them alone) */}
             <style>{`
@@ -368,8 +367,8 @@ header,[class*="backdrop-blur"]{background-color:rgba(20,58,46,.6)!important}
               <div className="pt-hb-body">Clients pay you directly, into your own accounts. <b>PayTree takes 0% of your payments</b>, no cut, ever. You only pay the simple monthly plan.</div>
             </details>
             <div className="flex w-full flex-wrap justify-center gap-3 sm:w-auto lg:justify-start">
-              <Cta variant="emerald" className="pt-btn w-full sm:w-auto sm:min-w-[260px]">
-                {`Try it free for ${TRIAL_DAYS} days`}
+              <Cta variant="emerald" className="pt-btn pt-btn-hero w-full sm:w-auto sm:min-w-[260px]">
+                {`Start your page free for ${TRIAL_DAYS} days`}
               </Cta>
             </div>
             <p className="text-[16px] font-bold text-[#064E3B]">No credit card required &middot; Then {PRICING.monthly.price}/month</p>
@@ -432,8 +431,10 @@ header,[class*="backdrop-blur"]{background-color:rgba(20,58,46,.6)!important}
           <section id="features" className="scroll-mt-24 px-5 py-20 sm:px-6">
             <div className="mx-auto flex max-w-[1180px] flex-col gap-10">
               <Reveal className="flex max-w-[640px] flex-col gap-3">
-                <span className="text-sm font-bold tracking-[0.14em] text-[#9A6E1A]">WHY PAYTREE</span>
-                <h2 className={headingClass}>Everything you need to get paid. Nothing you don&rsquo;t.</h2>
+                <span className="inline-block self-start rounded-full border-2 border-white px-[18px] py-1.5 text-[22px] font-extrabold tracking-[0.14em] text-[#9A6E1A]">WHY PAYTREE</span>
+                <h2 className={headingClass}>
+                  Payment methods, invoices and your budget. <span className="text-[#9A6E1A]">All in one place.</span>
+                </h2>
               </Reveal>
               <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
                 {FEATURES.map(({ title, body, Icon, tint }, i) => (
