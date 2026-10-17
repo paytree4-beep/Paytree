@@ -217,6 +217,7 @@ strong[class*="text-[#064E3B]"]{color:#FFFFFF!important}
 [class*="bg-[#064E3B]"]:not(.pt-bob):not(.pt-bob *) *{color:#17402F!important}
 /* yellow buttons: green frame, no glow */
 .pt-btn.pt-btn.pt-btn{border:2.5px solid #064E3B!important;outline:2px solid #E3B93C;outline-offset:2px;box-shadow:none!important}
+header .pt-btn.pt-btn.pt-btn{border-width:2px!important;outline-width:1.5px;outline-offset:1px}
 /* gold CTA card */
 [class*="from-white"][class*="via-[#FBF3DF]"]{background:linear-gradient(135deg,#2C6755,#1E5444)!important;border-color:#E3B93C!important}
 :is(details,summary):not(.pt-bob):not(.pt-bob *){border-color:rgba(255,255,255,.18)!important}
@@ -277,15 +278,16 @@ header,[class*="backdrop-blur"]{background-color:rgba(20,58,46,.6)!important}
               <a href="#faq" className="hover:text-[#064E3B]">FAQ</a>
             </nav>
             {SIGNUPS_OPEN ? (
-              <div className="flex items-center gap-1.5">
-                <Link href="/login" className="inline-flex min-h-11 items-center px-3 text-[15px] font-semibold text-[#064E3B]">
+              <div className="flex items-center gap-2">
+                <Link href="/login" className="inline-flex min-h-11 items-center whitespace-nowrap rounded-full border-2 border-[#E3B93C] px-3 text-[15px] font-semibold text-[#064E3B]">
                   Log in
                 </Link>
                 <Link
                   href="/signup"
-                  className="pt-btn inline-flex min-h-11 items-center rounded-full bg-[#064E3B] px-5 text-[15px] font-semibold text-[#FBFBFB]"
+                  className="pt-btn inline-flex min-h-11 flex-col items-center justify-center whitespace-nowrap rounded-full bg-[#064E3B] px-3 py-0.5 text-[15px] font-semibold leading-[1.1] text-[#FBFBFB]"
                 >
                   Start free
+                  <small className="text-[12.5px] font-bold">No card needed</small>
                 </Link>
               </div>
             ) : null}
@@ -365,6 +367,34 @@ header,[class*="backdrop-blur"]{background-color:rgba(20,58,46,.6)!important}
               </summary>
               <div className="pt-hb-body">Clients pay you directly, into your own accounts. <b>PayTree takes 0% of your payments</b>, no cut, ever. You only pay the simple monthly plan.</div>
             </details>
+            <div className="flex w-full flex-wrap justify-center gap-3 sm:w-auto lg:justify-start">
+              <Cta variant="emerald" className="pt-btn w-full sm:w-auto sm:min-w-[260px]">
+                {`Try it free for ${TRIAL_DAYS} days`}
+              </Cta>
+            </div>
+            <p className="text-[16px] font-bold text-[#064E3B]">No credit card required &middot; Then {PRICING.monthly.price}/month</p>
+            {/* Moving strip of payment methods (full width on phones) */}
+            <section
+              aria-label="Ways to get paid"
+              className="pt-strip -mx-5 w-[calc(100%+2.5rem)] self-center border-y-[1.5px] border-white bg-white/85 py-5 sm:-mx-6 sm:w-[calc(100%+3rem)] lg:mx-0 lg:w-full"
+            >
+              <div className="overflow-hidden [mask-image:linear-gradient(90deg,transparent,black_6%,black_94%,transparent)]">
+                <ul className="pt-marquee flex w-max gap-3 py-2">
+                  {[...METHODS, ...METHODS].map(({ name, Icon, tint }, i) => (
+                    <li
+                      key={`${name}-${i}`}
+                      aria-hidden={i >= METHODS.length ? "true" : undefined}
+                      className="pt-pm"
+                    >
+                      <span className="pt-pm-ic" style={{ backgroundColor: `${tint}22`, color: tint }}>
+                        <Icon strokeWidth={2.2} aria-hidden="true" />
+                      </span>
+                      <span className="pt-pm-t">{name}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </section>
             <details className="pt-hb pt-hb-apple">
               <summary>
                 <span aria-hidden="true" className="pt-wig pt-hb-ap">🍎</span>
@@ -388,34 +418,6 @@ header,[class*="backdrop-blur"]{background-color:rgba(20,58,46,.6)!important}
                 ) : null}
               </div>
             </details>
-            {/* Moving strip of payment methods (full width on phones) */}
-            <section
-              aria-label="Ways to get paid"
-              className="pt-strip -mx-5 w-[calc(100%+2.5rem)] self-center border-y-[1.5px] border-white bg-white/85 py-5 sm:-mx-6 sm:w-[calc(100%+3rem)] lg:mx-0 lg:w-full"
-            >
-              <div className="overflow-hidden [mask-image:linear-gradient(90deg,transparent,black_6%,black_94%,transparent)]">
-                <ul className="pt-marquee flex w-max gap-3 py-2">
-                  {[...METHODS, ...METHODS].map(({ name, Icon, tint }, i) => (
-                    <li
-                      key={`${name}-${i}`}
-                      aria-hidden={i >= METHODS.length ? "true" : undefined}
-                      className="pt-pm"
-                    >
-                      <span className="pt-pm-ic" style={{ backgroundColor: `${tint}22`, color: tint }}>
-                        <Icon strokeWidth={2.2} aria-hidden="true" />
-                      </span>
-                      <span className="pt-pm-t">{name}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </section>
-            <div className="flex w-full flex-wrap justify-center gap-3 sm:w-auto lg:justify-start">
-              <Cta variant="emerald" className="pt-btn w-full sm:w-auto sm:min-w-[260px]">
-                {`Try it free for ${TRIAL_DAYS} days`}
-              </Cta>
-            </div>
-            <p className="text-[16px] font-bold text-[#064E3B]">No credit card required &middot; Then {PRICING.monthly.price}/month</p>
             </div>
           </div>
 
