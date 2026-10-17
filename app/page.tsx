@@ -215,6 +215,8 @@ strong[class*="text-[#064E3B]"]{color:#FFFFFF!important}
 /* main buttons: yellow */
 [class*="bg-[#064E3B]"]:not(.pt-bob):not(.pt-bob *){background:#E3B93C!important;color:#17402F!important}
 [class*="bg-[#064E3B]"]:not(.pt-bob):not(.pt-bob *) *{color:#17402F!important}
+/* yellow buttons: green frame, no glow */
+.pt-btn.pt-btn.pt-btn{border:2.5px solid #064E3B!important;outline:2px solid #E3B93C;outline-offset:2px;box-shadow:none!important}
 /* gold CTA card */
 [class*="from-white"][class*="via-[#FBF3DF]"]{background:linear-gradient(135deg,#2C6755,#1E5444)!important;border-color:#E3B93C!important}
 :is(details,summary):not(.pt-bob):not(.pt-bob *){border-color:rgba(255,255,255,.18)!important}
@@ -281,7 +283,7 @@ header,[class*="backdrop-blur"]{background-color:rgba(20,58,46,.6)!important}
                 </Link>
                 <Link
                   href="/signup"
-                  className="inline-flex min-h-11 items-center rounded-full bg-[#064E3B] px-5 text-[15px] font-semibold text-[#FBFBFB]"
+                  className="pt-btn inline-flex min-h-11 items-center rounded-full bg-[#064E3B] px-5 text-[15px] font-semibold text-[#FBFBFB]"
                 >
                   Start free
                 </Link>
@@ -330,24 +332,26 @@ header,[class*="backdrop-blur"]{background-color:rgba(20,58,46,.6)!important}
             <style>{`
 .pt-hb.pt-hb.pt-hb{width:100%;max-width:358px;box-sizing:border-box;border:2.5px solid #E3B93C!important;border-radius:16px;box-shadow:0 10px 22px rgba(0,0,0,.35);text-align:left;background:#FAF5EA}
 .pt-hb-apple.pt-hb-apple.pt-hb-apple{background:#FFFFFF}
-.pt-hb summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:9px;padding:7px 12px;min-height:44px;-webkit-tap-highlight-color:transparent}
+.pt-hb summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding:8px 14px;min-height:48px;-webkit-tap-highlight-color:transparent}
 .pt-hb summary::-webkit-details-marker{display:none}
 .pt-hb-ic{flex:none;width:24px;height:24px;color:#064E3B}
 .pt-hb-ap{flex:none;font-size:23px;line-height:1}
 .pt-hb-t{flex:1;font-weight:800;font-size:14.5px;line-height:1.2;color:#064E3B}
 .pt-hb-t small{display:block;margin-top:2px;font-size:12px;font-weight:600;line-height:1.25;color:#2F4A3E}
-.pt-hb-plus{flex:none;width:24px;height:24px;border-radius:9999px;background:#E3B93C;color:#17402F;font-weight:800;font-size:18px;display:flex;align-items:center;justify-content:center;transition:transform .2s}
+.pt-hb-plus{flex:none;width:28px;height:28px;border-radius:9999px;background:#E3B93C;color:#17402F;font-weight:800;font-size:20px;line-height:1;display:flex;align-items:center;justify-content:center;transition:transform .2s}
 .pt-hb[open] .pt-hb-plus{transform:rotate(45deg)}
+.pt-hb-plus.pt-hb-plus{position:relative;font-size:0;color:transparent}
+.pt-hb-plus::before,.pt-hb-plus::after{content:"";position:absolute;left:50%;top:50%;width:12px;height:2.5px;margin:-1.25px 0 0 -6px;border-radius:2px;background:#17402F}
+.pt-hb-plus::after{transform:rotate(90deg)}
 .pt-hb-body{padding:0 12px 12px;font-size:13px;line-height:1.4;font-weight:600;color:#2F4A3E}
 .pt-hb-body b{color:#064E3B}
 .pt-hb-st{margin:0 0 8px;padding-left:18px}
 .pt-hb-st li{margin-bottom:4px}
-.pt-hb-money.pt-hb-money.pt-hb-money{position:relative;margin-top:14px;border-radius:18px}
-.pt-hb-money summary{padding:20px 14px 14px;gap:12px}
+.pt-hb-money.pt-hb-money.pt-hb-money{position:relative;margin-top:22px;border-radius:18px}
+.pt-hb-money summary{padding:26px 14px 14px;gap:12px}
 .pt-hb-money .pt-hb-ic{width:34px;height:34px}
 .pt-hb-money .pt-hb-t{font-size:19px;font-weight:900;line-height:1.2}
-.pt-hb-money .pt-hb-plus{width:28px;height:28px;font-size:20px}
-.pt-hb-badge{position:absolute;top:-15px;right:14px;white-space:nowrap;background:linear-gradient(180deg,#FFE58A,#F2C94C);color:#17402F;font-weight:900;font-size:13px;line-height:1.2;letter-spacing:.02em;border-radius:9999px;padding:5px 12px;border:2px solid #FFF3C4;animation:pt-badge-glow 2.4s ease-in-out infinite}
+.pt-hb-badge{position:absolute;top:-20px;right:12px;white-space:nowrap;background:linear-gradient(180deg,#FFE58A,#F2C94C);color:#17402F;font-weight:900;font-size:16px;line-height:1.2;letter-spacing:.01em;border-radius:9999px;padding:6px 14px;border:2.5px solid #064E3B;outline:2px solid #F2C94C;outline-offset:2px;animation:pt-badge-glow 2.4s ease-in-out infinite}
 @keyframes pt-badge-glow{0%,100%{box-shadow:0 0 0 3px rgba(242,201,76,.2),0 0 8px 1px rgba(242,201,76,.35)}50%{box-shadow:0 0 0 5px rgba(242,201,76,.3),0 0 24px 7px rgba(242,201,76,.8)}}
 @media (prefers-reduced-motion:reduce){.pt-hb-badge{animation:none;box-shadow:0 0 16px 4px rgba(242,201,76,.6)}}
 .pt-hb-go{display:block;margin-top:9px;text-align:center;background:#E3B93C;color:#17402F;font-weight:800;border-radius:9999px;padding:9px;text-decoration:none;font-size:14.5px}
@@ -407,7 +411,7 @@ header,[class*="backdrop-blur"]{background-color:rgba(20,58,46,.6)!important}
               </div>
             </section>
             <div className="flex w-full flex-wrap justify-center gap-3 sm:w-auto lg:justify-start">
-              <Cta variant="emerald" className="w-full shadow-[0_18px_40px_-18px_rgba(6,78,59,0.8)] sm:w-auto sm:min-w-[260px]">
+              <Cta variant="emerald" className="pt-btn w-full sm:w-auto sm:min-w-[260px]">
                 {`Try it free for ${TRIAL_DAYS} days`}
               </Cta>
             </div>
@@ -531,7 +535,7 @@ header,[class*="backdrop-blur"]{background-color:rgba(20,58,46,.6)!important}
                 <p className="max-w-[520px] text-[21px] font-semibold text-[#0F2419]">
                   Build your payment page in two minutes. {TRIAL_DAYS} days free, no card needed.
                 </p>
-                <Cta variant="emerald" className="min-w-[260px] shadow-[0_18px_40px_-18px_rgba(6,78,59,0.8)]">
+                <Cta variant="emerald" className="pt-btn min-w-[260px]">
                   {trialCta}
                 </Cta>
               </div>
