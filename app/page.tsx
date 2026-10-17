@@ -302,15 +302,17 @@ header,[class*="backdrop-blur"]{background-color:rgba(20,58,46,.6)!important}
               </div>
             </div>
             <h1 className="font-serif text-[clamp(38px,10vw,92px)] font-normal uppercase leading-[1.03] tracking-[0.01em] text-[#064E3B] [text-wrap:balance]">
-              The easiest way
+              <span className="pt-easy">The easiest way</span>
               <br />
               <span className="pt-onelink" data-t="to get paid">to get paid</span>
               <br />
               <span className="pt-bycust">by your customers.</span>
               <style>{`
-.pt-onelink{position:relative;display:inline-block;white-space:nowrap;font-size:1.05em;line-height:1.05;margin-top:6px;color:#F2C94C;-webkit-text-stroke:.9px #F2C94C;text-shadow:0 2px 3px rgba(0,0,0,.35);animation:pt-ol-glow 2.4s ease-in-out infinite}
+.pt-onelink{position:relative;display:inline-block;white-space:nowrap;font-size:1.22em;line-height:1.05;margin-top:6px;color:#F2C94C;-webkit-text-stroke:.9px #F2C94C;text-shadow:0 2px 3px rgba(0,0,0,.35);animation:pt-ol-glow 2.4s ease-in-out infinite}
 .pt-onelink::after{content:attr(data-t);position:absolute;left:0;top:0;width:100%;white-space:nowrap;color:transparent;-webkit-text-fill-color:transparent;-webkit-text-stroke:.9px transparent;text-shadow:none;background:linear-gradient(100deg,transparent 38%,rgba(255,252,210,.95) 50%,transparent 62%);background-size:250% 100%;background-repeat:no-repeat;-webkit-background-clip:text;background-clip:text;animation:pt-ol-shine 2.6s linear infinite}
-.pt-bycust{display:inline-block;margin-top:8px;font-size:.5em;line-height:1.1;letter-spacing:.05em}
+.pt-easy{display:inline-block;font-size:1.22em;line-height:1.03}
+@media (min-width:1024px){.pt-easy{font-size:1em}.pt-onelink{font-size:1.05em}}
+.pt-bycust{display:inline-block;margin-top:8px;font-size:.7em;line-height:1.1;letter-spacing:.04em;-webkit-text-stroke:.5px #FFFFFF}
 @keyframes pt-ol-shine{from{background-position:130% 0}to{background-position:-130% 0}}
 @keyframes pt-ol-glow{0%,100%{text-shadow:0 2px 3px rgba(0,0,0,.35),0 0 0 rgba(242,201,76,0)}50%{text-shadow:0 2px 3px rgba(0,0,0,.35),0 0 12px rgba(242,201,76,.4)}}
 @media (prefers-reduced-motion:reduce){.pt-onelink,.pt-onelink::after{animation:none}}
