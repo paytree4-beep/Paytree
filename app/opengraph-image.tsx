@@ -54,10 +54,10 @@ export default function Image() {
           </div>
           <span style={{ fontSize: 108, fontWeight: 800, color: "#FFFFFF", marginLeft: 24 }}>PayTree</span>
         </div>
-        <span style={{ fontSize: 74, fontWeight: 800, color: "#FFFFFF", marginTop: 36 }}>
+        <span style={{ fontSize: 60, fontWeight: 800, color: "#FFFFFF", marginTop: 32 }}>
           The Easiest Way to Get Paid.
         </span>
-        <span style={{ fontSize: 64, fontWeight: 800, color: "#E3B93C", marginTop: 12 }}>
+        <span style={{ fontSize: 72, fontWeight: 800, color: "#E3B93C", marginTop: 10 }}>
           One Link. Every Payment Method.
         </span>
       </div>
