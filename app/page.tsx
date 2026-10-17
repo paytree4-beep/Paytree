@@ -270,7 +270,7 @@ header,[class*="backdrop-blur"]{background-color:rgba(20,58,46,.6)!important}
       <div className="relative z-10">
         {/* Navigation */}
         <header className="sticky top-0 z-40 px-3 pt-3">
-          <div className={`mx-auto flex max-w-[1180px] items-center justify-between gap-3 px-4 py-1.5 sm:px-6 ${glass} rounded-full`}>
+          <div className={`mx-auto flex max-w-[1180px] items-center justify-between gap-2 py-1.5 pl-3 pr-2 sm:px-6 ${glass} rounded-full`}>
             <Logo tone="dark" size={30} />
             <nav aria-label="Main" className="hidden items-center gap-7 text-[15px] font-semibold text-[#064E3B]/85 md:flex">
               <a href="#features" className="hover:text-[#064E3B]">Features</a>
@@ -279,7 +279,7 @@ header,[class*="backdrop-blur"]{background-color:rgba(20,58,46,.6)!important}
               <a href="#faq" className="hover:text-[#064E3B]">FAQ</a>
             </nav>
             {SIGNUPS_OPEN ? (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5">
                 <Link href="/login" className="inline-flex min-h-11 items-center whitespace-nowrap rounded-full border-2 border-[#E3B93C] px-3 text-[15px] font-semibold text-[#064E3B]">
                   Log in
                 </Link>
@@ -394,29 +394,6 @@ header,[class*="backdrop-blur"]{background-color:rgba(20,58,46,.6)!important}
                 </ul>
               </div>
             </section>
-            <details className="pt-hb pt-hb-apple">
-              <summary>
-                <span aria-hidden="true" className="pt-wig pt-hb-ap">🍎</span>
-                <span className="pt-hb-t">
-                  Earn $0.25 per friend
-                  <small>Free to join. An apple for every friend who subscribes</small>
-                </span>
-                <span className="pt-hb-plus" aria-hidden="true">+</span>
-              </summary>
-              <div className="pt-hb-body">
-                <ol className="pt-hb-st">
-                  <li><b>Sign up free</b> (7-day free trial, no credit card required). Your own invite link is ready in your dashboard.</li>
-                  <li><b>Share it</b> with your friends. It keeps working until Dec 31, 2026, even if you don&apos;t subscribe.</li>
-                  <li>Every friend who <b>subscribes</b> drops an apple in your basket, worth <b>$0.25</b>.</li>
-                </ol>
-                On Harvest Day, <b>Jan 1, 2027</b>, swap your apples for cash.
-                {SIGNUPS_OPEN ? (
-                  <Link href="/signup" className="pt-hb-go">
-                    Start free
-                  </Link>
-                ) : null}
-              </div>
-            </details>
             </div>
           </div>
 
@@ -454,6 +431,31 @@ header,[class*="backdrop-blur"]{background-color:rgba(20,58,46,.6)!important}
                     </div>
                   </Reveal>
                 ))}
+                <div className="col-span-2 flex justify-center lg:col-span-4">
+                  <details className="pt-hb pt-hb-apple">
+                    <summary>
+                      <span aria-hidden="true" className="pt-wig pt-hb-ap">🍎</span>
+                      <span className="pt-hb-t">
+                        Hurry up! Get your referral link to join the challenge
+                        <small>Earn $0.25 for every friend who subscribes</small>
+                      </span>
+                      <span className="pt-hb-plus" aria-hidden="true">+</span>
+                    </summary>
+                    <div className="pt-hb-body">
+                      <ol className="pt-hb-st">
+                        <li><b>Sign up free</b> (7-day free trial, no credit card required). Your own invite link is ready in your dashboard.</li>
+                        <li><b>Share it</b> with your friends. It keeps working until Dec 31, 2026, even if you don&apos;t subscribe.</li>
+                        <li>Every friend who <b>subscribes</b> drops an apple in your basket, worth <b>$0.25</b>.</li>
+                      </ol>
+                      On Harvest Day, <b>Jan 1, 2027</b>, swap your apples for cash.
+                      {SIGNUPS_OPEN ? (
+                        <Link href="/signup" className="pt-hb-go">
+                          Start free
+                        </Link>
+                      ) : null}
+                    </div>
+                  </details>
+                </div>
                 <Reveal className="col-span-2 lg:col-span-4" delay={FEATURES.length * 60}>
                   <div className={`flex items-start gap-4 border-[#E2C27A] p-5 ${glass}`}>
                     <span aria-hidden="true" className="text-[40px] leading-none">🍎</span>
