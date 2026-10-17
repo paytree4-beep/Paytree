@@ -19,6 +19,7 @@ import {
   ShieldCheck,
   Smartphone,
   ClipboardCheck,
+  TreeDeciduous,
   Wallet,
   Pizza,
   Clapperboard,
@@ -57,14 +58,15 @@ const METHODS: { name: string; Icon: LucideIcon; tint: string }[] = [
 ];
 
 const FEATURES: { title: string; body: string; Icon: LucideIcon; tint: string }[] = [
-  { title: "Split the bill", body: "Dinner or a trip: everyone sees their share and pays you.", Icon: Pizza, tint: "#E5484D" },
+  { title: "One link + QR", body: "Bank, wallets, cards and any local app in one link, plus a QR for your counter.", Icon: QrCode, tint: "#064E3B" },
   { title: "Invoices", body: "Send a customer a bill. They pay with their app, you confirm it.", Icon: ReceiptText, tint: "#C9A048" },
+  { title: "My money", body: "See what came in and what you spent, by day, month and year. Download it to Excel.", Icon: ClipboardCheck, tint: "#6D1ED4" },
+  { title: "Money tree", body: "See your monthly income and spending as a money tree.", Icon: TreeDeciduous, tint: "#2E7D32" },
+  { title: "Split the bill", body: "Dinner or a trip: everyone sees their share and pays you.", Icon: Pizza, tint: "#E5484D" },
+  { title: "Paid to you", body: "We never hold your money. It goes straight to your own accounts.", Icon: ShieldCheck, tint: "#008CFF" },
   { title: "Pay me here card", body: "A ready card for Stories, plus a video with music for TikTok and Reels.", Icon: Clapperboard, tint: "#3FA34D" },
   { title: "Tip me card", body: "Creators and musicians: turn your page into a tip jar and share a ready Tip me card.", Icon: HandCoins, tint: "#E8AE1C" },
-  { title: "One link + QR", body: "Bank, wallets, cards and any local app in one link, plus a QR for your counter.", Icon: QrCode, tint: "#064E3B" },
-  { title: "My money", body: "See what came in and what you spent, by day, month and year. Download it to Excel.", Icon: ClipboardCheck, tint: "#6D1ED4" },
   { title: "Private stats", body: "Visits and taps. No cookies, no tracking.", Icon: BarChart3, tint: "#7BC86C" },
-  { title: "Paid to you", body: "We never hold your money. It goes straight to your own accounts.", Icon: ShieldCheck, tint: "#008CFF" },
 ];
 
 const STEPS = [
@@ -333,6 +335,8 @@ header,[class*="backdrop-blur"]{background-color:rgba(20,58,46,.6)!important}
             <style>{`
 .pt-hb.pt-hb.pt-hb{width:100%;max-width:358px;box-sizing:border-box;border:2.5px solid #E3B93C!important;border-radius:16px;box-shadow:0 10px 22px rgba(0,0,0,.35);text-align:left;background:#FAF5EA}
 .pt-hb-apple.pt-hb-apple.pt-hb-apple{background:#FFFFFF}
+.pt-hb-apple .pt-hb-t{font-size:16px}
+.pt-hb-apple .pt-hb-t small{font-size:15px;font-weight:700;margin-top:3px}
 .pt-hb summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding:8px 14px;min-height:48px;-webkit-tap-highlight-color:transparent}
 .pt-hb summary::-webkit-details-marker{display:none}
 .pt-hb-ic{flex:none;width:24px;height:24px;color:#064E3B}
@@ -349,9 +353,9 @@ header,[class*="backdrop-blur"]{background-color:rgba(20,58,46,.6)!important}
 .pt-hb-st{margin:0 0 8px;padding-left:18px}
 .pt-hb-st li{margin-bottom:4px}
 .pt-hb-money.pt-hb-money.pt-hb-money{position:relative;margin-top:22px;border-radius:18px}
-.pt-hb-money summary{padding:26px 14px 14px;gap:12px}
-.pt-hb-money .pt-hb-ic{width:34px;height:34px}
-.pt-hb-money .pt-hb-t{font-size:19px;font-weight:900;line-height:1.2}
+.pt-hb-money summary{padding:26px 12px 14px;gap:10px}
+.pt-hb-money .pt-hb-ic{width:28px;height:28px}
+.pt-hb-money .pt-hb-t{font-size:clamp(14px,4.3vw,19px);font-weight:900;line-height:1.2;white-space:nowrap}
 .pt-hb-badge{position:absolute;top:-20px;right:12px;white-space:nowrap;background:linear-gradient(180deg,#FFE58A,#F2C94C);color:#17402F;font-weight:900;font-size:16px;line-height:1.2;letter-spacing:.01em;border-radius:9999px;padding:6px 14px;border:2.5px solid #064E3B;outline:2px solid #F2C94C;outline-offset:2px;animation:pt-badge-glow 2.4s ease-in-out infinite}
 @keyframes pt-badge-glow{0%,100%{box-shadow:0 0 0 3px rgba(242,201,76,.2),0 0 8px 1px rgba(242,201,76,.35)}50%{box-shadow:0 0 0 5px rgba(242,201,76,.3),0 0 24px 7px rgba(242,201,76,.8)}}
 @media (prefers-reduced-motion:reduce){.pt-hb-badge{animation:none;box-shadow:0 0 16px 4px rgba(242,201,76,.6)}}
@@ -444,8 +448,8 @@ header,[class*="backdrop-blur"]{background-color:rgba(20,58,46,.6)!important}
                     <div className="pt-hb-body">
                       <ol className="pt-hb-st">
                         <li><b>Sign up free</b> (7-day free trial, no credit card required). Your own invite link is ready in your dashboard.</li>
-                        <li><b>Share it</b> with your friends. It keeps working until Dec 31, 2026, even if you don&apos;t subscribe.</li>
-                        <li>Every friend who <b>subscribes</b> drops an apple in your basket, worth <b>$0.25</b>.</li>
+                        <li><b>Share your referral link</b> with your friends. It keeps working until Dec 31, 2026, even if you don&apos;t subscribe.</li>
+                        <li>Every <b>paid subscriber</b> who joins with your link drops an apple in your basket, worth <b>$0.25</b>.</li>
                       </ol>
                       On Harvest Day, <b>Jan 1, 2027</b>, swap your apples for cash.
                       {SIGNUPS_OPEN ? (
@@ -462,7 +466,7 @@ header,[class*="backdrop-blur"]{background-color:rgba(20,58,46,.6)!important}
                     <div className="flex flex-col gap-1">
                       <h3 className="text-[18px] font-extrabold leading-tight text-[#0B1F18]">Apple basket</h3>
                       <p className="text-[16px] leading-snug font-semibold text-[#0F2419]">
-                        Share your link. Every friend who joins PayTree and pays drops an apple in your basket, worth $0.25. On January 1, 2027, we buy all your apples and pay you.
+                        Share your referral link. Every paid subscriber who joins with it drops an apple in your basket, worth $0.25. On January 1, 2027, swap your apples for cash.
                       </p>
                     </div>
                   </div>
