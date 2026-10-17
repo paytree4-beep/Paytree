@@ -328,7 +328,7 @@ header,[class*="backdrop-blur"]{background-color:rgba(20,58,46,.6)!important}
             </p>
             {/* Two compact tap-to-open boxes (plain class names so the dark theme above leaves them alone) */}
             <style>{`
-.pt-hb.pt-hb.pt-hb{width:100%;max-width:318px;box-sizing:border-box;border:2.5px solid #E3B93C!important;border-radius:16px;box-shadow:0 10px 22px rgba(0,0,0,.35);text-align:left;background:#FAF5EA}
+.pt-hb.pt-hb.pt-hb{width:100%;max-width:358px;box-sizing:border-box;border:2.5px solid #E3B93C!important;border-radius:16px;box-shadow:0 10px 22px rgba(0,0,0,.35);text-align:left;background:#FAF5EA}
 .pt-hb-apple.pt-hb-apple.pt-hb-apple{background:#FFFFFF}
 .pt-hb summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:9px;padding:7px 12px;min-height:44px;-webkit-tap-highlight-color:transparent}
 .pt-hb summary::-webkit-details-marker{display:none}
@@ -342,15 +342,24 @@ header,[class*="backdrop-blur"]{background-color:rgba(20,58,46,.6)!important}
 .pt-hb-body b{color:#064E3B}
 .pt-hb-st{margin:0 0 8px;padding-left:18px}
 .pt-hb-st li{margin-bottom:4px}
+.pt-hb-money.pt-hb-money.pt-hb-money{position:relative;margin-top:14px;border-radius:18px}
+.pt-hb-money summary{padding:20px 14px 14px;gap:12px}
+.pt-hb-money .pt-hb-ic{width:34px;height:34px}
+.pt-hb-money .pt-hb-t{font-size:19px;font-weight:900;line-height:1.2}
+.pt-hb-money .pt-hb-plus{width:28px;height:28px;font-size:20px}
+.pt-hb-badge{position:absolute;top:-15px;right:14px;white-space:nowrap;background:linear-gradient(180deg,#FFE58A,#F2C94C);color:#17402F;font-weight:900;font-size:13px;line-height:1.2;letter-spacing:.02em;border-radius:9999px;padding:5px 12px;border:2px solid #FFF3C4;animation:pt-badge-glow 2.4s ease-in-out infinite}
+@keyframes pt-badge-glow{0%,100%{box-shadow:0 0 0 3px rgba(242,201,76,.2),0 0 8px 1px rgba(242,201,76,.35)}50%{box-shadow:0 0 0 5px rgba(242,201,76,.3),0 0 24px 7px rgba(242,201,76,.8)}}
+@media (prefers-reduced-motion:reduce){.pt-hb-badge{animation:none;box-shadow:0 0 16px 4px rgba(242,201,76,.6)}}
 .pt-hb-go{display:block;margin-top:9px;text-align:center;background:#E3B93C;color:#17402F;font-weight:800;border-radius:9999px;padding:9px;text-decoration:none;font-size:14.5px}
             `}</style>
-            <details className="pt-hb">
+            <details className="pt-hb pt-hb-money">
               <summary>
+                <span className="pt-hb-badge">&#10022; 0% platform commission</span>
                 <ShieldCheck className="pt-hb-ic" strokeWidth={2} aria-hidden="true" />
-                <span className="pt-hb-t">PayTree never touches your money.</span>
+                <span className="pt-hb-t">We never touch your money.</span>
                 <span className="pt-hb-plus" aria-hidden="true">+</span>
               </summary>
-              <div className="pt-hb-body">Clients pay you directly. We only link to your own accounts.</div>
+              <div className="pt-hb-body">Clients pay you directly, into your own accounts. <b>PayTree takes 0% of your payments</b>, no cut, ever. You only pay the simple monthly plan.</div>
             </details>
             <details className="pt-hb pt-hb-apple">
               <summary>
